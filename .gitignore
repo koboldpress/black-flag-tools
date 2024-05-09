@@ -1,0 +1,15 @@
+# Conversion notes
+_converted/*
+!_converted/_NOTE.txt
+_sources/*
+!_sources/_NOTE.txt
+
+# IDE
+.nova/
+
+# Node Modules
+node_modules/
+
+# OS Specific
+.DS_Store
+.rsync

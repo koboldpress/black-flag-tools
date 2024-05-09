@@ -1,0 +1,1 @@
+Place any JSON files here to be converted from DnD5e to Black Flag format and then run `npm run convert`.
