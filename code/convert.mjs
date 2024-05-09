@@ -2,6 +2,7 @@ import { readdir, readFile, writeFile } from "node:fs/promises";
 import Path from "path";
 
 import BaseConversion from "./conversions/base.mjs";
+import FeatureConversion from "./conversions/feature.mjs";
 import SpellConversion from "./conversions/spell.mjs";
 
 export default function convertCommand() {
@@ -41,6 +42,7 @@ async function handleConversion(paths) {
 
 function selectConverter(data) {
 	return {
+		"feat": FeatureConversion,
 		"spell": SpellConversion
 	}[data.type] ?? BaseConversion;
 }
