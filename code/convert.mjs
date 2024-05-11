@@ -1,9 +1,14 @@
 import { readdir, readFile, writeFile } from "node:fs/promises";
 import Path from "path";
 
+import { seedRandom } from "./utils.mjs";
 import BaseConversion from "./conversions/base.mjs";
+import BackgroundConversion from "./conversions/background.mjs";
+import ClassConversion from "./conversions/class.mjs";
 import FeatureConversion from "./conversions/feature.mjs";
+import LineageConversion from "./conversions/lineage.mjs";
 import SpellConversion from "./conversions/spell.mjs";
+import SubclassConversion from "./conversions/subclass.mjs";
 
 export default function convertCommand() {
 	return {
@@ -33,6 +38,7 @@ async function handleConversion(paths) {
 	for ( const path of paths ) {
 		const file = await readFile(path, { encoding: "utf8" });
 		const initial = JSON.parse(file);
+		seedRandom(initial._id);
 		const Converter = selectConverter(initial);
 		const final = Converter.convert(initial);
 		const { name } = Path.parse(path);
@@ -42,7 +48,17 @@ async function handleConversion(paths) {
 
 function selectConverter(data) {
 	return {
+		"background": BackgroundConversion,
+		"class": ClassConversion,
+		// consumable => ammunition / consumable
+		// container => container
+		// equipment => armor / gear
 		"feat": FeatureConversion,
-		"spell": SpellConversion
+		// loot => 
+		"race": LineageConversion,
+		"spell": SpellConversion,
+		"subclass": SubclassConversion,
+		// tool => tool
+		// weapon => weapon
 	}[data.type] ?? BaseConversion;
 }

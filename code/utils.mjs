@@ -1,3 +1,7 @@
+import MersenneTwister from "mersenne-twister";
+
+export const generator = new MersenneTwister();
+
 export function getProperty(object, keyPath) {
 	if ( !keyPath ) return object;
 	let target = object;
@@ -22,19 +26,37 @@ export function setProperty(object, keyPath, value) {
 	target[key] = value;
 }
 
+const base62Chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+function getRandomValues(array) {
+	for ( let i = 0; i < array.length; i++ ) {
+		array[i] = generator.random_int();
+	}
+}
+
+export function seedRandom(id) {
+	const chars = base62Chars.split("");
+	const parts = id.split("");
+	let seed = 0;
+	while ( parts.length ) {
+		const value = parts.pop();
+		const index = chars.findIndex(c => c === value);
+		seed += index + 1;
+	}
+	generator.init_seed(seed);
+}
+
 /*
  * Portions of the core package (foundry.utils.randomID) repackaged in accordance with the "Limited License
  * Agreement for Module Development, found here: https://foundryvtt.com/article/license/
  */
 export function randomID(length=16) {
-	const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-	const cutoff = 0x100000000 - (0x100000000 % chars.length);
+	const cutoff = 0x100000000 - (0x100000000 % base62Chars.length);
 	const random = new Uint32Array(length);
 	do {
-		crypto.getRandomValues(random);
+		getRandomValues(random);
 	} while ( random.some(x => x >= cutoff) );
 	let id = "";
-	for ( let i = 0; i < length; i++ ) id += chars[random[i] % chars.length];
+	for ( let i = 0; i < length; i++ ) id += base62Chars[random[i] % base62Chars.length];
 	return id;
 }
-
