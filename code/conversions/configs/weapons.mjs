@@ -7,3 +7,21 @@ export function convertWeapon(initial) {
 		.replace(/lightcrossbow$/, "lightCrossbow")
 		.replace(/lighthammer$/, "lightHammer");
 }
+
+export function convertWeaponCategory(initial) {
+	return {
+		martialM: "martial",
+		martialR: "martial",
+		simpleM: "simple",
+		simpleR: "simple"
+	}[initial] ?? initial;
+}
+
+export function convertWeaponType(initial) {
+	return {
+		martialM: "melee",
+		martialR: "ranged",
+		simpleM: "melee",
+		simpleR: "ranged"
+	}[initial] ?? initial;
+}

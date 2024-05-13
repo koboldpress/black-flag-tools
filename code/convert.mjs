@@ -2,13 +2,23 @@ import { readdir, readFile, writeFile } from "node:fs/promises";
 import Path from "path";
 
 import { seedRandom } from "./utils.mjs";
+import AmmunitionConversion from "./conversions/ammunition.mjs";
+import ArmorConverion from "./conversions/armor.mjs";
 import BaseConversion from "./conversions/base.mjs";
 import BackgroundConversion from "./conversions/background.mjs";
 import ClassConversion from "./conversions/class.mjs";
+import ConsumableConversion from "./conversions/consumable.mjs";
+import ContainerConversion from "./conversions/container.mjs";
 import FeatureConversion from "./conversions/feature.mjs";
+import GearConverion from "./conversions/gear.mjs";
 import LineageConversion from "./conversions/lineage.mjs";
 import SpellConversion from "./conversions/spell.mjs";
 import SubclassConversion from "./conversions/subclass.mjs";
+import SundryConversion from "./conversions/sundry.mjs";
+import ToolConversion from "./conversions/tool.mjs";
+import WeaponConversion from "./conversions/weapon.mjs";
+import { isAmmunition } from "./conversions/configs/ammunition.mjs";
+import { isArmor } from "./conversions/configs/armor.mjs";
 
 export default function convertCommand() {
 	return {
@@ -47,18 +57,19 @@ async function handleConversion(paths) {
 }
 
 function selectConverter(data) {
-	return {
-		"background": BackgroundConversion,
-		"class": ClassConversion,
-		// consumable => ammunition / consumable
-		// container => container
-		// equipment => armor / gear
-		"feat": FeatureConversion,
-		// loot => 
-		"race": LineageConversion,
-		"spell": SpellConversion,
-		"subclass": SubclassConversion,
-		// tool => tool
-		// weapon => weapon
-	}[data.type] ?? BaseConversion;
+	switch (data.type) {
+		case "background": return BackgroundConversion;
+		case "class": return ClassConversion;
+		case "consumable": return isAmmunition(data) ? AmmunitionConversion : ConsumableConversion;
+		case "container": return ContainerConversion
+		case "equipment": return isArmor(data) ? ArmorConverion : GearConverion;
+		case "feat": return FeatureConversion
+		case "loot": return SundryConversion
+		case "race": return LineageConversion
+		case "spell": return SpellConversion
+		case "subclass": return SubclassConversion
+		case "tool": return ToolConversion
+		case "weapon": return WeaponConversion
+		default: return BaseConversion;
+	}
 }
