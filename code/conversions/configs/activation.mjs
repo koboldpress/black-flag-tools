@@ -4,7 +4,7 @@ export function convertActivationType(initial) {
 	}[initial] ?? initial;
 }
 
-export function convertTimePeriods(initial) {
+export function convertTimePeriod(initial) {
 	return {
 		disp: "dispelled",
 		dstr: "triggered",

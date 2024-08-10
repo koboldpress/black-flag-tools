@@ -1,5 +1,5 @@
 import { getProperty, setProperty } from "../../utils.mjs";
-import { convertWeightUnits } from "../configs/units.mjs";
+import { convertWeightUnit } from "../configs/units.mjs";
 import BaseConversion from "../base.mjs";
 
 export default class PhysicalConversion extends BaseConversion {
@@ -33,7 +33,7 @@ export default class PhysicalConversion extends BaseConversion {
 
 	static convertWeight(initial) {
 		if ( (typeof initial) === "object" ) {
-			return { value: initial.value, units: convertWeightUnits(initial.units) };
+			return { value: initial.value, units: convertWeightUnit(initial.units) };
 		} else {
 			return { value: initial, units: "pound" }
 		}

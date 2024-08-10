@@ -19,7 +19,7 @@ export default class LineageConversion extends BaseConversion {
 		LineageConversion.convertType,
 	];
 
-	static addAdvancement(title, changes) {
+	static addAdvancement(title, changes, final) {
 		const advancement = { _id: randomID(), type: "property", configuration: { changes }, title };
 		setProperty(final, `system.advancement.${advancement._id}`, advancement);
 	}
@@ -32,7 +32,7 @@ export default class LineageConversion extends BaseConversion {
 			if ( movement[t] ) changes.push({ key: `system.traits.movement.type.${t}`, mode: 5, value: `${movement[t]}` });
 		}
 		if ( movement.hover ) changes.push({ key: "system.traits.movement.tags", mode: 2, value: "hover" });
-		if ( changes.length ) this.addAdvancement("Movement", changes);
+		if ( changes.length ) LineageConversion.addAdvancement("Movement", changes, final);
 	}
 
 	static convertSenses(initial, final) {
@@ -45,7 +45,7 @@ export default class LineageConversion extends BaseConversion {
 				value: `${senses[t]}`
 			});
 		}
-		if ( changes.length ) this.addAdvancement("Senses", changes);
+		if ( changes.length ) LineageConversion.addAdvancement("Senses", changes, final);
 	}
 
 	static convertType(initial, final) {
@@ -57,7 +57,7 @@ export default class LineageConversion extends BaseConversion {
 			for ( const c of custom ) changes.push({ key: "system.traits.type.custom", mode: 2, value: c.trim() });
 		}
 		if ( type.swarm ) changes.push({ key: "system.traits.type.swarm", mode: 5, value: convertSize(type.swarm) });
-		if ( changes.length ) this.addAdvancement("Creature Type", changes);
+		if ( changes.length ) LineageConversion.addAdvancement("Creature Type", changes, final);
 	}
 
 }

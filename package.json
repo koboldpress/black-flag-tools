@@ -3,7 +3,6 @@
     "convert": "node ./code/cli.mjs convert"
   },
   "devDependencies": {
-    "mersenne-twister": "^1.1.0",
     "yargs": "^17.7.2"
   }
 }

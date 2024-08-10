@@ -7,11 +7,11 @@ export default class AttackActivityConversion extends BaseActivityConversion {
 
 	static paths = [
 		...super.paths,
-		["system.actionType",   "system.type",         this.convertAttackType],
 		["system.ability",      "system.ability",      convertAbility        ],
 		["system.attack.bonus", "system.attack.bonus",                       ],
 		["system.attack.flat",  "system.attack.flat",                        ],
 		["system.damage",       "system.damage",       this.convertDamage    ],
+		["system.actionType",   "system.type",         this.convertAttackType],
 	];
 
 	static convertAttackType(initial) {

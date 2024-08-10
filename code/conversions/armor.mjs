@@ -1,6 +1,7 @@
 import { getProperty, setProperty } from "../utils.mjs";
 import BaseConversion from "./base.mjs";
 import { convertArmorCategory, convertArmorType } from "./configs/armor.mjs";
+import IdentifiableConversion from "./templates/identifiable-conversion.mjs";
 import ItemDescriptionConversion from "./templates/item-description-conversion.mjs";
 import PhysicalConversion from "./templates/physical-conversion.mjs";
 import PropertiesConversion from "./templates/properties-conversion.mjs";
@@ -12,7 +13,7 @@ export default class ArmorConversion extends BaseConversion {
 	];
 
 	static templates = [
-		// TODO: Identifiable
+		IdentifiableConversion,
 		ItemDescriptionConversion,
 		PhysicalConversion,
 		PropertiesConversion
@@ -23,11 +24,11 @@ export default class ArmorConversion extends BaseConversion {
 	];
 
 	static paths = [
-		["system.type.value",    "system.type.category", convertArmorCategory],
-		["system.type.baseItem", "system.type.base",     convertArmorType    ],
-		["system.armor.value",   "system.armor.value",                       ],
-		["system.strength",      "system.armor.requiredStrength",            ]
-		// TODO: Magical bonus
+		["system.armor.value",        "system.armor.value",                       ],
+		["system.strength",           "system.armor.requiredStrength",            ],
+		["system.armor.magicalBonus", "system.magicalBonus"                       ],
+		["system.type.value",         "system.type.category", convertArmorCategory],
+		["system.type.baseItem",      "system.type.base",     convertArmorType    ],
 	];
 
 	static convertMaxModifier(initial, final) {

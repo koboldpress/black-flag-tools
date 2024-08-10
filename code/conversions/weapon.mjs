@@ -1,10 +1,11 @@
 import { getProperty } from "../utils.mjs";
 import BaseConversion from "./base.mjs";
 import { convertItemProperty } from "./configs/items.mjs";
-import { convertDistanceUnits } from "./configs/units.mjs";
+import { convertDistanceUnit } from "./configs/units.mjs";
 import { convertWeapon, convertWeaponCategory, convertWeaponType } from "./configs/weapons.mjs";
 import { convertDamage } from "./shared/damage.mjs";
 import ActivitiesConversion from "./templates/activities-conversion.mjs";
+import IdentifiableConversion from "./templates/identifiable-conversion.mjs";
 import ItemDescriptionConversion from "./templates/item-description-conversion.mjs";
 import PhysicalConversion from "./templates/physical-conversion.mjs";
 import PropertiesConversion from "./templates/properties-conversion.mjs";
@@ -13,7 +14,7 @@ export default class WeaponConversion extends BaseConversion {
 
 	static templates = [
 		ActivitiesConversion,
-		// TODO: Identifiable
+		IdentifiableConversion,
 		// TODO: Equippable
 		ItemDescriptionConversion,
 		PhysicalConversion,
@@ -25,10 +26,11 @@ export default class WeaponConversion extends BaseConversion {
 	];
 
 	static paths = [
+		["system.damage.parts",  "system.damage",        WeaponConversion.convertDamage],
+		["system.magicalBonus",  "system.magicalBonus"                                 ],
 		["system.type.value",    "system.type.value",    convertWeaponType             ],
 		["system.type.value",    "system.type.category", convertWeaponCategory         ],
 		["system.type.baseItem", "system.type.base",     convertWeapon                 ],
-		["system.damage.parts",  "system.damage",        WeaponConversion.convertDamage],
 	];
 
 	static convertDamage(initial) {
@@ -52,7 +54,7 @@ export default class WeaponConversion extends BaseConversion {
 			range.short = system.range?.value ?? null;
 			range.long = system.range?.long ?? null;
 		}
-		range.units = system.range?.units ? convertDistanceUnits(system.range.units) : "foot";
+		range.units = system.range?.units ? convertDistanceUnit(system.range.units) : "foot";
 		final.range = range;
 	}
 

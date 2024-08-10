@@ -1,4 +1,4 @@
-import MersenneTwister from "mersenne-twister";
+import MersenneTwister from "./mersenne.mjs";
 
 export const generator = new MersenneTwister();
 
@@ -24,6 +24,11 @@ export function setProperty(object, keyPath, value) {
 	}
 
 	target[key] = value;
+}
+
+export function staticID(id) {
+	if ( id.length >= 16 ) return id.substring(0, 16);
+	return id.padEnd(16, "0");
 }
 
 const base62Chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";

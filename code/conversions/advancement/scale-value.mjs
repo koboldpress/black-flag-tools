@@ -1,5 +1,5 @@
 import { getProperty } from "../../utils.mjs";
-import { convertDistanceUnits } from "../configs/units.mjs";
+import { convertDistanceUnit } from "../configs/units.mjs";
 import BaseActivityConversion from "./base.mjs";
 
 export default class ScaleValueConversion extends BaseActivityConversion {
@@ -32,7 +32,7 @@ export default class ScaleValueConversion extends BaseActivityConversion {
 					break;
 				case "distance":
 					f.value = i.value;
-					f.units = convertDistanceUnits(initial.distance?.units);
+					f.units = convertDistanceUnit(initial.distance?.units);
 					break;
 			}
 			final.scale[k] = f;

@@ -1,12 +1,13 @@
 import BaseConversion from "./base.mjs";
 import { convertItemProperty } from "./configs/items.mjs";
+import IdentifiableConversion from "./templates/identifiable-conversion.mjs";
 import ItemDescriptionConversion from "./templates/item-description-conversion.mjs";
 import PhysicalConversion from "./templates/physical-conversion.mjs";
 
 export default class SundryConversion extends BaseConversion {
 
 	static templates = [
-		// TODO: Identifiable
+		IdentifiableConversion,
 		// TODO: Equippable
 		// TODO: Currency
 		ItemDescriptionConversion,

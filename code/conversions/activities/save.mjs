@@ -1,7 +1,7 @@
 import { convertAbility } from "../configs/abilities.mjs";
 import BaseActivityConversion from "./base.mjs";
 
-export default class SavingThrowActivityConversion extends BaseActivityConversion {
+export default class SaveActivityConversion extends BaseActivityConversion {
 
 	static activityType = "savingThrow";
 

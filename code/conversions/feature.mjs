@@ -16,13 +16,15 @@ export default class FeatureConversion extends BaseConversion {
 	];
 
 	static postSteps = [
-		FeatureConversion.convertRequirements,
-		FeatureConversion.convertType
+		FeatureConversion.convertRequirements
 	];
 
 	static convertType(initial, final) {
-		const type = getProperty(initial, "system.type.value");
-		final.type = type === "feat" ? "talent" : "feature";
+		const type = getProperty(initial, "system.type");
+		final.type = type?.value === "feat" ? "talent" : "feature";
+		if ( !type ) return;
+		setProperty(final, "system.type.category", convertFeatureCategory(type.value));
+		setProperty(final, "system.type.value", convertFeatureType(type.subtype));
 	}
 
 	static convertRequirements(initial, final) {
@@ -40,13 +42,6 @@ export default class FeatureConversion extends BaseConversion {
 				setProperty(final, "system.level.value", Number(match.groups.level));
 			} 
 		}
-	}
-
-	static convertType(initial, final) {
-		const type = getProperty(initial, "system.type");
-		if ( !type ) return;
-		setProperty(final, "system.type.category", convertFeatureCategory(type.value));
-		setProperty(final, "system.type.value", convertFeatureType(type.subtype));
 	}
 
 }

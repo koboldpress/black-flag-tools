@@ -1,15 +1,15 @@
-export function convertDistanceUnits(initial) {
+export function convertDistanceUnit(initial) {
 	return {
 		ft: "foot",
 		mi: "mile"
-	}[initial] ?? [initial];
+	}[initial] ?? initial;
 }
 
-export function convertWeightUnits(initial) {
+export function convertWeightUnit(initial) {
 	return {
 		lb: "pound",
 		tn: "ton",
 		kg: "kilogram",
 		Mg: "megagram"
-	}[initial] ?? [initial];
+	}[initial] ?? initial;
 }

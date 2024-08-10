@@ -1,8 +1,9 @@
 import { getProperty, setProperty } from "../../utils.mjs";
 import BaseConversion from "../base.mjs";
 import AttackActivityConversion from "../activities/attack.mjs";
-import HealingActivityConversion from "../activities/healing.mjs";
-import SavingThrowActivityConversion from "../activities/saving-throw.mjs";
+import DamageActivityConversion from "../activities/damage.mjs";
+import HealActivityConversion from "../activities/heal.mjs";
+import SaveActivityConversion from "../activities/save.mjs";
 import UtilityActivityConversion from "../activities/utility.mjs";
 
 export default class ActivitiesConversion extends BaseConversion {
@@ -35,8 +36,9 @@ export default class ActivitiesConversion extends BaseConversion {
 
 		const activity = {
 			attack: AttackActivityConversion,
-			healing: HealingActivityConversion,
-			savingThrow: SavingThrowActivityConversion,
+			damage: DamageActivityConversion,
+			healing: HealActivityConversion,
+			savingThrow: SaveActivityConversion,
 			utility: UtilityActivityConversion
 		}[type].convert(initial);
 

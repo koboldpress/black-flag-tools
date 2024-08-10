@@ -14,7 +14,10 @@ export function convertDamage([formula, type]) {
 			if ( match.groups.operator === "-" ) damage.bonus = `-${damage.bonus}`;
 		}
 	} else {
-		damage.custom = formula;
+		damage.custom = {
+			enabled: true,
+			formula
+		};
 	}
 
 	return damage;
