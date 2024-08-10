@@ -52,26 +52,36 @@ export default class ActivitiesConversion extends BaseConversion {
 	}
 
 	static convertUses(initial, final) {
-		const uses = initial.system?.uses;
-		if ( !uses ) return;
+		const recharge = getProperty(initial, "system.recharge");
+		const uses = getProperty(initial, "system.uses");
 
-		const finalUses = { max: uses.max };
+		if ( recharge ) setProperty(final, "system.uses", {
+			max: "1",
+			recovery: [{
+				period: "recharge",
+				formula: recharge.value ?? "6"
+			}]
+		});
 
-		let recovery;
-		if ( uses.per === "charges" ) {
-			recovery = { period: "longRest" };
-			if ( uses.recovery ) {
-				recovery.type = "formula";
-				recovery.formula = uses.recovery;
-			} else {
-				recovery.type = "recoverAll";
+		else if ( uses ) {
+			const finalUses = { max: uses.max };
+
+			let recovery;
+			if ( uses.per === "charges" ) {
+				recovery = { period: "longRest" };
+				if ( uses.recovery ) {
+					recovery.type = "formula";
+					recovery.formula = uses.recovery;
+				} else {
+					recovery.type = "recoverAll";
+				}
+			} else if ( uses.per ) {
+				recovery = { period: convertRecoveryPeriods(uses.per) };
 			}
-		} else if ( uses.per ) {
-			recovery = { period: convertRecoveryPeriods(uses.per) };
-		}
-		if ( recovery ) finalUses.recovery = [recovery];
+			if ( recovery ) finalUses.recovery = [recovery];
 
-		setProperty(final, "system.uses", finalUses);
+			setProperty(final, "system.uses", finalUses);
+		}
 	}
 
 }

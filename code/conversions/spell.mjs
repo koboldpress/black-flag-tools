@@ -30,6 +30,7 @@ export default class SpellConversion extends BaseConversion {
 		["system.target",               "system.target",                          convertTargeting                        ],
 		["system.preparation.mode",     "flags.black-flag.relationship.mode",								        									    ],
 		["system.preparation.prepared", "flags.black-flag.relationship.prepared",								    									    ],
+		["system.sourceClass",          "flags.black-flag.relationship.origin.identifier"                                 ],
 	];
 
 	static postSteps = [

@@ -40,7 +40,19 @@ export default class FeatureConversion extends BaseConversion {
 			if ( validClasses.includes(identifier) && !Number.isNaN(level) ) {
 				setProperty(final, "system.identifier.associated", identifier);
 				setProperty(final, "system.level.value", Number(match.groups.level));
-			} 
+			}
+		}
+
+		const prerequisites = getProperty(initial, "system.prerequisites");
+		if ( prerequisites ) {
+			const filters = [];
+			if ( prerequisites.level ) filters.push({
+				_id: "characterLevel",
+				k: "system.progression.level",
+				o: "gte",
+				v: prerequisites.level
+			});
+			if ( filters.length ) setProperty(final, "system.restriction.filters", filters);
 		}
 	}
 
