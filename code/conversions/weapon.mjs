@@ -15,7 +15,6 @@ export default class WeaponConversion extends BaseConversion {
 	static templates = [
 		ActivitiesConversion,
 		IdentifiableConversion,
-		// TODO: Equippable
 		ItemDescriptionConversion,
 		PhysicalConversion,
 		PropertiesConversion,

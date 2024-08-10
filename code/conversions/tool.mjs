@@ -10,7 +10,6 @@ export default class ToolConversion extends BaseConversion {
 	static templates = [
 		ActivitiesConversion,
 		IdentifiableConversion,
-		// TODO: Equippable
 		ItemDescriptionConversion,
 		PhysicalConversion
 	];

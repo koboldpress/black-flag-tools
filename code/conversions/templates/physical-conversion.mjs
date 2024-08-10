@@ -5,12 +5,13 @@ import BaseConversion from "../base.mjs";
 export default class PhysicalConversion extends BaseConversion {
 
 	static paths = [
-		["system.container",          "system.container"                                           ],
-		["system.price.value",        "system.price.value"                                         ],
-		["system.price.denomination", "system.price.denomination"                                  ],
-		["system.quantity",           "system.quantity"                                            ],
-		["system.rarity",             "system.rarity"                                              ],
-		["system.weight",             "system.weight",             PhysicalConversion.convertWeight],
+		["system.container",          "system.container"                                                        ],
+		["system.price.value",        "system.price.value"                                                      ],
+		["system.price.denomination", "system.price.denomination"                                               ],
+		["system.quantity",           "system.quantity"                                                         ],
+		["system.rarity",             "system.rarity"                                                           ],
+		["system.weight",             "system.weight",                          PhysicalConversion.convertWeight],
+		["system.equipped",           "flags.black-flag.relationship.equipped"                                  ],
 	];
 
 	static postSteps = [

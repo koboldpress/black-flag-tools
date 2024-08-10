@@ -13,7 +13,6 @@ export default class BaseActivityConversion extends BaseConversion {
 	static paths = [
 		["system.activation.cost",      "activation.value",									    																			    ],
 		["system.activation.type",      "activation.type",                        convertActivationType                   ],
-		// TODO: Prevent activation details from being duplicated when added to spells
 		["system.activation.condition", "activation.condition", 							    																		    ],
 		["system.duration.value",       "duration.value",                                                                 ],
 		["system.duration.units",       "duration.units",                         convertTimePeriod                       ],

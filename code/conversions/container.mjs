@@ -8,7 +8,6 @@ export default class SundryConversion extends BaseConversion {
 
 	static templates = [
 		IdentifiableConversion,
-		// TODO: Equippable
 		// TODO: Currency
 		ItemDescriptionConversion,
 		PhysicalConversion

@@ -27,7 +27,7 @@ export default class AdvancementConversion extends BaseConversion {
 				case "ItemGrant": Converter = hasSpellData ? GrantSpellsConversion : GrantFeaturesConversion; break;
 				case "ScaleValue": Converter = ScaleValueConversion; break;
 				case "Size": Converter = SizeConversion; break;
-				case "Trait": Converter = TraitConversion; break; // TODO: Or KeyAbility for saving throw on classes
+				case "Trait": Converter = TraitConversion; break;
 			}
 			if ( Converter ) {
 				const f = Converter.convert(i);
