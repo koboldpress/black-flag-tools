@@ -5,10 +5,16 @@ import DamageActivityConversion from "../activities/damage.mjs";
 import HealActivityConversion from "../activities/heal.mjs";
 import SaveActivityConversion from "../activities/save.mjs";
 import UtilityActivityConversion from "../activities/utility.mjs";
+import { convertRecoveryPeriods } from "../configs/usage.mjs";
 
 export default class ActivitiesConversion extends BaseConversion {
 
-	static convert(initial, final) {
+	static postSteps = [
+		ActivitiesConversion.convertActivities,
+		ActivitiesConversion.convertUses,
+	];
+
+	static convertActivities(initial, final) {
 		let type;
 		switch ( getProperty(initial, "system.actionType") ) {
 			case "mwak":
@@ -43,6 +49,29 @@ export default class ActivitiesConversion extends BaseConversion {
 		}[type].convert(initial);
 
 		setProperty(final, `system.activities.${activity._id}`, activity);
+	}
+
+	static convertUses(initial, final) {
+		const uses = initial.system?.uses;
+		if ( !uses ) return;
+
+		const finalUses = { max: uses.max };
+
+		let recovery;
+		if ( uses.per === "charges" ) {
+			recovery = { period: "longRest" };
+			if ( uses.recovery ) {
+				recovery.type = "formula";
+				recovery.formula = uses.recovery;
+			} else {
+				recovery.type = "recoverAll";
+			}
+		} else if ( uses.per ) {
+			recovery = { period: convertRecoveryPeriods(uses.per) };
+		}
+		if ( recovery ) finalUses.recovery = [recovery];
+
+		setProperty(final, "system.uses", finalUses);
 	}
 
 }

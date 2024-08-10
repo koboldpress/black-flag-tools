@@ -1,4 +1,4 @@
-import { getProperty } from "../utils.mjs";
+import { getProperty, setProperty } from "../utils.mjs";
 import BaseConversion from "./base.mjs";
 import { convertItemProperty } from "./configs/items.mjs";
 import { convertDistanceUnit } from "./configs/units.mjs";
@@ -55,7 +55,7 @@ export default class WeaponConversion extends BaseConversion {
 			range.long = system.range?.long ?? null;
 		}
 		range.units = system.range?.units ? convertDistanceUnit(system.range.units) : "foot";
-		final.range = range;
+		setProperty(final, "system.range", range);
 	}
 
 }

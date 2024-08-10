@@ -1,7 +1,8 @@
-import { randomID, setProperty } from "../../utils.mjs";
+import { randomID, getProperty, setProperty } from "../../utils.mjs";
 import BaseConversion from "../base.mjs";
 import { convertActivationType, convertTimePeriod } from "../configs/activation.mjs";
 import { convertDistanceUnit } from "../configs/units.mjs";
+import { convertConsumptionTypes } from "../configs/usage.mjs";
 import { convertDamage } from "../shared/damage.mjs";
 import { convertTargeting } from "../shared/targeting.mjs";
 
@@ -34,7 +35,22 @@ export default class BaseActivityConversion extends BaseConversion {
 		setProperty(activity, "type", this.activityType);
 		setProperty(activity, "activation.primary", true);
 
-		// TODO: Consumption
+		const consumption = {
+			targets: [],
+			scale: { allowed: false }
+		};
+		const consume = getProperty(initial, "system.consume");
+		if ( consume?.type && consume?.type !== "ammo" ) {
+			const type = convertConsumptionTypes(consume.type);
+			if ( type ) {
+				const target = { type, target: consume.target ?? "" };
+				if ( consume.scale ) target.scaling = { mode: "amount" };
+				consumption.targets.push(target);
+			}
+		}
+		const uses = getProperty(initial, "system.uses");
+		if ( uses?.max ) consumption.targets.push({ type: "item", value: "1" });
+		setProperty(activity, "consumption", consumption);
 
 		return activity;
 	}
