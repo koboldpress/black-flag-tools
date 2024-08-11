@@ -1,0 +1,42 @@
+{
+	"id": "black-flag-tools",
+	"title": "Black Flag Roleplaying Conversion Tools",
+	"description": "<p></p>",
+	"version": "0.1.001",
+	"compatibility": {
+		"minimum": "12.330",
+		"verified": "12"
+	},
+	"url": "",
+	"authors": [
+		{
+			"name": "Jeff ‘Arbron’ Hitchcock",
+			"url": "https://github.com/arbron",
+			"email": "jeff@szed.co",
+			"discord": "arbron#6515",
+			"twitter": "@arbron",
+			"flags": {}
+		}
+	],
+	"relationships": {
+		"systems": [
+			{
+				"id": "black-flag"
+			},
+			{
+				"id": "dnd5e"
+			}
+		]
+	},
+	"esmodules": ["./code/module.mjs"],
+	"styles": [],
+	"languages": [
+		{
+			"lang": "en",
+			"name": "English",
+			"path": "lang/en.json",
+			"flags": {}
+		}
+	],
+	"flags": {}
+}

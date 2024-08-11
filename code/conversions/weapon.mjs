@@ -12,6 +12,10 @@ import PropertiesConversion from "./templates/properties-conversion.mjs";
 
 export default class WeaponConversion extends BaseConversion {
 
+	static preSteps = [
+		WeaponConversion.convertDamage
+	];
+
 	static templates = [
 		ActivitiesConversion,
 		IdentifiableConversion,
@@ -25,20 +29,23 @@ export default class WeaponConversion extends BaseConversion {
 	];
 
 	static paths = [
-		["system.damage.parts",  "system.damage",        WeaponConversion.convertDamage],
 		["system.magicalBonus",  "system.magicalBonus"                                 ],
 		["system.type.value",    "system.type.value",    convertWeaponType             ],
 		["system.type.value",    "system.type.category", convertWeaponCategory         ],
 		["system.type.baseItem", "system.type.base",     convertWeapon                 ],
 	];
 
-	static convertDamage(initial) {
-		const part = initial[0];
+	static convertDamage(initial, final) {
+		const damage = getProperty(initial, "system.damage.parts") ?? [];
+		if ( !damage.length ) return;
+		const part = damage[0];
 		if ( !part ) return;
 		const parsed = convertDamage(part);
 		if ( parsed?.custom || parsed?.bonus !== "@mod" ) return;
 		delete parsed.bonus;
-		return parsed;
+		setProperty(final, "system.damage", parsed);
+		damage.pop();
+		setProperty(initial, "system.damage.parts", damage);
 	}
 
 	static convertRange(initial, final) {

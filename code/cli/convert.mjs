@@ -1,8 +1,8 @@
 import { readdir, readFile, writeFile } from "node:fs/promises";
 import Path from "path";
 
-import { seedRandom } from "./utils.mjs";
-import { selectConverter } from "./conversions/_module.mjs";
+import { seedRandom } from "../utils.mjs";
+import { selectConverter } from "../conversions/_module.mjs";
 
 export default function convertCommand() {
 	return {

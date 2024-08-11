@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "convert": "node ./code/cli.mjs convert"
+    "convert": "node ./code/cli/_module.mjs convert"
   },
   "devDependencies": {
     "yargs": "^17.7.2"
