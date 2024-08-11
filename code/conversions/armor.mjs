@@ -9,18 +9,18 @@ import PropertiesConversion from "./templates/properties-conversion.mjs";
 export default class ArmorConversion extends BaseConversion {
 
 	static preSteps = [
-		(i, f) => f.type = "armor"
+		(i, f) => f.type = "armor",
 	];
 
 	static templates = [
 		IdentifiableConversion,
 		ItemDescriptionConversion,
 		PhysicalConversion,
-		PropertiesConversion
+		PropertiesConversion,
 	];
 
 	static postSteps = [
-		ArmorConversion.convertMaxModifier
+		ArmorConversion.convertMaxModifier,
 	];
 
 	static paths = [

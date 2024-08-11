@@ -1,3 +1,9 @@
+export function convertCreatureType(initial) {
+	return {
+		
+	}[initial] ?? initial;
+}
+
 export function convertSize(initial) {
 	return {
 		sm: "small",

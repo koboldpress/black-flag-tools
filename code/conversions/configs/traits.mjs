@@ -24,5 +24,14 @@ export function convertLanguage(initial) {
 	return {
 		deep: "voidSpeech",
 		"esoteric:deep": "esoteric:deepSpeech"
-	}[initial] ?? [initial];
+	}[initial] ?? initial;
+}
+
+export function validLanguage(language) {
+	return [
+		"common", "dwarvish", "elvish", "giant", "gnomish", "goblin", "halfling", "orcish",
+		"abyssal", "celestial", "draconic", "infernal", "machineSpeech", "primordial",
+		"aquan", "auran", "ignan", "terran", "sylvan", "undercommon", "voidSpeech",
+		"druidic", "thievesCant"
+	].includes(language);
 }
