@@ -1,5 +1,11 @@
 {
 	"BFTools": {
-		"Convert": "Convert"
+		"Export": "Export for Black Flag",
+		"Import": {
+			"ContextMenuOption": "Import from DnD5e",
+			"Hint1": "You may import {document} data into this pack from an exported JSON file.",
+			"Hint2": "This data should be exported from DnD5e using the conversion tool.",
+			"Success": "Successfully imported {count} documents into {compendium}!"
+		}
 	}
 }
