@@ -1,5 +1,6 @@
-import { seedRandom } from "./utils.mjs";
 import { selectConverter } from "./conversions/_module.mjs";
+import { ParsingApplication } from "./parsing/_module.mjs";
+import { seedRandom } from "./utils.mjs";
 
 Hooks.once("setup", () => {
 	// Export options for DnD5e
@@ -51,8 +52,11 @@ Hooks.once("setup", () => {
 				}
 			});
 		});
+
+		Hooks.on("renderCompendium", (app, [html], data) => ParsingApplication.injectSidebarButton(app, html));
 	}
 });
+
 
 /* <><><><> <><><><> <><><><> <><><><> <><><><> <><><><> */
 /*                Conversion & Exporting                 */

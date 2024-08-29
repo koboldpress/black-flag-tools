@@ -2,7 +2,7 @@
 	"id": "black-flag-tools",
 	"title": "Black Flag Roleplaying Conversion Tools",
 	"description": "<p></p>",
-	"version": "0.1.001",
+	"version": "0.1.002",
 	"compatibility": {
 		"minimum": "12.330",
 		"verified": "12"
@@ -29,7 +29,7 @@
 		]
 	},
 	"esmodules": ["./code/module.mjs"],
-	"styles": [],
+	"styles": ["./styles/parser.css"],
 	"languages": [
 		{
 			"lang": "en",

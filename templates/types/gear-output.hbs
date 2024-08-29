@@ -1,0 +1,20 @@
+<h3>{{ item.name }}</h3>
+
+<dl>
+	<dt>{{ localize "BF.Equipment.Category.Label" }}</dt>
+	<dd>
+		{{#with (lookup CONFIG.gearCategories.localized item.system.type.category) as |value| }}
+		{{ value }}{{ else }}—{{/with}}
+	</dd>
+	<dt>{{ localize "BF.Rarity.Label" }}</dt>
+	<dd>
+		{{#with (lookup CONFIG.rarities.localized item.system.rarity) as |value| }}
+		{{ value }}{{ else }}—{{/with}}
+	</dd>
+	<dt>{{ localize "BF.Price.Label" }}</dt>
+	<dd>{{ item.system.price.label }}</dd>
+</dl>
+
+<hr>
+
+{{{ enriched.description }}}

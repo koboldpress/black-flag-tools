@@ -1,0 +1,71 @@
+.black-flag-tools.parser {
+	.window-content {
+		display: grid;
+		grid-template-areas:
+			"input output"
+			"footer footer";
+		grid-template-columns: 1fr 1fr;
+		grid-template-rows: auto min-content;
+		gap: 12px;
+
+		[data-application-part="input"] { grid-area: input; }
+		[data-application-part="output"] { grid-area: output; }
+		[data-application-part="footer"] { grid-area: footer; }
+	}
+	[data-application-part="input"] {
+		textarea {
+			block-size: 100%;
+			inline-size: 100%;
+			border-radius: 0;
+			background: var(--bf-background-color-half-white);
+			resize: none;
+		}
+	}
+	[data-application-part="output"] {
+		border: 2px solid var(--bf-color-border-blue);
+		padding: 8px;
+		overflow-y: auto;
+		background: var(--bf-background-color-half-white);
+
+		h3 {
+			border: none;
+			color: var(--bf-text-color-black);
+			font-family: var(--bf-font-header);
+			text-shadow: none;
+		}
+		dl {
+			display: flex;
+			flex-wrap: wrap;
+			align-items: first baseline;
+			gap: 6px;
+
+			> * {
+				margin: 0;
+				padding: 0;
+				font-family: var(--bf-font-primary);
+				font-size: var(--font-size-14);
+				line-height: normal;
+			}
+			dt {
+				color: var(--bf-text-color-black);
+				font-weight: 600;
+				text-shadow: none;
+				&::after {
+					content: ": ";
+				}
+			}
+			dd:has(+ dd)::after {
+				content: ", ";
+			}
+			dd:not(:has(+ dd)):not(:last-child) {
+				padding-inline-end: 6px;
+				border-inline-end: 1px solid black;
+			}
+		}
+	}
+	[data-application-part="footer"] {
+		display: flex;
+		gap: 8px;
+		> * { flex: 1 1 33%; }
+	}
+}
