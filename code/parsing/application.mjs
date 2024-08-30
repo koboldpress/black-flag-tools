@@ -41,6 +41,17 @@ export default class ParsingApplication extends HandlebarsApplicationMixin(Appli
 	};
 
 	/* <><><><> <><><><> <><><><> <><><><> */
+
+	static TYPES = {
+		gear: {
+			label: "BF.Item.Type.Gear[one]", template: "modules/black-flag-tools/templates/types/gear-output.hbs"
+		},
+		container: {
+			label: "BF.Item.Type.Container[one]", template: "modules/black-flag-tools/templates/types/gear-output.hbs"
+		}
+	};
+
+	/* <><><><> <><><><> <><><><> <><><><> */
 	/*             Properties              */
 	/* <><><><> <><><><> <><><><> <><><><> */
 
@@ -105,19 +116,20 @@ export default class ParsingApplication extends HandlebarsApplicationMixin(Appli
 	 * @protected
 	 */
 	async _prepareFooterContext(context, options) {
-		// TODO: Select last created type
+		const lastType = game.user.getFlag("black-flag-tools", "lastType");
 		context.types = {
 			field: new foundry.data.fields.StringField(),
-			options: [
-				{ value: "gear", label: game.i18n.localize(CONFIG.Item.typeLabels.gear) }
-			]
+			options: Object.entries(this.constructor.TYPES).map(([value, data]) => ({
+				value, label: game.i18n.localize(data.label), selected: lastType === value
+			}))
 		};
-		// TODO: Select last used folder
+		const lastFolder = game.user.getFlag("black-flag-tools", "lastFolder");
 		context.folders = {
 			field: new foundry.data.fields.StringField(),
 			options: [
 				{ value: "", label: game.i18n.localize("BFTools.Parser.NoFolder") },
 				...this.pack._formatFolderSelectOptions()
+					.map(({ id, name }) => ({ value: id, label: name, selected: id === lastFolder }))
 			]
 		};
 		return context;
@@ -137,7 +149,7 @@ export default class ParsingApplication extends HandlebarsApplicationMixin(Appli
 			try {
 				const item = parseInput(this.type, this.input);
 				context.preview = await renderTemplate(
-					`modules/black-flag-tools/templates/types/${this.type}-output.hbs`,
+					this.constructor.TYPES[this.type].template,
 					{
 						CONFIG: CONFIG.BlackFlag,
 						item,
@@ -170,11 +182,11 @@ export default class ParsingApplication extends HandlebarsApplicationMixin(Appli
 	static async #handleFormSubmission(event, form, formData) {
 		if ( this.document ) {
 			const cls = getDocumentClass(this.document.documentName);
-			const created = await cls.create({
-				...this.document.toObject(),
-				folder: this.element.querySelector('[name="folder"]')?.value ?? undefined
-			}, { pack: this.pack.metadata.id });
-			ui.notifications.info(game.i18n.format("BF.Tools.Parser.Create", { name: created.name }));
+			const folder = this.element.querySelector('[name="folder"]')?.value;
+			await game.user.setFlag("black-flag-tools", "lastType", this.type);
+			if ( folder !== undefined ) await game.user.setFlag("black-flag-tools", "lastFolder", folder);
+			const created = await cls.create({ ...this.document.toObject(), folder }, { pack: this.pack.metadata.id });
+			created.sheet.render({ force: true });
 		}
 	}
 

@@ -1,7 +1,7 @@
 import Parser from "../parser.mjs";
 
-export default function parseGear(input) {
-	const data = { type: "gear" };
+export default function parseGear(type, input) {
+	const data = { type };
 	const parser = new Parser(input);
 
 	// Name

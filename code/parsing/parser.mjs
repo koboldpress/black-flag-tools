@@ -49,10 +49,21 @@ export default class Parser {
 	consumeDescription() {
 		const paragraphs = [];
 		let paragraph = "";
+		let inList = false;
 		const addParagraph = () => {
-			// TODO: Process contents of paragraph to add enrichers
 			paragraph = paragraph.trim();
-			if ( paragraph ) paragraphs.push(`<p>${paragraph.trim()}</p>`);
+			if ( paragraph ) {
+				const li = paragraph.startsWith("•");
+				if ( li ) {
+					if ( !inList ) paragraphs.push("<ul>");
+					inList = true;
+					paragraph = paragraph.replace("•", "");
+				}
+				else if ( inList ) paragraphs.push("</ul>");
+				paragraphs.push(
+					`${li ? "<li>" : ""}<p>${this.parseEnrichers(paragraph.trim())}</p>${li ? "</li>" : ""}`
+				);
+			}
 			paragraph = "";
 		};
 		for ( const line of this.consumeRepeat("\n") ) {
@@ -168,5 +179,90 @@ export default class Parser {
 			this.#startIndex = index + 1;
 		}
 		return result;
+	}
+
+	/* <><><><> <><><><> <><><><> <><><><> */
+	/*               Parsing               */
+	/* <><><><> <><><><> <><><><> <><><><> */
+
+	static enrichers = [
+		// Skills
+		{
+			regex: /DC\s+(?<dc>\d+)\s+(?<ability>\w+)\s+\((?<skill>[\w\s]+)\)\s+check/gdi,
+			handler: result => {
+				const { ability, dc, skill } = result.groups;
+				if ( !(ability.toLowerCase() in CONFIG.BlackFlag.enrichment.lookup.abilities) ) return false;
+				if ( !(skill.toLowerCase() in CONFIG.BlackFlag.enrichment.lookup.skills) ) return false;
+				return `[[/check ${dc} ${ability} (${skill})]]`;
+			}
+		},
+
+		// Ability Checks
+		{
+			regex: /DC\s+(?<dc>\d+)\s+(?<ability>\w+)\s+check/gdi,
+			handler: result => {
+				const { ability, dc } = result.groups;
+				if ( !(ability.toLowerCase() in CONFIG.BlackFlag.enrichment.lookup.abilities) ) return false;
+				return `[[/check ${dc} ${ability}]]`;
+			}
+		},
+
+		// Ability Saves
+		{
+			regex: /DC\s+(?<dc>\d+)\s+(?<ability>\w+)\s+save/gdi,
+			handler: result => {
+				const { ability, dc } = result.groups;
+				if ( !(ability.toLowerCase() in CONFIG.BlackFlag.enrichment.lookup.abilities) ) return false;
+				return `[[/save ${dc} ${ability}]]`;
+			}
+		},
+
+		// Damage
+		{
+			regex: /(?<roll>\d+d\d+(?:\s+[+|-|−]\s+\d+)?)\s+(?<type>\w+)\sdamage/gdi,
+			handler: result => {
+				const { roll, type } = result.groups;
+				if ( !(type.toLowerCase() in CONFIG.BlackFlag.damageTypes) ) return false;
+				return `[[/damage ${roll} ${type}]]`;
+			}
+		},
+
+		// Other Roll
+		{
+			regex: /(\d+d\d+(?:\s+[+|-|−]\s+\d+)?)/gdi,
+			handler: result => `[[/r ${result[0].replace("−", "-")}]]`
+		}
+	];
+
+	/* <><><><> <><><><> <><><><> <><><><> */
+
+	/**
+	 * Find potential rolls & DCs in a paragraph and add enrichers.
+	 * @param {string} paragraph
+	 * @returns {string}
+	 */
+	parseEnrichers(paragraph) {
+		const replacements = [];
+		let count = 0;
+		for ( const { regex, handler } of Parser.enrichers ) {
+			let match;
+			const keys = [];
+			while ( (match = regex.exec(paragraph)) !== null ) {
+				const newValue = handler(match);
+				if ( newValue ) {
+					const key = `$$${count}$$`;
+					replacements.push({ key, newValue });
+					keys.unshift({ key, indices: match.indices[0] });
+					count++;
+				}
+			}
+			for ( const { key, indices } of keys ) {
+				paragraph = paragraph.substring(0, indices[0]) + key + paragraph.substring(indices[1]);
+			}
+		}
+		for ( const { key, newValue } of replacements ) {
+			paragraph = paragraph.replace(key, newValue);
+		}
+		return paragraph;
 	}
 }
