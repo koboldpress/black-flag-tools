@@ -3,8 +3,9 @@
 <dl>
 	<dt>{{ localize "BF.Equipment.Category.Label" }}</dt>
 	<dd>
-		{{#with (lookup CONFIG.gearCategories.localized item.system.type.category) as |value| }}
-		{{ value }}{{ else }}—{{/with}}
+		{{#with (lookup CONFIG.gearCategories.clothing.children.localized item.system.type.base) as |value|}}
+		{{ value }}{{ else }}{{#with (lookup CONFIG.gearCategories.localized item.system.type.category) as |value| }}
+		{{ value }}{{ else }}—{{/with}}{{/with}}
 	</dd>
 	<dt>{{ localize "BF.Rarity.Label" }}</dt>
 	<dd>
@@ -13,6 +14,15 @@
 	</dd>
 	<dt>{{ localize "BF.Price.Label" }}</dt>
 	<dd>{{ item.system.price.label }}</dd>
+	<dt>{{ localize "BF.Attunement.Label" }}</dt>
+	<dd>
+		{{#if (eq item.system.attunement.value "required")}}{{ localize "BF.Attunement.Type.Required" }}
+		{{else if (eq item.system.attunement.value "optional")}}{{ localize "BF.Attunement.Type.Optional" }}
+		{{else}}{{ localize "BF.Attunement.Type.None" }}{{/if}}
+	</dd>
+	{{#if item.system.attunement.requirement}}
+		<dd>{{ item.system.attunement.requirement }}</dd>
+	{{/if}}
 </dl>
 
 <hr>

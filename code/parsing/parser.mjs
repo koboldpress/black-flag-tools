@@ -29,6 +29,16 @@ export default class Parser {
 	#text;
 
 	/* <><><><> <><><><> <><><><> <><><><> */
+
+	/**
+	 * Remaining text.
+	 * @type {string}
+	 */
+	get remainder() {
+		return this.#text.substring(this.#startIndex);
+	}
+
+	/* <><><><> <><><><> <><><><> <><><><> */
 	/*              Consuming              */
 	/* <><><><> <><><><> <><><><> <><><><> */
 
