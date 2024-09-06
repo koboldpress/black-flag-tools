@@ -10,6 +10,7 @@
 		"Parser": {
 			"Title": "Parse Document",
 			"Created": "Created {name}!",
+			"MagicItem": "Magic Item",
 			"NoFolder": "No Folder",
 			"Save": "Save"
 		}

@@ -2,16 +2,9 @@
 
 <dl>
 	<dt>{{ localize "BF.Equipment.Category.Label" }}</dt>
-	<dd>
-		{{#with (lookup CONFIG.gearCategories.clothing.children.localized item.system.type.base) as |value|}}
-		{{ value }}{{ else }}{{#with (lookup CONFIG.gearCategories.localized item.system.type.category) as |value| }}
-		{{ value }}{{ else }}—{{/with}}{{/with}}
-	</dd>
+	<dd>{{#with item.system.type.label as |value| }}{{ value }}{{else}}—{{/with}}</dd>
 	<dt>{{ localize "BF.Rarity.Label" }}</dt>
-	<dd>
-		{{#with (lookup CONFIG.rarities.localized item.system.rarity) as |value| }}
-		{{ value }}{{ else }}—{{/with}}
-	</dd>
+	<dd>{{#with (lookup CONFIG.rarities.localized item.system.rarity) as |value| }}{{ value }}{{ else }}—{{/with}}</dd>
 	<dt>{{ localize "BF.Price.Label" }}</dt>
 	<dd>{{ item.system.price.label }}</dd>
 	<dt>{{ localize "BF.Attunement.Label" }}</dt>

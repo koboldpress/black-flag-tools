@@ -43,11 +43,37 @@ export default class ParsingApplication extends HandlebarsApplicationMixin(Appli
 	/* <><><><> <><><><> <><><><> <><><><> */
 
 	static TYPES = {
+		ammunition: {
+			label: "BF.Item.Type.Ammunition[one]",
+			template: "modules/black-flag-tools/templates/types/magic-item-output.hbs"
+		},
+		armor: {
+			label: "BF.Item.Type.Armor[one]",
+			template: "modules/black-flag-tools/templates/types/magic-item-output.hbs"
+		},
+		weapon: {
+			label: "BF.Item.Type.Weapon[one]",
+			template: "modules/black-flag-tools/templates/types/magic-item-output.hbs"
+		},
 		gear: {
-			label: "BF.Item.Type.Gear[one]", template: "modules/black-flag-tools/templates/types/gear-output.hbs"
+			label: "BF.Item.Type.Gear[one]",
+			group: "BFTools.Parser.MagicItem",
+			template: "modules/black-flag-tools/templates/types/magic-item-output.hbs"
+		},
+		consumable: {
+			label: "BF.Item.Type.Consumable[one]",
+			group: "BFTools.Parser.MagicItem",
+			template: "modules/black-flag-tools/templates/types/magic-item-output.hbs"
 		},
 		container: {
-			label: "BF.Item.Type.Container[one]", template: "modules/black-flag-tools/templates/types/gear-output.hbs"
+			label: "BF.Item.Type.Container[one]",
+			group: "BFTools.Parser.MagicItem",
+			template: "modules/black-flag-tools/templates/types/magic-item-output.hbs"
+		},
+		staff: {
+			label: "BF.Item.Gear.Category.Staff[one]",
+			group: "BFTools.Parser.MagicItem",
+			template: "modules/black-flag-tools/templates/types/magic-item-output.hbs"
 		}
 	};
 
@@ -120,7 +146,10 @@ export default class ParsingApplication extends HandlebarsApplicationMixin(Appli
 		context.types = {
 			field: new foundry.data.fields.StringField(),
 			options: Object.entries(this.constructor.TYPES).map(([value, data]) => ({
-				value, label: game.i18n.localize(data.label), selected: lastType === value
+				value,
+				label: game.i18n.localize(data.label),
+				group: game.i18n.localize(data.group),
+				selected: lastType === value
 			}))
 		};
 		const lastFolder = game.user.getFlag("black-flag-tools", "lastFolder");
@@ -147,7 +176,7 @@ export default class ParsingApplication extends HandlebarsApplicationMixin(Appli
 	async _prepareOutputContext(context, options) {
 		if ( this.type && this.input ) {
 			try {
-				const item = parseInput(this.type, this.input);
+				const item = await parseInput(this.type, this.input);
 				context.preview = await renderTemplate(
 					this.constructor.TYPES[this.type].template,
 					{

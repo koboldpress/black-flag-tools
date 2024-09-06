@@ -43,6 +43,36 @@ export default class Parser {
 	/* <><><><> <><><><> <><><><> <><><><> */
 
 	/**
+	 * Consume attunement description.
+	 * @returns {object|void}
+	 */
+	consumeAttunement() {
+		const attunement = this.consumeRegex(/\s*\(Requires Attunement\s*(?<requirement>[^\)]+)?\)/i);
+		if ( !attunement ) return;
+		const data = { value: "required" };
+		if ( attunement.groups.requirement ) data.requirement = attunement.groups.requirement;
+		return data;
+	}
+
+	/* <><><><> <><><><> <><><><> <><><><> */
+	
+	/**
+	 * Consume cost.
+	 * @param {number} basePrice
+	 * @returns {object|void}
+	 */
+	consumeCost(basePrice=0) {
+		const cost = this.consumeRegex(/\s*(?<price>[\d,]+) gp(?<base> \+ base [\w]+ cost)?/i);
+		let number = Number(cost?.groups.price.replace(",", ""));
+		if ( Number.isFinite(number) ) {
+			if ( cost.groups.base ) number += basePrice;
+			return number;
+		}
+	}
+
+	/* <><><><> <><><><> <><><><> <><><><> */
+
+	/**
 	 * Consume the remainder of the text and parse it into a description with separate paragraphs.
 	 * @returns {string}
 	 */
@@ -51,7 +81,7 @@ export default class Parser {
 		let paragraph = "";
 		let inList = false;
 		const addParagraph = () => {
-			paragraph = paragraph.trim();
+			paragraph = paragraph.trim().replaceAll("\t", "");
 			if ( paragraph ) {
 				const li = paragraph.startsWith("•");
 				if ( li ) {
@@ -176,7 +206,7 @@ export default class Parser {
 		} else {
 			result = this.#text.substring(this.#startIndex, index);
 			if ( excludeMatch ) result.replace(match, "");
-			this.#startIndex = index + 1;
+			this.#startIndex = index + match.length;
 		}
 		return result;
 	}
