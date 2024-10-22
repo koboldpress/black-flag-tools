@@ -55,7 +55,65 @@ export default class Parser {
 	}
 
 	/* <><><><> <><><><> <><><><> <><><><> */
-	
+
+	/**
+	 * Consume the casting line of a spell.
+	 * @returns {object|void}
+	 */
+	consumeCasting() {
+		const line = this.consumeLine({ startingWith: /Casting Time:/ });
+		if ( !line ) return;
+		const parser = new Parser(line);
+		const value = parser.consumeNumber();
+		let type;
+		for ( const config of [CONFIG.BlackFlag.actionTypes, CONFIG.BlackFlag.timeUnits] ) {
+			type = parser.consumeEnumPlurals(config);
+			if ( type ) break;
+		}
+		return { value, type };
+	}
+
+	/* <><><><> <><><><> <><><><> <><><><> */
+
+	/**
+	 * Consume the components line of a spell.
+	 * @returns {object|void}
+	 */
+	consumeComponents() {
+		const line = this.consumeLine({ startingWith: /Components:/ });
+		if ( !line ) return;
+		const parser = new Parser(line);
+		const results = parser.consumeRegex(
+			/\s*(?<required>(?:\w,?\s?)+)(?:\s*\((?<material>[^)]+?(?<consumes>which the spell consumes)?)\))?/i
+		);
+
+		// Components
+		const required = results.groups.required
+			.replaceAll(" ", "")
+			.split(",")
+			.map(comp =>
+				Object.entries(CONFIG.BlackFlag.spellComponents.localizedAbbreviations)
+					.find(([, v]) => v.toLowerCase() === comp.toLowerCase())?.[0]
+			)
+			.filter(_ => _);
+
+		// Material details
+		const material = {};
+		if ( results.groups.material ) {
+			material.description = results.groups.material;
+			material.consumed = "consumed" in results.groups;
+			const costMatch = material.description.match(/(?<cost>\d+) (?<denomination>gp|sp|ep|pp|cp)/i);
+			if ( costMatch ) {
+				material.cost = Number(costMatch.groups.cost);
+				material.denomination = costMatch.groups.denomination;
+			}
+		}
+
+		return { required, material };
+	}
+
+	/* <><><><> <><><><> <><><><> <><><><> */
+
 	/**
 	 * Consume cost.
 	 * @param {number} basePrice
@@ -74,25 +132,30 @@ export default class Parser {
 
 	/**
 	 * Consume the remainder of the text and parse it into a description with separate paragraphs.
+	 * @param {object} [options={}]
+	 * @param {Function} [options.process] - Method called for each paragraph, providing the paragraph text and index.
 	 * @returns {string}
 	 */
-	consumeDescription() {
+	consumeDescription({ process }={}) {
 		const paragraphs = [];
 		let paragraph = "";
 		let inList = false;
+		let index = 0;
 		const addParagraph = () => {
 			paragraph = paragraph.trim().replaceAll("\t", "");
 			if ( paragraph ) {
-				const li = paragraph.startsWith("•");
+				const li = paragraph.startsWith("•") || paragraph.startsWith("-");
 				if ( li ) {
 					if ( !inList ) paragraphs.push("<ul>");
 					inList = true;
-					paragraph = paragraph.replace("•", "");
+					paragraph = paragraph.replace(/^•|-\s*/, "");
 				}
 				else if ( inList ) paragraphs.push("</ul>");
+				if ( process ) paragraph = process(paragraph, index);
 				paragraphs.push(
 					`${li ? "<li>" : ""}<p>${this.parseEnrichers(paragraph.trim())}</p>${li ? "</li>" : ""}`
 				);
+				index += 1;
 			}
 			paragraph = "";
 		};
@@ -102,6 +165,25 @@ export default class Parser {
 		}
 		addParagraph();
 		return paragraphs.join("\n");
+	}
+
+	/* <><><><> <><><><> <><><><> <><><><> */
+
+	/**
+	 * Consume the duration line of a spell.
+	 * @returns {object|void}
+	 */
+	consumeDuration() {
+		const line = this.consumeLine({ startingWith: /Duration:/ });
+		if ( !line ) return;
+		const parser = new Parser(line);
+		const value = parser.consumeNumber();
+		let units;
+		for ( const config of [CONFIG.BlackFlag.durations, CONFIG.BlackFlag.timeUnits] ) {
+			units = parser.consumeEnumPlurals(config);
+			if ( units ) break;
+		}
+		return { value, units };
 	}
 
 	/* <><><><> <><><><> <><><><> <><><><> */
@@ -121,13 +203,81 @@ export default class Parser {
 	}
 
 	/* <><><><> <><><><> <><><><> <><><><> */
+
+	/**
+	 * Consume one of the values in the provided enum after it has been localized using each plural form and return
+	 * the matching key.
+	 * @param {LabeledConfiguration|LocalizedConfiguration|NestedTypeConfiguration} config
+	 * @param {object} [options={}]
+	 * @param {string} [options.extra] - Extra text to find after the value (e.g. ", " will match "Wondrous Item, ").
+	 * @returns {string|null}
+	 */
+	consumeEnumPlurals(config, { extra="" }={}) {
+		for ( const pluralRule of ["zero", "one", "two", "few", "many", "other"] ) {
+			const localized = BlackFlag.utils.makeLabels(config, { flatten: true, pluralRule, sort: false });
+			const key = this.consumeEnum(localized);
+			if ( key ) return key;
+		}
+	}
+
+	/* <><><><> <><><><> <><><><> <><><><> */
 	
 	/**
 	 * Consume and return a single line of text, not including the line end symbol.
-	 * @returns {string}
+	 * @param {RegExp} [options={}]
+	 * @param {string} [options.startingWith] - Only consume line if it starts with this.
+	 * @returns {string|null}
 	 */
-	consumeLine() {
+	consumeLine({ startingWith }={}) {
+		if ( startingWith ) {
+			const result = this.consumeRegex(startingWith);
+			if ( result === null ) return null;
+		}
 		return this.consumeUntil("\n").replace("\n", "");
+	}
+
+	/* <><><><> <><><><> <><><><> <><><><> */
+
+	/**
+	 * Consume a single number.
+	 * @returns {number|null}
+	 */
+	consumeNumber() {
+		const number = this.consumeRegex(/\s*\d+\s*/);
+		if ( number === null ) return null;
+		return Number(number);
+	}
+
+	/* <><><><> <><><><> <><><><> <><><><> */
+
+	/**
+	 * Consume the range line of a spell.
+	 * @returns {{ range: object, template: object }|void}
+	 */
+	consumeRange() {
+		const line = this.consumeLine({ startingWith: /Range:/ });
+		if ( !line ) return;
+		const parser = new Parser(line);
+
+		// Parse Range
+		const range = { value: parser.consumeNumber(), units: null };
+		for ( const config of [CONFIG.BlackFlag.distanceUnits, CONFIG.BlackFlag.rangeTypes] ) {
+			range.units = parser.consumeEnumPlurals(config);
+			if ( range.units ) break;
+		}
+
+		// Shape
+		const template = {};
+		const results = parser.consumeRegex(/\s*\((?<size>\d+)(?<units>[\w-]+)\s+(?<shape>[\w\s]+)\)/i);
+		if ( results ) {
+			template.size = !Number.isNaN(Number(results.groups.size)) ? Number(results.groups.size) : null;
+			template.type = Object.entries(CONFIG.BlackFlag.areaOfEffectTypes.localized)
+				.find(([k, v]) => v.toLowerCase() === results.groups.shape)?.[0];
+			const unitsParser = new Parser(results.groups.units.replace("-", ""));
+			template.units = unitsParser.consumeEnumPlurals(CONFIG.BlackFlag.distanceUnits);
+		}
+
+		return { range, template };
 	}
 
 	/* <><><><> <><><><> <><><><> <><><><> */
@@ -140,7 +290,7 @@ export default class Parser {
 	consumeRegex(regex) {
 		// Should always be locked to start of string and have the `d` flags
 		regex = new RegExp(`${regex.source.startsWith("^") ? "" : "^"}${regex.source}`, `${regex.flags}d`);
-		const result = regex.exec(this.#text.substring(this.#startIndex));
+		const result = regex.exec(this.remainder);
 		if ( result === null ) return null;
 		this.#startIndex += result.indices[0][1];
 		return result;
@@ -185,7 +335,7 @@ export default class Parser {
 	 * @returns {boolean} - If a match is found.
 	 */
 	consumeIfMatches(match, { matchCase=false }={}) {
-		const regex = new RegExp(`\s*${match}`, matchCase ? "" : "i");
+		const regex = new RegExp(`\\s*${match}`, matchCase ? "" : "i");
 		return this.consumeRegex(regex) !== null;
 	}
 
@@ -196,6 +346,7 @@ export default class Parser {
 	 * @param {string} [match] - Ending characters to match.
 	 * @param {object} [options={}]
 	 * @param {boolean} [options.excludeMatch=true] - Don't include match in final string.
+	 * @returns {string}
 	 */
 	consumeUntil(match, { excludeMatch=true }={}) {
 		let result;

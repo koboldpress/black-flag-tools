@@ -1,0 +1,27 @@
+<h3>{{ item.name }}</h3>
+
+<dl>
+	<dt>{{ localize "BF.Spell.Circle.Label" }}</dt>
+	<dd>{{ item.system.circle.base }}</dd>
+	<dt>{{ localize "BF.Spell.Source.Label" }}</dt>
+	<dd>{{ ifThen item.system.source.size item.system.source.label "—" }}</dd>
+	<dt>{{ localize "BF.Spell.School.Label" }}</dt>
+	<dd>{{ ifThen item.system.school (lookup CONFIG.spellSchools.localized item.system.school) "—" }}</dd>
+	<dt>{{ localize "BF.Spell.CastingTime.Label" }}</dt>
+	<dd>{{{ ifThen item.system.casting.label item.system.casting.label "—" }}}</dd>
+	<dt>{{ localize "BF.RANGE.Label" }}</dt>
+	<dd>
+		{{ ifThen item.system.range.label item.system.range.label "—" }}
+		{{#if item.system.target.template.label}}
+			({{{ item.system.target.template.label }}})
+		{{/if}}
+	</dd>
+	<dt>{{ localize "BF.Spell.Component.Label" }}</dt>
+	<dd>{{{ ifThen item.system.components.embedLabel item.system.components.embedLabel "—" }}}</dd>
+	<dt>{{ localize "BF.DURATION.Label" }}</dt>
+	<dd>{{ ifThen item.system.duration.label item.system.duration.label "—" }}</dd>
+</dl>
+
+<hr>
+
+{{{ enriched.description }}}

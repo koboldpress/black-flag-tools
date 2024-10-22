@@ -43,22 +43,29 @@ export default class ParsingApplication extends HandlebarsApplicationMixin(Appli
 	/* <><><><> <><><><> <><><><> <><><><> */
 
 	static TYPES = {
-		ammunition: {
-			label: "BF.Item.Type.Ammunition[one]",
-			template: "modules/black-flag-tools/templates/types/magic-item-output.hbs"
-		},
-		armor: {
-			label: "BF.Item.Type.Armor[one]",
-			template: "modules/black-flag-tools/templates/types/magic-item-output.hbs"
-		},
-		weapon: {
-			label: "BF.Item.Type.Weapon[one]",
-			template: "modules/black-flag-tools/templates/types/magic-item-output.hbs"
+		spell: {
+			label: "BF.Item.Type.Spell[one]",
+			template: "modules/black-flag-tools/templates/types/spell-output.hbs"
 		},
 		gear: {
 			label: "BF.Item.Type.Gear[one]",
 			group: "BFTools.Parser.MagicItem",
 			template: "modules/black-flag-tools/templates/types/magic-item-output.hbs"
+		},
+		ammunition: {
+			label: "BF.Item.Type.Ammunition[one]",
+			template: "modules/black-flag-tools/templates/types/magic-item-output.hbs",
+			group: "BFTools.Parser.MagicItem"
+		},
+		armor: {
+			label: "BF.Item.Type.Armor[one]",
+			template: "modules/black-flag-tools/templates/types/magic-item-output.hbs",
+			group: "BFTools.Parser.MagicItem"
+		},
+		weapon: {
+			label: "BF.Item.Type.Weapon[one]",
+			template: "modules/black-flag-tools/templates/types/magic-item-output.hbs",
+			group: "BFTools.Parser.MagicItem"
 		},
 		consumable: {
 			label: "BF.Item.Type.Consumable[one]",
@@ -67,6 +74,11 @@ export default class ParsingApplication extends HandlebarsApplicationMixin(Appli
 		},
 		container: {
 			label: "BF.Item.Type.Container[one]",
+			group: "BFTools.Parser.MagicItem",
+			template: "modules/black-flag-tools/templates/types/magic-item-output.hbs"
+		},
+		enchantment: {
+			label: "BF.EFFECT.Type.Enchantment[one]",
 			group: "BFTools.Parser.MagicItem",
 			template: "modules/black-flag-tools/templates/types/magic-item-output.hbs"
 		},
@@ -191,6 +203,7 @@ export default class ParsingApplication extends HandlebarsApplicationMixin(Appli
 			} catch(err) {
 				context.error = err.message;
 				this.document = null;
+				console.error(err);
 			}
 		}
 		return context;

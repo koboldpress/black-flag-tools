@@ -8,7 +8,8 @@ export default async function parseMagicItem(type, input) {
 	data.name = parser.consumeLine();
 
 	// Type
-	if ( type === "consumable" ) findType(CONFIG.BlackFlag.consumableCategories, parser, data);
+	if ( type === "enchantment" ) data.type = "feature";
+	else if ( type === "consumable" ) findType(CONFIG.BlackFlag.consumableCategories, parser, data);
 	else if ( type === "staff" ) {
 		parser.consumeUntil("Staff, ");
 		const item = await fromUuid(CONFIG.BlackFlag.weapons.simple.children.quarterstaff.link);
