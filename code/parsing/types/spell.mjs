@@ -1,7 +1,7 @@
 import Parser from "../parser.mjs";
 
 export default async function parseSpell(type, input) {
-	let data = { type };
+	let data = { type, "system.tags": [] };
 	const parser = new Parser(input);
 
 	// Name
@@ -13,13 +13,15 @@ export default async function parseSpell(type, input) {
 
 	// Source
 	const regex = new RegExp(
-		`((?:(?:${Object.values(CONFIG.BlackFlag.spellSources.localized).join("|")}|and),?\\s+)+)(?:\\(|Cantrip\\s*)`, "i"
+		`((?:(?:${Object.values(CONFIG.BlackFlag.spellSources.localized).join("|")}|and),?\\s+)+)(?:\\(|Cantrip\\s*|(?<ritual>Ritual\\s*)?)`, "i"
 	);
-	let sources = parser.consumeRegex(regex)?.[1].trim().replace(",", "").split(" ");
+	const sourceMatch = parser.consumeRegex(regex);
+	let sources = sourceMatch?.[1].trim().replace(",", "").split(" ");
 	data["system.source"] = sources?.map(source =>
 		Object.entries(CONFIG.BlackFlag.spellSources.localized)
 			.find(([k, v]) => v.toLowerCase() === source.toLowerCase())?.[0]
 	).filter(_ => _);
+	if ( sourceMatch?.groups?.ritual ) data["system.tags"].push("ritual");
 
 	// School
 	parser.consumeIfMatches("\\(");
@@ -32,7 +34,9 @@ export default async function parseSpell(type, input) {
 	data["system.range"] = range;
 	data["system.target.template"] = template;
 	data["system.components"] = parser.consumeComponents();
-	data["system.duration"] = parser.consumeDuration();
+	const { duration, concentration } = parser.consumeDuration() ?? {};
+	data["system.duration"] = duration;
+	if ( concentration ) data["system.tags"].push("concentration");
 
 	// Description
 	data["system.description.value"] = parser.consumeDescription({ process: (paragraph, index) => {

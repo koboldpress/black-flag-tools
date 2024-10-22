@@ -171,19 +171,19 @@ export default class Parser {
 
 	/**
 	 * Consume the duration line of a spell.
-	 * @returns {object|void}
+	 * @returns {{ duration: object, concentration: boolean }|void}
 	 */
 	consumeDuration() {
 		const line = this.consumeLine({ startingWith: /Duration:/ });
 		if ( !line ) return;
 		const parser = new Parser(line);
-		const value = parser.consumeNumber();
-		let units;
+		const concentration = !!parser.consumeIfMatches("Concentration, up to ");
+		const duration = { value: parser.consumeNumber(), units: null };
 		for ( const config of [CONFIG.BlackFlag.durations, CONFIG.BlackFlag.timeUnits] ) {
-			units = parser.consumeEnumPlurals(config);
-			if ( units ) break;
+			duration.units = parser.consumeEnumPlurals(config);
+			if ( duration.units ) break;
 		}
-		return { value, units };
+		return { duration, concentration };
 	}
 
 	/* <><><><> <><><><> <><><><> <><><><> */
@@ -329,13 +329,13 @@ export default class Parser {
 
 	/**
 	 * Consume text at the start of the string if it matches the provided value, otherwise do nothing.
-	 * @param {string} match - Text to match.
+	 * @param {RegExp|string} match - Text to match.
 	 * @param {object} [options={}]
 	 * @param {boolean} [options.matchCase=false] - Should this be a case sensitive match?
 	 * @returns {boolean} - If a match is found.
 	 */
 	consumeIfMatches(match, { matchCase=false }={}) {
-		const regex = new RegExp(`\\s*${match}`, matchCase ? "" : "i");
+		const regex = match instanceof RegExp ? match : new RegExp(`\\s*${match}`, matchCase ? "" : "i");
 		return this.consumeRegex(regex) !== null;
 	}
 
