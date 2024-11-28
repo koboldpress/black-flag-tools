@@ -1,0 +1,7 @@
+{
+	"project": {
+		"type": "module",
+		"userId": "blackflag"
+	},
+	"includes": ["README.md"]
+}

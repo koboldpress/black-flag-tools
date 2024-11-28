@@ -1,0 +1,150 @@
+name: Release Creation
+
+env:
+  node_version: 18
+
+on:
+  release:
+    types: [published]
+
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+
+    - name: Load project type
+      id: type
+      uses: ActionsTools/read-json-action@main
+      with:
+        file_path: "./build-config.json"
+        prop_path: "project.type"
+
+
+    - name: Load project premium status
+      id: premium
+      continue-on-error: true
+      uses: ActionsTools/read-json-action@main
+      with:
+        file_path: "./build-config.json"
+        prop_path: "project.premium"
+
+
+    - name: Load project includes
+      id: buildconfig
+      uses: ActionsTools/read-json-action@main
+      with:
+        file_path: "./build-config.json"
+
+
+    - name: Load system manifest
+      id: manifest
+      uses: ActionsTools/read-json-action@main
+      with:
+        file_path: "./${{ steps.type.outputs.value }}.json"
+
+
+    - name: Set up variables
+      id: vars
+      run: |
+        VERSION=${GITHUB_REF/refs\/tags\//}
+        PACKAGE_ID=${{ steps.manifest.outputs.id }}
+        echo "VERSION=$VERSION" >> $GITHUB_ENV
+        echo "PACKAGE_ID=$PACKAGE_ID" >> $GITHUB_ENV
+        echo "ZIP_NAME=$PACKAGE_ID-$VERSION.zip" >> $GITHUB_ENV
+        echo "RELEASE_DOWNLOAD_URL=https://github.com/${{ github.repository }}/releases/download/$VERSION/$PACKAGE_ID-$VERSION.zip" >> $GITHUB_ENV
+        echo "RELEASE_INSTALL_URL=https://github.com/${{github.repository}}/releases/download/$VERSION/${{ steps.type.outputs.value }}.json" >> $GITHUB_ENV
+
+
+    - name: Adjust manifest
+      uses: microsoft/variable-substitution@v1
+      with:
+        files: "${{ steps.type.outputs.value }}.json"
+      env:
+        version: ${{ env.VERSION }}
+        flags.hotReload: false
+
+
+    - name: Set protected flag for premium modules
+      if: ${{ steps.premium.outputs.value }}
+      uses: microsoft/variable-substitution@v1
+      with:
+        files: "${{ steps.type.outputs.value }}.json"
+      env:
+        protected: true
+
+
+    - name: Set download URL for non-premium modules
+      if: ${{ ! steps.premium.outputs.value }}
+      uses: microsoft/variable-substitution@v1
+      with:
+        files: "${{ steps.type.outputs.value }}.json"
+      env:
+        download: ${{ env.RELEASE_DOWNLOAD_URL }}
+
+
+    - name: Use Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ env.node_version }}
+        cache: 'npm'
+
+
+    - name: Install Dependencies
+      run: npm ci
+
+
+    - name: Build All
+      run: npm run build --if-present
+
+
+    - name: Compile archive contents
+      id: archive
+      uses: actions/github-script@v6
+      env:
+        ESMODULES: ${{ steps.manifest.outputs.esmodules }}
+        INCLUDES: ${{ steps.buildconfig.outputs.includes }}
+        LANGUAGES: ${{ steps.manifest.outputs.languages }}
+        PACKS: ${{ steps.manifest.outputs.packs }}
+        STYLES: ${{ steps.manifest.outputs.styles }}
+      with:
+        result-encoding: string
+        script: |
+          const manifest = {};
+          if ( process.env.ESMODULES ) manifest.esmodules = JSON.parse(process.env.ESMODULES);
+          if ( process.env.INCLUDES ) manifest.includes = JSON.parse(process.env.INCLUDES);
+          if ( process.env.LANGUAGES ) manifest.languages = JSON.parse(process.env.LANGUAGES);
+          if ( process.env.PACKS ) manifest.packs = JSON.parse(process.env.PACKS);
+          if ( process.env.STYLES ) manifest.styles = JSON.parse(process.env.STYLES);
+          const includes = [
+            "${{ steps.type.outputs.value }}.json",
+            "template.json",
+            ...(manifest.esmodules ?? []),
+            ...(manifest.esmodules?.map(s => `${s}.map`) ?? []),
+            ...(manifest.styles ?? []),
+            ...(manifest.packs?.map(p => p.path) ?? []),
+            ...(manifest.languages?.map(l => l.path) ?? []),
+            ...(manifest.includes ?? [])
+          ];
+          return includes.join(" ");
+
+
+    - name: Zip Contents
+      run: zip ${{ env.ZIP_NAME }} -r ${{ steps.archive.outputs.result }}
+
+
+    - name: Update Release with Files
+      uses: ncipollo/release-action@v1
+      with:
+        allowUpdates: true
+        name: ${{ github.event.release.name }}
+        draft: ${{ github.event.release.unpublished }}
+        prerelease: ${{ github.event.release.prerelease }}
+        token: ${{ secrets.GITHUB_TOKEN }}
+        artifacts: './${{ steps.type.outputs.value }}.json, ./${{ env.ZIP_NAME }}'
+        tag: ${{ env.VERSION }}
+        body: |
+          ${{ github.event.release.body }}
+          **Installation:** To manually install this release, please use the following manifest URL: ${{env.RELEASE_INSTALL_URL}}

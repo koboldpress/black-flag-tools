@@ -1,3 +1,6 @@
+# Build Artifacts
+/black-flag-tools.*
+
 # Conversion notes
 _converted/*
 !_converted/_NOTE.txt

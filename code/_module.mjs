@@ -1,3 +1,12 @@
+/**
+ * The Black Flag Conversion Tools for Foundry Virtual Tabletop.
+ * Software License: MIT
+ * Repository: https://github.com/koboldpress/black-flag-tools
+ * Issue Tracker: https://github.com/koboldpress/black-flag-tools/issues
+ */
+
+import "../styles/_module.css";
+
 import { selectConverter } from "./conversions/_module.mjs";
 import { ParsingApplication } from "./parsing/_module.mjs";
 import { seedRandom } from "./utils.mjs";
