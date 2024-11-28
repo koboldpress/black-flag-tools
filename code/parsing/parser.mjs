@@ -47,11 +47,14 @@ export default class Parser {
 	 * @returns {object|void}
 	 */
 	consumeAttunement() {
-		const attunement = this.consumeRegex(/\s*\(Requires Attunement\s*(?<requirement>[^\)]+)?\)/i);
-		if ( !attunement ) return;
-		const data = { value: "required" };
-		if ( attunement.groups.requirement ) data.requirement = attunement.groups.requirement;
-		return data;
+		const required = this.consumeRegex(/\s*\(Requires Attunement\s*(?<requirement>[^\)]+)?\)/i);
+		if ( required ) {
+			const data = { value: "required" };
+			if ( required.groups.requirement ) data.requirement = required.groups.requirement;
+			return data;
+		}
+		const optional = this.consumeRegex(/\s*\([^)]+ Require Attunement\)/i);
+		if ( optional ) return { value: "optional" };
 	}
 
 	/* <><><><> <><><><> <><><><> <><><><> */

@@ -47,11 +47,6 @@ export default class ParsingApplication extends HandlebarsApplicationMixin(Appli
 			label: "BF.Item.Type.Spell[one]",
 			template: "modules/black-flag-tools/templates/types/spell-output.hbs"
 		},
-		gear: {
-			label: "BF.Item.Type.Gear[one]",
-			group: "BFTools.Parser.MagicItem",
-			template: "modules/black-flag-tools/templates/types/magic-item-output.hbs"
-		},
 		ammunition: {
 			label: "BF.Item.Type.Ammunition[one]",
 			template: "modules/black-flag-tools/templates/types/magic-item-output.hbs",
@@ -59,11 +54,6 @@ export default class ParsingApplication extends HandlebarsApplicationMixin(Appli
 		},
 		armor: {
 			label: "BF.Item.Type.Armor[one]",
-			template: "modules/black-flag-tools/templates/types/magic-item-output.hbs",
-			group: "BFTools.Parser.MagicItem"
-		},
-		weapon: {
-			label: "BF.Item.Type.Weapon[one]",
 			template: "modules/black-flag-tools/templates/types/magic-item-output.hbs",
 			group: "BFTools.Parser.MagicItem"
 		},
@@ -80,12 +70,27 @@ export default class ParsingApplication extends HandlebarsApplicationMixin(Appli
 		enchantment: {
 			label: "BF.EFFECT.Type.Enchantment[one]",
 			group: "BFTools.Parser.MagicItem",
+			template: "modules/black-flag-tools/templates/types/enchantment-output.hbs"
+		},
+		rod: {
+			label: "BF.Item.Gear.Category.Rod[one]",
+			group: "BFTools.Parser.MagicItem",
 			template: "modules/black-flag-tools/templates/types/magic-item-output.hbs"
 		},
 		staff: {
 			label: "BF.Item.Gear.Category.Staff[one]",
 			group: "BFTools.Parser.MagicItem",
 			template: "modules/black-flag-tools/templates/types/magic-item-output.hbs"
+		},
+		gear: {
+			label: "BF.Item.Gear.Category.WondrousItem[one]",
+			group: "BFTools.Parser.MagicItem",
+			template: "modules/black-flag-tools/templates/types/magic-item-output.hbs"
+		},
+		weapon: {
+			label: "BF.Item.Type.Weapon[one]",
+			template: "modules/black-flag-tools/templates/types/magic-item-output.hbs",
+			group: "BFTools.Parser.MagicItem"
 		}
 	};
 
@@ -189,13 +194,16 @@ export default class ParsingApplication extends HandlebarsApplicationMixin(Appli
 		if ( this.type && this.input ) {
 			try {
 				const item = await parseInput(this.type, this.input);
+				const type = item.effects.size ? "enchantment" : this.type; // TODO: Handle better
 				context.preview = await renderTemplate(
-					this.constructor.TYPES[this.type].template,
+					this.constructor.TYPES[type].template,
 					{
 						CONFIG: CONFIG.BlackFlag,
 						item,
 						enriched: {
-							description: await TextEditor.enrichHTML(item.system.description.value ?? "", { relativeTo: item })
+							description: await TextEditor.enrichHTML(item.system.description.value ?? "", {
+								relativeTo: item, secrets: true
+							})
 						}
 					}
 				);
@@ -257,6 +265,6 @@ export default class ParsingApplication extends HandlebarsApplicationMixin(Appli
 			const parser = new ParsingApplication({ pack: app.collection });
 			parser.render({ force: true });
 		});
-		html.querySelector(".header-actions").append(button);
+		html.querySelector(".header-actions")?.append(button);
 	}
 }

@@ -8,8 +8,13 @@ export default async function parseMagicItem(type, input) {
 	data.name = parser.consumeLine();
 
 	// Type
-	if ( type === "enchantment" ) data.type = "feature";
-	else if ( type === "consumable" ) findType(CONFIG.BlackFlag.consumableCategories, parser, data);
+	if ( type === "consumable" ) findType(CONFIG.BlackFlag.consumableCategories, parser, data);
+	else if ( type === "rod" ) {
+		parser.consumeUntil("Rod, ");
+		const item = await fromUuid(CONFIG.BlackFlag.weapons.simple.children.club.link);
+		data = { ...foundry.utils.flattenObject(item.toObject()), ...data };
+		data.type = "weapon";
+	}
 	else if ( type === "staff" ) {
 		parser.consumeUntil("Staff, ");
 		const item = await fromUuid(CONFIG.BlackFlag.weapons.simple.children.quarterstaff.link);
@@ -17,6 +22,8 @@ export default async function parseMagicItem(type, input) {
 		data.type = "weapon";
 	}
 	else findType(CONFIG.BlackFlag.gearCategories, parser, data);
+
+	// TODO: If parsing enchantment, add secret block beneath description with first line details
 
 	// Attunement, Rarity, & Price
 	data["system.rarity"] = parser.consumeEnum(CONFIG.BlackFlag.rarities.localized);

@@ -1,4 +1,5 @@
 import Parser from "../parser.mjs";
+import parseEnchantment from "./enchantment.mjs";
 
 export default async function parseArmorWeapon(type, input) {
 	let data = { type };
@@ -8,7 +9,9 @@ export default async function parseArmorWeapon(type, input) {
 	data.name = parser.consumeLine();
 
 	// Type
-	data = { ...await findBaseData(parser, type), ...data };
+	const item = await findBaseData(parser, type);
+	if ( !item ) return parseEnchantment("enchantment", input);
+	data = { ...item, ...data };
 
 	// Attunement, Rarity, & Price
 	data["system.rarity"] = parser.consumeEnum(CONFIG.BlackFlag.rarities.localized);
@@ -25,7 +28,7 @@ export default async function parseArmorWeapon(type, input) {
 
 async function findBaseData(parser, itemType) {
 	const match = parser.consumeRegex(/\s*(?<kind>Armor|Weapon)\s+\((?<type>[^)]+)\),\s*/i);
-	if ( !match ) return {};
+	if ( !match ) return null;
 
 	let config;
 	switch (itemType) {
@@ -33,7 +36,7 @@ async function findBaseData(parser, itemType) {
 		case "armor": config = CONFIG.BlackFlag.armor; break;
 		case "weapon": config = CONFIG.BlackFlag.weapons; break;
 	}
-	if ( !config ) return {};
+	if ( !config ) return null;
 	const type = match.groups.type.toLowerCase();
 
 	let uuid;
@@ -51,7 +54,9 @@ async function findBaseData(parser, itemType) {
 	check(config);
 
 	const item = await fromUuid(uuid);
-	const data = item?.toObject() ?? {};
+	if ( !item ) return null;
+
+	const data = item.toObject();
 	delete data._id;
 	return foundry.utils.flattenObject(data);
 }
