@@ -11,37 +11,32 @@ import PhysicalConversion from "./templates/physical-conversion.mjs";
 import PropertiesConversion from "./templates/properties-conversion.mjs";
 
 export default class WeaponConversion extends BaseConversion {
-
-	static preSteps = [
-		WeaponConversion.convertDamage
-	];
+	static preSteps = [WeaponConversion.convertDamage];
 
 	static templates = [
 		ActivitiesConversion,
 		IdentifiableConversion,
 		ItemDescriptionConversion,
 		PhysicalConversion,
-		PropertiesConversion,
+		PropertiesConversion
 	];
 
-	static postSteps = [
-		WeaponConversion.convertRange
-	];
+	static postSteps = [WeaponConversion.convertRange];
 
 	static paths = [
-		["system.magicalBonus",  "system.magicalBonus"                                 ],
-		["system.type.value",    "system.type.value",    convertWeaponType             ],
-		["system.type.value",    "system.type.category", convertWeaponCategory         ],
-		["system.type.baseItem", "system.type.base",     convertWeapon                 ],
+		["system.magicalBonus", "system.magicalBonus"],
+		["system.type.value", "system.type.value", convertWeaponType],
+		["system.type.value", "system.type.category", convertWeaponCategory],
+		["system.type.baseItem", "system.type.base", convertWeapon]
 	];
 
 	static convertDamage(initial, final) {
 		const damage = getProperty(initial, "system.damage.parts") ?? [];
-		if ( !damage.length ) return;
+		if (!damage.length) return;
 		const part = damage[0];
-		if ( !part ) return;
+		if (!part) return;
 		const parsed = convertDamage(part);
-		if ( parsed?.custom || parsed?.bonus !== "@mod" ) return;
+		if (parsed?.custom || parsed?.bonus !== "@mod") return;
 		delete parsed.bonus;
 		setProperty(final, "system.damage", parsed);
 		damage.pop();
@@ -52,16 +47,19 @@ export default class WeaponConversion extends BaseConversion {
 		const system = initial.system ?? {};
 		const properties = getProperty(final, "system.properties") ?? [];
 		const range = { short: null, long: null, reach: null };
-		if ( final.system?.type?.value === "melee" && properties.includes("reach") && !properties.includes("thrown")
-			&& system.range.short > 5 ) {
+		if (
+			final.system?.type?.value === "melee" &&
+			properties.includes("reach") &&
+			!properties.includes("thrown") &&
+			system.range.short > 5
+		) {
 			range.reach = system.range.short - 5;
 		}
-		if ( final.system?.type?.value === "ranged" || properties.includes("thrown") ) {
+		if (final.system?.type?.value === "ranged" || properties.includes("thrown")) {
 			range.short = system.range?.value ?? null;
 			range.long = system.range?.long ?? null;
 		}
 		range.units = system.range?.units ? convertDistanceUnit(system.range.units) : "foot";
 		setProperty(final, "system.range", range);
 	}
-
 }

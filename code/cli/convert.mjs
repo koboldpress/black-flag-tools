@@ -16,20 +16,20 @@ export default function convertCommand() {
 			});
 		},
 		handler: async argv => handleConversion(argv.files)
-	}
+	};
 }
 
 async function handleConversion(paths) {
 	// No paths specified, load all JSON files in the `_sources` folder
-	if ( !paths.length ) {
+	if (!paths.length) {
 		const files = await readdir("_sources", { withFileTypes: true });
-		for ( const file of files ) {
-			if ( !file.isFile() || !file.name.endsWith(".json") ) continue;
+		for (const file of files) {
+			if (!file.isFile() || !file.name.endsWith(".json")) continue;
 			paths.push(Path.join("_sources/", file.name));
 		}
 	}
 
-	for ( const path of paths ) {
+	for (const path of paths) {
 		const file = await readFile(path, { encoding: "utf8" });
 		const initial = JSON.parse(file);
 		seedRandom(initial._id);

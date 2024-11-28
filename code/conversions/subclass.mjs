@@ -5,16 +5,7 @@ import ItemDescriptionConversion from "./templates/item-description-conversion.m
 import SpellcastingConversion from "./templates/spellcasting-conversion.mjs";
 
 export default class SubclassConversion extends BaseConversion {
+	static templates = [AdvancementConversion, ConceptConversion, ItemDescriptionConversion, SpellcastingConversion];
 
-	static templates = [
-		AdvancementConversion,
-		ConceptConversion,
-		ItemDescriptionConversion,
-		SpellcastingConversion,
-	];
-
-	static paths = [
-		["system.classIdentifier", "system.identifier.class"]
-	];
-
+	static paths = [["system.classIdentifier", "system.identifier.class"]];
 }

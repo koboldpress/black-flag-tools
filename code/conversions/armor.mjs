@@ -7,28 +7,18 @@ import PhysicalConversion from "./templates/physical-conversion.mjs";
 import PropertiesConversion from "./templates/properties-conversion.mjs";
 
 export default class ArmorConversion extends BaseConversion {
+	static preSteps = [(i, f) => (f.type = "armor")];
 
-	static preSteps = [
-		(i, f) => f.type = "armor",
-	];
+	static templates = [IdentifiableConversion, ItemDescriptionConversion, PhysicalConversion, PropertiesConversion];
 
-	static templates = [
-		IdentifiableConversion,
-		ItemDescriptionConversion,
-		PhysicalConversion,
-		PropertiesConversion,
-	];
-
-	static postSteps = [
-		ArmorConversion.convertMaxModifier,
-	];
+	static postSteps = [ArmorConversion.convertMaxModifier];
 
 	static paths = [
-		["system.armor.value",        "system.armor.value",                       ],
-		["system.strength",           "system.armor.requiredStrength",            ],
-		["system.armor.magicalBonus", "system.magicalBonus"                       ],
-		["system.type.value",         "system.type.category", convertArmorCategory],
-		["system.type.baseItem",      "system.type.base",     convertArmorType    ],
+		["system.armor.value", "system.armor.value"],
+		["system.strength", "system.armor.requiredStrength"],
+		["system.armor.magicalBonus", "system.magicalBonus"],
+		["system.type.value", "system.type.category", convertArmorCategory],
+		["system.type.baseItem", "system.type.base", convertArmorType]
 	];
 
 	static convertMaxModifier(initial, final) {
@@ -39,8 +29,7 @@ export default class ArmorConversion extends BaseConversion {
 			medium: 2,
 			heavy: 0
 		}[type];
-		if ( expectedValue === undefined || expectedValue === dex ) return;
-		if ( expectedValue !== dex ) setProperty(final, "system.modifier.max", dex);
+		if (expectedValue === undefined || expectedValue === dex) return;
+		if (expectedValue !== dex) setProperty(final, "system.modifier.max", dex);
 	}
-
 }

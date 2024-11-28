@@ -4,7 +4,6 @@ import { convertActivationType } from "../configs/activation.mjs";
 import { convertDamage } from "../shared/damage.mjs";
 
 export default class BaseAdvancementConversion extends BaseConversion {
-
 	static advancementType = "";
 
 	static convertBase(initial) {
@@ -21,20 +20,26 @@ export default class BaseAdvancementConversion extends BaseConversion {
 	}
 
 	static convertClassRestriction(initial) {
-		return {
-			primary: "original",
-			secondary: "multiclass"
-		}[initial] ?? "";
+		return (
+			{
+				primary: "original",
+				secondary: "multiclass"
+			}[initial] ?? ""
+		);
 	}
 
 	static convertSpellConfiguration(initial) {
 		const final = {};
-		switch ( initial.preparation ) {
-			case "always": final.alwaysPrepared = true;
-			case "prepared": final.mode = "default"; break;
-			default: final.mode = initial.preparation; break;
+		switch (initial.preparation) {
+			case "always":
+				final.alwaysPrepared = true;
+			case "prepared":
+				final.mode = "default";
+				break;
+			default:
+				final.mode = initial.preparation;
+				break;
 		}
 		return final;
 	}
-
 }

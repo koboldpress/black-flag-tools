@@ -8,18 +8,15 @@ import SpellcastingConversion from "./templates/spellcasting-conversion.mjs";
 import StartingEquipmentConversion from "./templates/starting-equipment-conversion.mjs";
 
 export default class ClassConversion extends BaseConversion {
-
 	static templates = [
 		AdvancementConversion,
 		ConceptConversion,
 		ItemDescriptionConversion,
 		SpellcastingConversion,
-		StartingEquipmentConversion,
+		StartingEquipmentConversion
 	];
 
-	static postSteps = [
-		ClassConversion.convertHitPoints
-	];
+	static postSteps = [ClassConversion.convertHitPoints];
 
 	static convertHitPoints(initial, final) {
 		const advancement = {
@@ -31,5 +28,4 @@ export default class ClassConversion extends BaseConversion {
 		};
 		setProperty(final, `system.advancement.${advancement._id}`, advancement);
 	}
-
 }

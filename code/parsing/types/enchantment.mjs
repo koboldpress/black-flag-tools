@@ -23,16 +23,16 @@ export default async function parseEnchantment(type, input) {
 	let attunement = parser.consumeAttunement();
 	const price = parser.consumeCost();
 	const plusBaseCost = parser.consumeRegex(/\s*\+\s+(?:ammunition|armor|shield|weapon)\s+base\s+cost\s*/i);
-	if ( !attunement ) attunement = parser.consumeAttunement();
+	if (!attunement) attunement = parser.consumeAttunement();
 	tagline = tagline.replace(parser.remainder, "");
-	const description = data["system.description.value"] = parser.consumeDescription();
+	const description = (data["system.description.value"] = parser.consumeDescription());
 
 	// Name
 	let effectName = `${data.name} {}`;
-	if ( data.name.includes(typeResult?.groups.type) ) effectName = data.name.replace(typeResult?.groups.type, "{}");
-	else if ( typeResult?.groups.details?.includes("Any") ) {
+	if (data.name.includes(typeResult?.groups.type)) effectName = data.name.replace(typeResult?.groups.type, "{}");
+	else if (typeResult?.groups.details?.includes("Any")) {
 		const part = typeResult.groups.details.replace("Any", "").trim();
-		if ( data.name.includes(part) ) effectName = data.name.replace(part, "{}");
+		if (data.name.includes(part)) effectName = data.name.replace(part, "{}");
 	}
 	effect.changes.push({ key: "name", mode: CONST.ACTIVE_EFFECT_MODES.OVERRIDE, value: effectName });
 
@@ -50,21 +50,27 @@ export default async function parseEnchantment(type, input) {
 	effect.changes.push({ key: "system.description.value", mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: description });
 
 	// Attunement
-	if ( attunement ) Object.entries(attunement).forEach(([key, value]) => effect.changes.push({
-		key: `system.attunement.${key}`, mode: CONST.ACTIVE_EFFECT_MODES.OVERRIDE, value
-	}));
+	if (attunement)
+		Object.entries(attunement).forEach(([key, value]) =>
+			effect.changes.push({
+				key: `system.attunement.${key}`,
+				mode: CONST.ACTIVE_EFFECT_MODES.OVERRIDE,
+				value
+			})
+		);
 
 	// Price
-	if ( price ) effect.changes.push(
-		{ key: "system.price.value", mode: CONST.ACTIVE_EFFECT_MODES[plusBaseCost ? "ADD" : "OVERRIDE"], value: price },
-		{ key: "system.price.denomination", mode: CONST.ACTIVE_EFFECT_MODES.OVERRIDE, value: "gp" }
-	);
+	if (price)
+		effect.changes.push(
+			{ key: "system.price.value", mode: CONST.ACTIVE_EFFECT_MODES[plusBaseCost ? "ADD" : "OVERRIDE"], value: price },
+			{ key: "system.price.denomination", mode: CONST.ACTIVE_EFFECT_MODES.OVERRIDE, value: "gp" }
+		);
 
 	// Magical Property
 	effect.changes.push({ key: "system.properties", mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: "magical" });
 
 	// Rarity
-	if ( rarity ) effect.changes.push({ key: "system.rarity", mode: CONST.ACTIVE_EFFECT_MODES.OVERRIDE, value: rarity });
+	if (rarity) effect.changes.push({ key: "system.rarity", mode: CONST.ACTIVE_EFFECT_MODES.OVERRIDE, value: rarity });
 
 	data.effects = [effect];
 

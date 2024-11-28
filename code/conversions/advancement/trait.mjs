@@ -2,14 +2,13 @@ import { convertTrait } from "../configs/traits.mjs";
 import BaseActivityConversion from "./base.mjs";
 
 export default class TraitConversion extends BaseActivityConversion {
-
 	static advancementType = "trait";
 
 	static paths = [
-		["configuration.hint",    "hint"                                                 ],
-		["configuration.mode",    "configuration.mode"                                   ],
-		["configuration.grants",  "configuration.grants",  TraitConversion.convertGrants ],
-		["configuration.choices", "configuration.choices", TraitConversion.convertChoices],
+		["configuration.hint", "hint"],
+		["configuration.mode", "configuration.mode"],
+		["configuration.grants", "configuration.grants", TraitConversion.convertGrants],
+		["configuration.choices", "configuration.choices", TraitConversion.convertChoices]
 	];
 
 	static convertGrants(initial) {
@@ -22,5 +21,4 @@ export default class TraitConversion extends BaseActivityConversion {
 			pool: i.pool?.map(p => convertTrait(p))
 		}));
 	}
-
 }

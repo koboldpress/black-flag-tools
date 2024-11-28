@@ -3,21 +3,18 @@ import { convertDistanceUnit } from "../configs/units.mjs";
 import BaseActivityConversion from "./base.mjs";
 
 export default class ScaleValueConversion extends BaseActivityConversion {
-
 	static advancementType = "scaleValue";
 
 	static paths = [
-		["configuration.identifier", "identifier",       ],
-		["configuration.type",       "configuration.type"],
+		["configuration.identifier", "identifier"],
+		["configuration.type", "configuration.type"]
 	];
 
-	static postSteps = [
-		ScaleValueConversion.convertScale
-	];
+	static postSteps = [ScaleValueConversion.convertScale];
 
 	static convertScale(initial, final) {
 		final.scale = {};
-		for ( const [k, i] of Object.entries(getProperty(initial, "configuration.scale") ?? {}) ) {
+		for (const [k, i] of Object.entries(getProperty(initial, "configuration.scale") ?? {})) {
 			const f = {};
 			switch (getProperty(initial, "configuration.type")) {
 				case "cr":
@@ -38,5 +35,4 @@ export default class ScaleValueConversion extends BaseActivityConversion {
 			final.scale[k] = f;
 		}
 	}
-
 }

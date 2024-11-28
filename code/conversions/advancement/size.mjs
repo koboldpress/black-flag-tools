@@ -2,7 +2,6 @@ import { convertSize } from "../configs/actors.mjs";
 import BaseActivityConversion from "./base.mjs";
 
 export default class SizeConversion extends BaseActivityConversion {
-
 	static advancementType = "size";
 
 	static paths = [
@@ -13,5 +12,4 @@ export default class SizeConversion extends BaseActivityConversion {
 	static convertSizes(initial) {
 		return initial?.map(i => convertSize(i));
 	}
-
 }

@@ -7,18 +7,17 @@ import { convertDamage } from "../shared/damage.mjs";
 import { convertTargeting } from "../shared/targeting.mjs";
 
 export default class BaseActivityConversion extends BaseConversion {
-
 	static activityType = "";
 
 	static paths = [
-		["system.activation.cost",      "activation.value",									    																			    ],
-		["system.activation.type",      "activation.type",                        convertActivationType                   ],
-		["system.activation.condition", "activation.condition", 							    																		    ],
-		["system.duration.value",       "duration.value",                                                                 ],
-		["system.duration.units",       "duration.units",                         convertTimePeriod                       ],
-		["system.range.value",          "range.value",                                                                    ],
-		["system.range.units",          "range.units",                            convertDistanceUnit                     ],
-		["system.target",               "target",                                 convertTargeting                        ],
+		["system.activation.cost", "activation.value"],
+		["system.activation.type", "activation.type", convertActivationType],
+		["system.activation.condition", "activation.condition"],
+		["system.duration.value", "duration.value"],
+		["system.duration.units", "duration.units", convertTimePeriod],
+		["system.range.value", "range.value"],
+		["system.range.units", "range.units", convertDistanceUnit],
+		["system.target", "target", convertTargeting]
 	];
 
 	static convert(initial, final) {
@@ -39,16 +38,16 @@ export default class BaseActivityConversion extends BaseConversion {
 			scale: { allowed: false }
 		};
 		const consume = getProperty(initial, "system.consume");
-		if ( consume?.type && consume?.type !== "ammo" ) {
+		if (consume?.type && consume?.type !== "ammo") {
 			const type = convertConsumptionTypes(consume.type);
-			if ( type ) {
+			if (type) {
 				const target = { type, target: consume.target ?? "" };
-				if ( consume.scale ) target.scaling = { mode: "amount" };
+				if (consume.scale) target.scaling = { mode: "amount" };
 				consumption.targets.push(target);
 			}
 		}
 		const uses = getProperty(initial, "system.uses");
-		if ( uses?.max ) consumption.targets.push({ type: "item", value: "1" });
+		if (uses?.max) consumption.targets.push({ type: "item", value: "1" });
 		setProperty(activity, "consumption", consumption);
 
 		return activity;
@@ -72,5 +71,4 @@ export default class BaseActivityConversion extends BaseConversion {
 				break;
 		}
 	}
-
 }

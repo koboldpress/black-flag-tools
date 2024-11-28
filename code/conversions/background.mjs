@@ -5,12 +5,5 @@ import ItemDescriptionConversion from "./templates/item-description-conversion.m
 import StartingEquipmentConversion from "./templates/starting-equipment-conversion.mjs";
 
 export default class BackgroundConversion extends BaseConversion {
-
-	static templates = [
-		AdvancementConversion,
-		ConceptConversion,
-		ItemDescriptionConversion,
-		StartingEquipmentConversion,
-	];
-
+	static templates = [AdvancementConversion, ConceptConversion, ItemDescriptionConversion, StartingEquipmentConversion];
 }

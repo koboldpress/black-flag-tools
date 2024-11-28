@@ -15,9 +15,7 @@ export function convertArmor(initial) {
 }
 
 export function convertArmorCategory(initial) {
-	return {
-
-	}[initial] ?? initial;
+	return {}[initial] ?? initial;
 }
 
 export function convertArmorType(initial) {

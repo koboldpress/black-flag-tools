@@ -112,7 +112,7 @@ export default class ParsingApplication extends HandlebarsApplicationMixin(Appli
 	 */
 	get input() {
 		return this.element.querySelector('[name="input"]')?.value ?? "";
-	};
+	}
 
 	/* <><><><> <><><><> <><><><> <><><><> */
 
@@ -133,7 +133,7 @@ export default class ParsingApplication extends HandlebarsApplicationMixin(Appli
 	get type() {
 		// TODO: Select default input
 		return this.element.querySelector('[name="type"]')?.value ?? "gear";
-	};
+	}
 
 	/* <><><><> <><><><> <><><><> <><><><> */
 	/*              Rendering              */
@@ -141,10 +141,12 @@ export default class ParsingApplication extends HandlebarsApplicationMixin(Appli
 
 	/** @inheritDoc */
 	async _preparePartContext(partId, context, options) {
-		context = { ...await super._preparePartContext(partId, context, options) };
+		context = { ...(await super._preparePartContext(partId, context, options)) };
 		switch (partId) {
-			case "footer": return this._prepareFooterContext(context, options);
-			case "output": return this._prepareOutputContext(context, options);
+			case "footer":
+				return this._prepareFooterContext(context, options);
+			case "output":
+				return this._prepareOutputContext(context, options);
 		}
 		return context;
 	}
@@ -174,7 +176,8 @@ export default class ParsingApplication extends HandlebarsApplicationMixin(Appli
 			field: new foundry.data.fields.StringField(),
 			options: [
 				{ value: "", label: game.i18n.localize("BFTools.Parser.NoFolder") },
-				...this.pack._formatFolderSelectOptions()
+				...this.pack
+					._formatFolderSelectOptions()
 					.map(({ id, name }) => ({ value: id, label: name, selected: id === lastFolder }))
 			]
 		};
@@ -191,24 +194,22 @@ export default class ParsingApplication extends HandlebarsApplicationMixin(Appli
 	 * @protected
 	 */
 	async _prepareOutputContext(context, options) {
-		if ( this.type && this.input ) {
+		if (this.type && this.input) {
 			try {
 				const item = await parseInput(this.type, this.input);
 				const type = item.effects.size ? "enchantment" : this.type; // TODO: Handle better
-				context.preview = await renderTemplate(
-					this.constructor.TYPES[type].template,
-					{
-						CONFIG: CONFIG.BlackFlag,
-						item,
-						enriched: {
-							description: await TextEditor.enrichHTML(item.system.description.value ?? "", {
-								relativeTo: item, secrets: true
-							})
-						}
+				context.preview = await renderTemplate(this.constructor.TYPES[type].template, {
+					CONFIG: CONFIG.BlackFlag,
+					item,
+					enriched: {
+						description: await TextEditor.enrichHTML(item.system.description.value ?? "", {
+							relativeTo: item,
+							secrets: true
+						})
 					}
-				);
+				});
 				this.document = item;
-			} catch(err) {
+			} catch (err) {
 				context.error = err.message;
 				this.document = null;
 				console.error(err);
@@ -230,11 +231,11 @@ export default class ParsingApplication extends HandlebarsApplicationMixin(Appli
 	 * @returns {Promise<void>}
 	 */
 	static async #handleFormSubmission(event, form, formData) {
-		if ( this.document ) {
+		if (this.document) {
 			const cls = getDocumentClass(this.document.documentName);
 			const folder = this.element.querySelector('[name="folder"]')?.value;
 			await game.user.setFlag("black-flag-tools", "lastType", this.type);
-			if ( folder !== undefined ) await game.user.setFlag("black-flag-tools", "lastFolder", folder);
+			if (folder !== undefined) await game.user.setFlag("black-flag-tools", "lastFolder", folder);
 			const created = await cls.create({ ...this.document.toObject(), folder }, { pack: this.pack.metadata.id });
 			created.sheet.render({ force: true });
 		}
@@ -244,7 +245,7 @@ export default class ParsingApplication extends HandlebarsApplicationMixin(Appli
 
 	/** @override */
 	_onChangeForm(formConfig, event) {
-		if ( ["input", "type"].includes(event.target.name) ) this.render({ parts: ["output"] });
+		if (["input", "type"].includes(event.target.name)) this.render({ parts: ["output"] });
 	}
 
 	/* <><><><> <><><><> <><><><> <><><><> */
@@ -257,7 +258,7 @@ export default class ParsingApplication extends HandlebarsApplicationMixin(Appli
 	 * @param {HTMLElement} html  HTML of the application being rendered.
 	 */
 	static injectSidebarButton(app, html) {
-		if ( app.collection.locked ) return;
+		if (app.collection.locked) return;
 		const button = document.createElement("button");
 		button.classList.add("parse");
 		button.innerHTML = `<i class="fa-solid fa-file-lines" inert></i> ${game.i18n.localize("BFTools.Parser.Title")}`;

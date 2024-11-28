@@ -6,17 +6,10 @@ import ItemDescriptionConversion from "./templates/item-description-conversion.m
 import PhysicalConversion from "./templates/physical-conversion.mjs";
 
 export default class ToolConversion extends BaseConversion {
-
-	static templates = [
-		ActivitiesConversion,
-		IdentifiableConversion,
-		ItemDescriptionConversion,
-		PhysicalConversion
-	];
+	static templates = [ActivitiesConversion, IdentifiableConversion, ItemDescriptionConversion, PhysicalConversion];
 
 	static paths = [
-		["system.type.value",    "system.type.category", convertTool],
-		["system.type.baseItem", "system.type.base",     convertTool]
+		["system.type.value", "system.type.category", convertTool],
+		["system.type.baseItem", "system.type.base", convertTool]
 	];
-
 }

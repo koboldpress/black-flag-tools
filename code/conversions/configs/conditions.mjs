@@ -1,5 +1,3 @@
 export function convertCondition(initial) {
-	return {
-		
-	}[initial] ?? initial;
+	return {}[initial] ?? initial;
 }

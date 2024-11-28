@@ -19,19 +19,33 @@ import { isArmor } from "./configs/armor.mjs";
 
 export function selectConverter(data) {
 	switch (data.type) {
-		case "background": return BackgroundConversion;
-		case "class": return ClassConversion;
-		case "consumable": return isAmmunition(data) ? AmmunitionConversion : ConsumableConversion;
-		case "container": return ContainerConversion;
-		case "equipment": return isArmor(data) ? ArmorConverion : GearConverion;
-		case "feat": return FeatureConversion;
-		case "loot": return SundryConversion;
-		case "npc": return NPCConversion;
-		case "race": return LineageConversion;
-		case "spell": return SpellConversion;
-		case "subclass": return SubclassConversion;
-		case "tool": return ToolConversion;
-		case "weapon": return WeaponConversion;
-		default: return BaseConversion;
+		case "background":
+			return BackgroundConversion;
+		case "class":
+			return ClassConversion;
+		case "consumable":
+			return isAmmunition(data) ? AmmunitionConversion : ConsumableConversion;
+		case "container":
+			return ContainerConversion;
+		case "equipment":
+			return isArmor(data) ? ArmorConverion : GearConverion;
+		case "feat":
+			return FeatureConversion;
+		case "loot":
+			return SundryConversion;
+		case "npc":
+			return NPCConversion;
+		case "race":
+			return LineageConversion;
+		case "spell":
+			return SpellConversion;
+		case "subclass":
+			return SubclassConversion;
+		case "tool":
+			return ToolConversion;
+		case "weapon":
+			return WeaponConversion;
+		default:
+			return BaseConversion;
 	}
 }

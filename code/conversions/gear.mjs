@@ -6,21 +6,12 @@ import ItemDescriptionConversion from "./templates/item-description-conversion.m
 import PhysicalConversion from "./templates/physical-conversion.mjs";
 
 export default class GearConversion extends BaseConversion {
+	static preSteps = [(i, f) => (f.type = "gear")];
 
-	static preSteps = [
-		(i, f) => f.type = "gear"
-	];
-
-	static templates = [
-		ActivitiesConversion,
-		IdentifiableConversion,
-		ItemDescriptionConversion,
-		PhysicalConversion
-	];
+	static templates = [ActivitiesConversion, IdentifiableConversion, ItemDescriptionConversion, PhysicalConversion];
 
 	static paths = [
-		["system.type.value",   "system.type.category", convertGearCategory],
-		["system.type.subtype", "system.type.value",    convertGearType    ],
+		["system.type.value", "system.type.category", convertGearCategory],
+		["system.type.subtype", "system.type.value", convertGearType]
 	];
-
 }

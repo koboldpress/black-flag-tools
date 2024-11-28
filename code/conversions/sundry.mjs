@@ -5,15 +5,7 @@ import ItemDescriptionConversion from "./templates/item-description-conversion.m
 import PhysicalConversion from "./templates/physical-conversion.mjs";
 
 export default class SundryConversion extends BaseConversion {
+	static templates = [IdentifiableConversion, ItemDescriptionConversion, PhysicalConversion];
 
-	static templates = [
-		IdentifiableConversion,
-		ItemDescriptionConversion,
-		PhysicalConversion
-	];
-
-	static paths = [
-		["system.type.value", "system.type.category", convertSundryCategory]
-	];
-
+	static paths = [["system.type.value", "system.type.category", convertSundryCategory]];
 }

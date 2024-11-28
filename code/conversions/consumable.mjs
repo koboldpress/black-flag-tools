@@ -7,17 +7,13 @@ import PhysicalConversion from "./templates/physical-conversion.mjs";
 import PropertiesConversion from "./templates/properties-conversion.mjs";
 
 export default class ConsumableConversion extends BaseConversion {
-
 	static templates = [
 		ActivitiesConversion,
 		IdentifiableConversion,
 		ItemDescriptionConversion,
 		PhysicalConversion,
-		PropertiesConversion,
+		PropertiesConversion
 	];
 
-	static paths = [
-		["system.type.value", "system.type.category", convertConsumableCategory],
-	];
-
+	static paths = [["system.type.value", "system.type.category", convertConsumableCategory]];
 }

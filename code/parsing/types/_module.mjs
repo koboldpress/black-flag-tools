@@ -7,12 +7,16 @@ export default function parseInput(type, input) {
 	switch (type) {
 		case "ammunition":
 		case "armor":
-		case "weapon": return parseArmorWeapon(type, input);
-		case "enchantment": return parseEnchantment(type, input);
+		case "weapon":
+			return parseArmorWeapon(type, input);
+		case "enchantment":
+			return parseEnchantment(type, input);
 		case "consumable":
 		case "container":
 		case "gear":
-		case "staff": return parseMagicItem(type, input);
-		case "spell": return parseSpell(type, input);
+		case "staff":
+			return parseMagicItem(type, input);
+		case "spell":
+			return parseSpell(type, input);
 	}
 }

@@ -3,22 +3,22 @@ import MersenneTwister from "./mersenne.mjs";
 export const generator = new MersenneTwister();
 
 export function getProperty(object, keyPath) {
-	if ( !keyPath ) return object;
+	if (!keyPath) return object;
 	let target = object;
-	for ( const part of keyPath.split(".") ) {
-		if ( typeof target !== "object" || !(part in target) ) return;
+	for (const part of keyPath.split(".")) {
+		if (typeof target !== "object" || !(part in target)) return;
 		target = target[part];
 	}
-	return target
+	return target;
 }
 
 export function setProperty(object, keyPath, value) {
-	if ( !keyPath ) return;
+	if (!keyPath) return;
 	let target = object;
 
 	const parts = keyPath.split(".");
 	const key = parts.pop();
-	for ( const part of parts ) {
+	for (const part of parts) {
 		target[part] ??= {};
 		target = target[part];
 	}
@@ -27,14 +27,14 @@ export function setProperty(object, keyPath, value) {
 }
 
 export function staticID(id) {
-	if ( id.length >= 16 ) return id.substring(0, 16);
+	if (id.length >= 16) return id.substring(0, 16);
 	return id.padEnd(16, "0");
 }
 
 const base62Chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
 function getRandomValues(array) {
-	for ( let i = 0; i < array.length; i++ ) {
+	for (let i = 0; i < array.length; i++) {
 		array[i] = generator.random_int();
 	}
 }
@@ -43,7 +43,7 @@ export function seedRandom(id) {
 	const chars = base62Chars.split("");
 	const parts = id.split("");
 	let seed = 0;
-	while ( parts.length ) {
+	while (parts.length) {
 		const value = parts.pop();
 		const index = chars.findIndex(c => c === value);
 		seed += index + 1;
@@ -55,13 +55,13 @@ export function seedRandom(id) {
  * Portions of the core package (foundry.utils.randomID) repackaged in accordance with the "Limited License
  * Agreement for Module Development, found here: https://foundryvtt.com/article/license/
  */
-export function randomID(length=16) {
+export function randomID(length = 16) {
 	const cutoff = 0x100000000 - (0x100000000 % base62Chars.length);
 	const random = new Uint32Array(length);
 	do {
 		getRandomValues(random);
-	} while ( random.some(x => x >= cutoff) );
+	} while (random.some(x => x >= cutoff));
 	let id = "";
-	for ( let i = 0; i < length; i++ ) id += base62Chars[random[i] % base62Chars.length];
+	for (let i = 0; i < length; i++) id += base62Chars[random[i] % base62Chars.length];
 	return id;
 }

@@ -5,7 +5,6 @@ import ItemDescriptionConversion from "./templates/item-description-conversion.m
 import PhysicalConversion from "./templates/physical-conversion.mjs";
 
 export default class SundryConversion extends BaseConversion {
-
 	static templates = [
 		IdentifiableConversion,
 		// TODO: Currency
@@ -14,15 +13,16 @@ export default class SundryConversion extends BaseConversion {
 	];
 
 	static paths = [
-		["system.capacity",   "system.capacity",   SundryConversion.convertCapacity        ],
-		["system.properties", "system.properties", i => i?.map(p => convertItemProperty(p))],
+		["system.capacity", "system.capacity", SundryConversion.convertCapacity],
+		["system.properties", "system.properties", i => i?.map(p => convertItemProperty(p))]
 	];
 
 	static convertCapacity(initial) {
 		switch (initial?.type) {
-			case "items": return { count: initial.value };
-			case "weight": return { weight: { value: initial.value, units: "pound" } };
+			case "items":
+				return { count: initial.value };
+			case "weight":
+				return { weight: { value: initial.value, units: "pound" } };
 		}
 	}
-
 }

@@ -1,30 +1,39 @@
 {
-  "scripts": {
-    "build": "npm run build:code",
-    "build:code": "rollup --config",
-    "build:styles": "postcss styles/_module.css -o black-flag-tools.css -m",
-    "convert": "node ./code/cli/_module.mjs convert",
-    "lint": "eslint --ext .mjs ./code",
-    "lint:fix": "eslint --ext .mjs ./code --fix",
-    "prettier": "npx prettier . --check",
-    "prettier:fix": "npx prettier . --write",
-    "watch": "rollup --config --watch",
-    "prepare": "husky"
-  },
-  "devDependencies": {
-    "eslint": "^9.9.1",
-    "eslint-plugin-jsdoc": "^50.2.2",
-    "husky": "^9.1.7",
-    "lint-staged": "^15.2.10",
-    "postcss": "^8.4.49",
-    "postcss-cli": "^11.0.0",
-    "postcss-import": "^16.1.0",
-    "postcss-preset-env": "^10.1.1",
-    "prettier": "^3.4.1",
-    "rollup": "^4.27.4",
-    "rollup-plugin-postcss": "^4.0.2"
-  },
-  "dependencies": {
-    "yargs": "^17.7.2"
-  }
+	"scripts": {
+		"build": "npm run build:code",
+		"build:code": "rollup --config",
+		"build:styles": "postcss styles/_module.css -o black-flag-tools.css -m",
+		"convert": "node ./code/cli/_module.mjs convert",
+		"lint": "eslint --ext .mjs ./code",
+		"lint:fix": "eslint --ext .mjs ./code --fix",
+		"prettier": "npx prettier . --check",
+		"prettier:fix": "npx prettier . --write",
+		"watch": "rollup --config --watch",
+		"prepare": "husky && husky install"
+	},
+	"devDependencies": {
+		"eslint": "^9.9.1",
+		"eslint-plugin-jsdoc": "^50.2.2",
+		"husky": "^8.0.0",
+		"lint-staged": "^15.2.10",
+		"postcss": "^8.4.49",
+		"postcss-cli": "^11.0.0",
+		"postcss-import": "^16.1.0",
+		"postcss-preset-env": "^10.1.1",
+		"prettier": "^3.4.1",
+		"rollup": "^4.27.4",
+		"rollup-plugin-postcss": "^4.0.2"
+	},
+	"dependencies": {
+		"yargs": "^17.7.2"
+	},
+	"lint-staged": {
+		"**/*": "prettier --write --ignore-unknown"
+	},
+	"prettier": {
+		"arrowParens": "avoid",
+		"printWidth": 120,
+		"trailingComma": "none",
+		"useTabs": true
+	}
 }

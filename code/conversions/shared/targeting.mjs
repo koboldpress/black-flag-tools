@@ -3,7 +3,7 @@ export function convertTargeting(initial) {
 
 	let { value, width, units, type } = initial ?? {};
 	let isIndividual = true;
-	switch ( type ) {
+	switch (type) {
 		case "wall":
 			type = "line";
 		case "line":
@@ -36,7 +36,7 @@ export function convertTargeting(initial) {
 			break;
 	}
 
-	if ( isIndividual ) {
+	if (isIndividual) {
 		final.affects.count = value;
 		final.affects.type = type;
 	}
