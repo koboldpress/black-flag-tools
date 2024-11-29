@@ -1,0 +1,20 @@
+<section>
+	<div class="summary">
+		<h3>{{ localize "BFTools.Import.Summary.Title" }}</h3>
+		<p>{{{ summary }}}</p>
+	</div>
+	{{#if pack.originals.size}}
+		<div class="uuid-remapping">
+			<h3>{{ localize "BFTools.Import.Remapping.Title" }}</h3>
+			<div class="form-group">
+				<p class="hint">{{ localize "BFTools.Import.Remapping.Hint" }}</p>
+			</div>
+			{{#each pack.originals as |name|}}
+				{{ formField ../pack.field name=name label=name options=../pack.options }}
+			{{/each}}
+		</div>
+	{{/if}}
+	<menu class="buttons unlist">
+		<li><button type="submit" class="light-button">{{ localize "BFTools.Import.Action.Submit" }}</button>
+	</menu>
+</section>

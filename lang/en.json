@@ -2,17 +2,31 @@
 	"BFTools": {
 		"Export": "Export for Black Flag",
 		"Import": {
-			"ContextMenuOption": "Import from DnD5e",
+			"Action": {
+				"Import": "Import from DnD5e",
+				"Submit": "Import Documents"
+			},
 			"Hint1": "You may import {document} data into this pack from an exported JSON file.",
 			"Hint2": "This data should be exported from DnD5e using the conversion tool.",
-			"Success": "Successfully imported {count} documents into {compendium}!"
+			"Remapping": {
+				"Hint": "Replace UUIDs found in imported content with links to different compendiums. This process will replace the compendium portion of the link, but will not modify the ID or remap to BFRD content.",
+				"KeepExisting": "Keep Existing Pack",
+				"Title": "Compendium Pack Remapping"
+			},
+			"Submit": "Import Documents",
+			"Success": "Successfully imported {count} documents into {compendium}!",
+			"Summary": {
+				"Description": "Found <strong>{count}</strong> documents to import into “{target}”.",
+				"Title": "Summary"
+			},
+			"Title": "Importer"
 		},
 		"Parser": {
-			"Title": "Parse Document",
 			"Created": "Created {name}!",
 			"MagicItem": "Magic Item",
 			"NoFolder": "No Folder",
-			"Save": "Save"
+			"Save": "Save",
+			"Title": "Parse Document"
 		}
 	}
 }

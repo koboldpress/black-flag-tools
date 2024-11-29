@@ -9,6 +9,7 @@ import "../styles/_module.css";
 
 import { selectConverter } from "./conversions/_module.mjs";
 import { ParsingApplication } from "./parsing/_module.mjs";
+import { ImportingDialog } from "./importing/_module.mjs";
 import { seedRandom } from "./utils.mjs";
 
 Hooks.once("setup", () => {
@@ -48,7 +49,7 @@ Hooks.once("setup", () => {
 	else if (game.system.id === "black-flag") {
 		Hooks.on("getCompendiumDirectoryEntryContext", (application, menuItems) => {
 			menuItems.push({
-				name: game.i18n.localize("BFTools.Import.ContextMenuOption"),
+				name: game.i18n.localize("BFTools.Import.Action.Import"),
 				icon: '<i class="fa-solid fa-file-import"></i>',
 				group: "conversion",
 				condition: ([li]) => {
@@ -57,7 +58,7 @@ Hooks.once("setup", () => {
 				},
 				callback: ([li]) => {
 					const pack = game.packs.get(li.closest("[data-pack]")?.dataset.pack);
-					if (pack) importToCompendium(pack);
+					if (pack) ImportingDialog.import(pack);
 				}
 			});
 		});
@@ -130,71 +131,4 @@ function createDownload(filename, json) {
 	anchor.download = `${filename}.json`;
 	anchor.click();
 	URL.revokeObjectURL(url);
-}
-
-/* <><><><> <><><><> <><><><> <><><><> <><><><> <><><><> */
-/*                       Importing                       */
-/* <><><><> <><><><> <><><><> <><><><> <><><><> <><><><> */
-
-/**
- * Take a export JSON file and import it into a compendium.
- * @param {Compendium} pack - Compendium into which the documents should be imported.
- */
-async function importToCompendium(pack) {
-	const file = await Dialog.wait(
-		{
-			title: `Import Data: ${pack.metadata.label}`,
-			content: await renderTemplate("templates/apps/import-data.html", {
-				hint1: game.i18n.format("BFTools.Import.Hint1", { document: pack.metadata.type }),
-				hint2: game.i18n.localize("BFTools.Import.Hint2")
-			}),
-			buttons: {
-				import: {
-					icon: '<i class="fa-solid fa-file-import" inert></i>',
-					label: "Import",
-					callback: html => {
-						const form = html.find("form")[0];
-						if (!form.data.files.length) return ui.notifications.error("No file uploaded to import.");
-						return readTextFromFile(form.data.files[0]);
-					}
-				},
-				no: {
-					icon: '<i class="fa-solid fa-times"></i>',
-					label: "Cancel"
-				}
-			},
-			default: "import"
-		},
-		{
-			width: 400
-		}
-	);
-
-	let data;
-	try {
-		data = JSON.parse(file);
-	} catch (err) {
-		ui.notifications.error("Could not parse JSON file.");
-		return;
-	}
-
-	const docs = [];
-	const folders = [];
-	for (const entry of foundry.utils.getType(data) === "Array" ? data : [data]) {
-		if (entry._documentType === "Folder") folders.push(entry);
-		else docs.push(entry);
-	}
-	await getDocumentClass("Folder").createDocuments(folders, { keepId: true, pack: pack.metadata.id });
-	const created = await getDocumentClass(pack.metadata.type).createDocuments(docs, {
-		keepId: true,
-		pack: pack.metadata.id
-	});
-
-	if (created?.length)
-		ui.notifications.info(
-			game.i18n.format("BFTools.Import.Success", {
-				compendium: pack.metadata.label,
-				count: created.length
-			})
-		);
 }

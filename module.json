@@ -44,5 +44,10 @@
 			"flags": {}
 		}
 	],
-	"flags": {}
+	"flags": {
+		"hotReload": {
+			"extensions": ["css", "hbs", "json"],
+			"paths": ["black-flag-tools.css", "templates", "lang"]
+		}
+	}
 }
