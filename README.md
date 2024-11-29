@@ -29,6 +29,7 @@ The conversion tools are designed to turn content compatible with the DnD5e syst
 There are a few things that conversion currently does not cover:
 1. **PCs**: Due to the large differences in how PCs are handled between the two systems, they cannot be converted. Instead convert the individual classes, spells, and equipment you wish to use with your PC and then re-create it within Black Flag.
 2. **Adventures**: The conversion system currently cannot handle adventure documents. Hopefully this will be possible in the future.
+3. **Active Effects**: No attempt is made to convert active effect keys and values between the two systems. If the content you are converting contains active effects, you will have to manually adjust them to match Black Flag using the references available in the [Active Effects Guide](https://koboldpress.github.io/black-flag-docs/documentation/active-effects).
 
 ### In-game Conversion
 
@@ -69,7 +70,31 @@ This tool is used to convert `json` files exported from DnD5e compendiums to `js
 
 ## Parsing
 
-TODO
+The parsing tool allows importing items from plain text into the Black Flag system. The parser is designed to work with text formatting in the standard Black Flag style. It currently works for spells and magic items.
+
+To access the parser, launch a world using the Black Flag game system with the Black Flag Conversion Tools mod enabled. Find the compendium you wish to parse into, unlock it using the context menu, and then open it up. The "Parse Document" button should be visible at the top beneath the standard "Create" buttons and above the search field:
+
+![](https://github.com/koboldpress/black-flag-tools/blob/main/assets/instructions/pase-document-button.jpg?raw=true)
+
+Clicking on this button brings up the document parsing window. It is split into the input section on the left, the output preview on the right, and a few controls along the bottom. Between by pasting in the text content into the left field and selecting the appropriate item type from the bottom left. This should cause a preview of the parsed item to be shown on the right:
+
+![](https://github.com/koboldpress/black-flag-tools/blob/main/assets/instructions/parsing-magical-item.jpg?raw=true)
+
+If desired, you can select a folder to place the newly created document into. Once everything looks good, push the "Save" button and the sheet for the newly created document should open:
+
+![](https://github.com/koboldpress/black-flag-tools/blob/main/assets/instructions/parsed-item.jpg?raw=true)
+
+The parser is able to fill in a bunch of details for the created items, but some things will have to be handled manually such as the icon, activities, and active effects.
+
+#### Spacing in Descriptions
+
+The parser is designed to handle the weird line breaks that happen when copying directly from a PDF file. Because of this, you will have to modify your pasted input to add extra line breaks between paragraphs. Without these line breaks, the description will be one large block:
+
+![](https://github.com/koboldpress/black-flag-tools/blob/main/assets/instructions/parsing-no-spaces.jpg?raw=true)
+
+Adding some extra line breaks where they appear in the original text will help the parser distinguish between paragraphs and properly create lists in the final document:
+
+![](https://github.com/koboldpress/black-flag-tools/blob/main/assets/instructions/pasing-spaces.jpg?raw=true)
 
 ## Conversion Tutorial
 
