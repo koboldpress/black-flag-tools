@@ -17,6 +17,7 @@ export default class ArmorConversion extends BaseConversion {
 		["system.armor.value", "system.armor.value"],
 		["system.strength", "system.armor.requiredStrength"],
 		["system.armor.magicalBonus", "system.magicalBonus"],
+		[null, "system.modifier.min"],
 		["system.type.value", "system.type.category", convertArmorCategory],
 		["system.type.baseItem", "system.type.base", convertArmorType]
 	];

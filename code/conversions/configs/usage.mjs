@@ -1,10 +1,10 @@
 export function convertConsumptionTypes(initial) {
 	return (
 		{
+			activityUses: "activity",
 			ammo: "",
-			attribute: "",
-			material: "item",
-			charges: "item"
+			itemUses: "item",
+			material: "item"
 		}[initial] ?? initial
 	);
 }

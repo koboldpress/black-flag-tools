@@ -6,17 +6,15 @@ export default class AttackActivityConversion extends BaseActivityConversion {
 
 	static paths = [
 		...super.paths,
-		["system.ability", "system.ability", convertAbility],
-		["system.attack.bonus", "system.attack.bonus"],
-		["system.attack.flat", "system.attack.flat"],
-		["system.damage", "system.damage", this.convertDamage],
-		["system.actionType", "system.type", this.convertAttackType]
+		["attack.ability", "system.attack.ability", convertAbility],
+		["attack.bonus", "system.attack.bonus"],
+		["attack.critical.threshold", "system.attack.critical.threshold"],
+		["attack.flat", "system.attack.flat"],
+		["attack.type.value", "system.attack.type.value"],
+		["attack.type.classification", "system.attack.type.classification"],
+		["damage.critical.bonus", "system.damage.critical.bonus"],
+		["damage.includeBase", "system.damage.includeBase"],
+		["damage.parts", "system.damage.parts", this.convertDamage],
+		["effects", "system.effects"]
 	];
-
-	static convertAttackType(initial) {
-		return {
-			value: { m: "melee", r: "ranged" }[initial[0]],
-			classification: { w: "weapon", s: "spell" }[initial[1]]
-		};
-	}
 }

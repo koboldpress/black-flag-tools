@@ -6,6 +6,8 @@ import ConceptConversion from "./templates/concept-conversion.mjs";
 import ItemDescriptionConversion from "./templates/item-description-conversion.mjs";
 
 export default class LineageConversion extends BaseConversion {
+	static preSteps = [(i, f) => (f.type = "lineage")];
+
 	static templates = [AdvancementConversion, ConceptConversion, ItemDescriptionConversion];
 
 	static postSteps = [

@@ -1,87 +1,42 @@
 import { getProperty, setProperty } from "../../utils.mjs";
 import BaseConversion from "../base.mjs";
 import AttackActivityConversion from "../activities/attack.mjs";
+import CastActivityConversion from "../activities/cast.mjs";
+import CheckActivityConversion from "../activities/check.mjs";
 import DamageActivityConversion from "../activities/damage.mjs";
 import HealActivityConversion from "../activities/heal.mjs";
 import SaveActivityConversion from "../activities/save.mjs";
+import SummonActivityConversion from "../activities/summon.mjs";
 import UtilityActivityConversion from "../activities/utility.mjs";
-import { convertRecoveryPeriods } from "../configs/usage.mjs";
+import { convertUsesRecovery } from "../shared/uses.mjs";
 
 export default class ActivitiesConversion extends BaseConversion {
 
-	static postSteps = [
-		ActivitiesConversion.convertActivities,
-		ActivitiesConversion.convertUses,
+	static paths = [
+		["system.uses.spent", "system.uses.spent"],
+		["system.uses.recovery", "system.uses.recovery", convertUsesRecovery],
+		["system.uses.max", "system.uses.max"]
 	];
 
-	static convertActivities(initial, final) {
-		let type;
-		switch ( getProperty(initial, "system.actionType") ) {
-			case "mwak":
-			case "rwak":
-			case "msak":
-			case "rsak":
-				type = "attack";
-				break;
-			case "heal":
-				type = "healing";
-				break;
-			case "save":
-				type = "savingThrow";
-				break;
-			case "abil":
-			case "ench":
-			case "summ":
-			case "util":
-			case "other":
-				type = "utility";
-				break;
-		}
-		if ( !type && !getProperty(initial, "system.activation.type") ) return;
-		type ??= "utility";
-
-		const activity = {
-			attack: AttackActivityConversion,
-			damage: DamageActivityConversion,
-			healing: HealActivityConversion,
-			savingThrow: SaveActivityConversion,
-			utility: UtilityActivityConversion
-		}[type].convert(initial);
-
-		setProperty(final, `system.activities.${activity._id}`, activity);
-	}
-
-	static convertUses(initial, final) {
-		const recharge = getProperty(initial, "system.recharge");
-		const uses = getProperty(initial, "system.uses");
-
-		if ( recharge ) setProperty(final, "system.uses", {
-			max: "1",
-			recovery: [{
-				period: "recharge",
-				formula: recharge.value ?? "6"
-			}]
-		});
-
-		else if ( uses ) {
-			const finalUses = { max: uses.max };
-
-			let recovery;
-			if ( uses.per === "charges" ) {
-				recovery = { period: "longRest" };
-				if ( uses.recovery ) {
-					recovery.type = "formula";
-					recovery.formula = uses.recovery;
-				} else {
-					recovery.type = "recoverAll";
-				}
-			} else if ( uses.per ) {
-				recovery = { period: convertRecoveryPeriods(uses.per) };
+	static convert(initial, final) {
+		const activities = getProperty(initial, "system.activities") ?? {};
+		for ( const [key, i] of Object.entries(activities) ) {
+			let Converter;
+			switch ( i.type ) {
+				case "attack": Converter = AttackActivityConversion; break;
+				case "cast": Converter = CastActivityConversion; break;
+				case "check": Converter = CheckActivityConversion; break;
+				case "damage": Converter = DamageActivityConversion; break;
+				// case "enchant": Converter = EnchantActivityConversion; break;
+				case "heal": Converter = HealActivityConversion; break;
+				case "save": Converter = SaveActivityConversion; break;
+				case "summon": Converter = SummonActivityConversion; break;
+				case "utility":
+				default: Converter = UtilityActivityConversion; break;
 			}
-			if ( recovery ) finalUses.recovery = [recovery];
-
-			setProperty(final, "system.uses", finalUses);
+			activities[key] = Converter.convert(i);
 		}
+		setProperty(final, "system.activities", activities);
+		return super.convert(initial, final);
 	}
-
 }

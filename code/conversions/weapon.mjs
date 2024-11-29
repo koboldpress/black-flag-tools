@@ -21,10 +21,15 @@ export default class WeaponConversion extends BaseConversion {
 		PropertiesConversion
 	];
 
-	static postSteps = [WeaponConversion.convertRange];
-
 	static paths = [
+		["system.damage.base", "system.damage.base", convertDamage],
+		["system.damage.versatile", null],
 		["system.magicalBonus", "system.magicalBonus"],
+		["system.range.value", "system.range.short"],
+		["system.range.long", "system.range.long"],
+		["system.range.reach", "system.range.reach"],
+		["system.range.units", "system.range.units", convertDistanceUnit],
+		["system.range.value", "system.range.value"],
 		["system.type.value", "system.type.value", convertWeaponType],
 		["system.type.value", "system.type.category", convertWeaponCategory],
 		["system.type.baseItem", "system.type.base", convertWeapon]
@@ -41,25 +46,5 @@ export default class WeaponConversion extends BaseConversion {
 		setProperty(final, "system.damage", parsed);
 		damage.pop();
 		setProperty(initial, "system.damage.parts", damage);
-	}
-
-	static convertRange(initial, final) {
-		const system = initial.system ?? {};
-		const properties = getProperty(final, "system.properties") ?? [];
-		const range = { short: null, long: null, reach: null };
-		if (
-			final.system?.type?.value === "melee" &&
-			properties.includes("reach") &&
-			!properties.includes("thrown") &&
-			system.range.short > 5
-		) {
-			range.reach = system.range.short - 5;
-		}
-		if (final.system?.type?.value === "ranged" || properties.includes("thrown")) {
-			range.short = system.range?.value ?? null;
-			range.long = system.range?.long ?? null;
-		}
-		range.units = system.range?.units ? convertDistanceUnit(system.range.units) : "foot";
-		setProperty(final, "system.range", range);
 	}
 }

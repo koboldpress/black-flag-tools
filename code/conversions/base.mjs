@@ -24,6 +24,7 @@ export default class BaseConversion {
 
 		// Copy & convert direct paths
 		for (const [initialKeyPath, finalKeyPath, conversion] of this.paths) {
+			if (initialKeyPath === null || finalKeyPath === null) continue;
 			let value = getProperty(initial, initialKeyPath);
 			if (conversion) value = conversion(value);
 			setProperty(final, finalKeyPath, value);

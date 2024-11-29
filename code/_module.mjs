@@ -13,7 +13,7 @@ import { seedRandom } from "./utils.mjs";
 
 Hooks.once("setup", () => {
 	// Export options for DnD5e
-	if (game.system.id === "dnd5e" && foundry.utils.isNewerVersion("4.0.0", game.system.version)) {
+	if (game.system.id === "dnd5e") {
 		Hooks.on("getCompendiumEntryContext", (application, menuItems) => {
 			if (!["Actor", "Item"].includes(application.metadata.type)) return false;
 			menuItems.push({

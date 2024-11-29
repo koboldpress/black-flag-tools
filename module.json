@@ -1,10 +1,10 @@
 {
 	"id": "black-flag-tools",
 	"title": "Black Flag Roleplaying Conversion Tools",
-	"description": "<p></p>",
-	"version": "0.1.002",
+	"description": "<p>Set of tools for import content into the Black Flag system and making DnD5e content compatible with the system.</p>",
+	"version": "0.1.003",
 	"compatibility": {
-		"minimum": "12.330",
+		"minimum": "12.331",
 		"verified": "12"
 	},
 	"url": "",
@@ -21,15 +21,21 @@
 	"relationships": {
 		"systems": [
 			{
-				"id": "black-flag"
+				"id": "black-flag",
+				"compatibility": {
+					"minimum": "1.0.052"
+				}
 			},
 			{
-				"id": "dnd5e"
+				"id": "dnd5e",
+				"compatibility": {
+					"minimum": "4.0.0"
+				}
 			}
 		]
 	},
-	"esmodules": ["./code/module.mjs"],
-	"styles": ["./styles/parser.css"],
+	"esmodules": ["./black-flag-tools.mjs"],
+	"styles": ["./black-flag-tools.css"],
 	"languages": [
 		{
 			"lang": "en",

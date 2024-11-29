@@ -1,5 +1,6 @@
 import { getProperty, randomID, setProperty, staticID } from "../utils.mjs";
 import BaseConversion from "./base.mjs";
+import { convertAbility } from "./configs/abilities.mjs";
 import AdvancementConversion from "./templates/advancement-conversion.mjs";
 import ConceptConversion from "./templates/concept-conversion.mjs";
 import IdentifiableConversion from "./templates/identifiable-conversion.mjs";
@@ -16,7 +17,7 @@ export default class ClassConversion extends BaseConversion {
 		StartingEquipmentConversion
 	];
 
-	static postSteps = [ClassConversion.convertHitPoints];
+	static postSteps = [ClassConversion.convertHitPoints, ClassConversion.convertPrimaryAbility];
 
 	static convertHitPoints(initial, final) {
 		const advancement = {
@@ -24,6 +25,18 @@ export default class ClassConversion extends BaseConversion {
 			type: "hitPoints",
 			configuration: {
 				denomination: Number(getProperty(initial, "system.hitDice")?.substring(1) ?? 6)
+			}
+		};
+		setProperty(final, `system.advancement.${advancement._id}`, advancement);
+	}
+
+	static convertPrimaryAbility(initial, final) {
+		if (!initial.primaryAbility?.value?.length) return;
+		const advancement = {
+			_id: staticID("bfKeyAbility"),
+			type: "keyAbility",
+			configuration: {
+				options: initial.primaryAbility.value.map(a => convertAbility(a))
 			}
 		};
 		setProperty(final, `system.advancement.${advancement._id}`, advancement);
