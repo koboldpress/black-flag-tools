@@ -22,9 +22,11 @@ export function convertTrait(initial) {
 			break;
 		case "weapon":
 			trait = convertWeapon(trait);
+			type = "weapons";
 			break;
 		case "tool":
 			trait = convertTool(trait);
+			type = "tools";
 			break;
 		// TODO: di, dr, dv, ci
 	}
