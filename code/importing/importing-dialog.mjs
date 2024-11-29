@@ -98,7 +98,7 @@ export default class ImportingDialog extends HandlebarsApplicationMixin(Applicat
 		const data = { value: id, label: `${metadata.label} (${id})` };
 		if (metadata.packageType === "world") data.group = game.i18n.localize("PACKAGE.Type.world");
 		else if (metadata.packageType === "system") data.group = game.i18n.localize("BF.BlackFlagRoleplaying");
-		else data.group = game.modules.get(metadata.packageName)?.name;
+		else data.group = game.modules.get(metadata.packageName)?.title;
 		return data;
 	}
 
@@ -115,6 +115,8 @@ export default class ImportingDialog extends HandlebarsApplicationMixin(Applicat
 	 * @returns {Promise<void>}
 	 */
 	static async #handleFormSubmission(event, form, formData) {
+		this.element.querySelector("button").disabled = true;
+
 		await getDocumentClass("Folder").createDocuments(this.folders, { keepId: true, pack: this.pack.metadata.id });
 
 		const replacements = new Map(Object.entries(formData.object).filter(([, v]) => v));
