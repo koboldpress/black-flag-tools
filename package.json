@@ -6,6 +6,7 @@
 		"convert": "node ./code/cli/_module.mjs convert",
 		"lint": "eslint ./code",
 		"lint:fix": "eslint ./code --fix",
+		"postinstall": "npm run build:code",
 		"prettier": "npx prettier . --check",
 		"prettier:fix": "npx prettier . --write",
 		"watch": "rollup --config --watch",
