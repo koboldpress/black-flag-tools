@@ -15,17 +15,29 @@ export default class NPCConversion extends BaseConversion {
 
 	static paths = [
 		["system.attributes.exhaustion", "system.attributes.exhaustion"],
-		["system.details.cr", "system.attributes.cr"],
+		["system.attributes.hd.spent", null],
+		["system.attributes.hp.formula", null],
 		["system.attributes.hp.max", "system.attributes.hp.max"],
 		["system.attributes.hp.temp", "system.attributes.hp.temp"],
+		["system.attributes.hp.tempmax", "system.attributes.hp.tempmax"],
 		["system.attributes.hp.value", "system.attributes.hp.value"],
-		["system.resources.legact.max", "system.attributes.legendary.max"],
-		["system.details.biography.value", "system.biography.value"],
-		["system.details.source.book", "system.biography.source.book"],
-		["system.details.source.custom", "system.biography.source.fallback"],
-		["system.details.source.page", "system.biography.source.page"],
+		["system.attributes.death.success", null],
+		["system.attributes.death.failure", null],
 		["system.attributes.spellcasting", "system.spellcasting.ability", convertAbility],
-		["system.details.type", "system.traits.type", NPCConversion.convertCreatureType]
+		["system.details.biography.value", "system.biography.value"],
+		["system.details.cr", "system.attributes.cr"],
+		["system.details.environment", null],
+		["system.details.spellLevel", null],
+		["system.details.type", "system.traits.type", NPCConversion.convertCreatureType],
+		["system.resources.legact.max", "system.attributes.legendary.max"],
+		["system.resources.legact.value", null],
+		["system.resources.legres.max", null],
+		["system.resources.legres.value", null],
+		["system.resources.lair.initiative", null],
+		["system.resources.lair.value", null],
+		["system.source.book", "system.biography.source.book"],
+		["system.source.custom", "system.biography.source.fallback"],
+		["system.source.page", "system.biography.source.page"]
 	];
 
 	static postSteps = [NPCConversion.convertBonuses, NPCConversion.convertSkills];
@@ -135,7 +147,7 @@ export default class NPCConversion extends BaseConversion {
 		if (initial.custom) final.custom.push(initial.custom);
 		if (initial.swarm) final.swarm = convertSize(initial.swarm);
 
-		for (let subtype of initial.subtype?.split(",")) {
+		for (let subtype of initial.subtype?.split(",") ?? []) {
 			subtype = subtype.trim();
 			if (!subtype) continue;
 			if (subtype.toLowerCase() === "any race") {

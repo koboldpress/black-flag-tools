@@ -21,8 +21,6 @@ export default async function parseMagicItem(type, input) {
 		data.type = "weapon";
 	} else findType(CONFIG.BlackFlag.gearCategories, parser, data);
 
-	// TODO: If parsing enchantment, add secret block beneath description with first line details
-
 	// Attunement, Rarity, & Price
 	data["system.rarity"] = parser.consumeEnum(CONFIG.BlackFlag.rarities.localized);
 	data["system.attunement"] = parser.consumeAttunement();

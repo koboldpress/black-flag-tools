@@ -25,7 +25,6 @@ export default class ScaleValueConversion extends BaseActivityConversion {
 				case "dice":
 					f.number = i.number;
 					f.denomination = i.faces;
-					// TODO: Convert modifiers when supported
 					break;
 				case "distance":
 					f.value = i.value;
