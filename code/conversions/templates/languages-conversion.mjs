@@ -14,7 +14,6 @@ export default class LanguagesConversion extends BaseConversion {
 			custom: [],
 			tags: []
 		};
-		// TODO: Add "All Languages" option (maybe tag?)
 
 		for ( let entry of initial.custom?.split(";") ?? [] ) {
 			entry = entry.trim();

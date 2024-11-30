@@ -6,6 +6,7 @@ const UUIDFields = {
 	],
 	Actor: [],
 	Advancement: [
+		"configuration.pool.*.key", // Equipment
 		"configuration.pool.*.uuid" // ChooseFeatures, GrantFeatures, ChooseSpells, GrantSpells
 	],
 	Item: [
