@@ -7,7 +7,8 @@
 		"minimum": "12.331",
 		"verified": "12"
 	},
-	"url": "",
+	"download": "",
+	"url": "https://github.com/koboldpress/black-flag-tools/",
 	"authors": [
 		{
 			"name": "Jeff ‘Arbron’ Hitchcock",
