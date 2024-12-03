@@ -8,6 +8,7 @@
 		"verified": "12"
 	},
 	"download": "",
+	"manifest": "https://github.com/koboldpress/black-flag-tools/releases/latest/download/module.json",
 	"url": "https://github.com/koboldpress/black-flag-tools/",
 	"authors": [
 		{
