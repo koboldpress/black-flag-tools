@@ -3,5 +3,5 @@
 		"type": "module",
 		"userId": "blackflag"
 	},
-	"includes": ["README.md"]
+	"includes": ["README.md", "templates/"]
 }
