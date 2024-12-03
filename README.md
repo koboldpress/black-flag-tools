@@ -1,4 +1,4 @@
-# Black Flag Content Tools
+# Black Flag Roleplaying Content Tools
 
 These tools are designed to aid in converting [DnD5e](https://github.com/foundryvtt/dnd5e) content into [Black Flag Roleplaying](https://github.com/koboldpress/black-flag/) content as well as parsing content from PDFs.
 
@@ -33,7 +33,7 @@ There are a few things that conversion currently does not cover:
 
 ### In-game Conversion
 
-Conversion can also be performed from within a DnD5e game. It is possible export either a single document or an entire compendium. Simple instructions are listed below and a more in-depth tutorial is available at the bottom of this document.
+Conversion can also be performed from within a DnD5e game. It is possible export either a single document or an entire compendium. Simple instructions are listed below and a more in-depth tutorial can be found on the [Black Flag documentation site](https://koboldpress.github.io/black-flag-docs/documentation/conversion-tutorial).
 
 #### Single Document
 
@@ -70,88 +70,4 @@ This tool is used to convert `json` files exported from DnD5e compendiums to `js
 
 ## Parsing
 
-The parsing tool allows importing items from plain text into the Black Flag system. The parser is designed to work with text formatting in the standard Black Flag style. It currently works for spells and magic items.
-
-To access the parser, launch a world using the Black Flag game system with the Black Flag Conversion Tools mod enabled. Find the compendium you wish to parse into, unlock it using the context menu, and then open it up. The "Parse Document" button should be visible at the top beneath the standard "Create" buttons and above the search field:
-
-![](https://github.com/koboldpress/black-flag-tools/blob/main/assets/instructions/pase-document-button.jpg?raw=true)
-
-Clicking on this button brings up the document parsing window. It is split into the input section on the left, the output preview on the right, and a few controls along the bottom. Between by pasting in the text content into the left field and selecting the appropriate item type from the bottom left. This should cause a preview of the parsed item to be shown on the right:
-
-![](https://github.com/koboldpress/black-flag-tools/blob/main/assets/instructions/parsing-magical-item.jpg?raw=true)
-
-If desired, you can select a folder to place the newly created document into. Once everything looks good, push the "Save" button and the sheet for the newly created document should open:
-
-![](https://github.com/koboldpress/black-flag-tools/blob/main/assets/instructions/parsed-item.jpg?raw=true)
-
-The parser is able to fill in a bunch of details for the created items, but some things will have to be handled manually such as the icon, activities, and active effects.
-
-#### Spacing in Descriptions
-
-The parser is designed to handle the weird line breaks that happen when copying directly from a PDF file. Because of this, you will have to modify your pasted input to add extra line breaks between paragraphs. Without these line breaks, the description will be one large block:
-
-![](https://github.com/koboldpress/black-flag-tools/blob/main/assets/instructions/parsing-no-spaces.jpg?raw=true)
-
-Adding some extra line breaks where they appear in the original text will help the parser distinguish between paragraphs and properly create lists in the final document:
-
-![](https://github.com/koboldpress/black-flag-tools/blob/main/assets/instructions/pasing-spaces.jpg?raw=true)
-
-## Conversion Tutorial
-
-This tutorial will walk you though the process of converting several DnD5e compendiums in depth. In this example we will be bringing the classes, equipment, and spells from the DnD5e SRD into Black Flag.
-
-### 1. Set up Environment
-
-The first step is preparing everything for conversion. Ensure you have the latest version of the DnD5e and Black Flag systems installed as well as the latest version of this module. You will also need to set up a series of compendiums to receive the content. Compendiums can be in either the world or a module, but in this case the instructions assume you are using a custom module to hold the converted content. Follow the [Module Maker instructions](https://foundryvtt.com/article/module-maker/) on the Foundry site for information on this general process.
-
-For this conversion I have created three compendiums within a newly created module. One will contain the classes, subclasses, and class features, a second will contain the equipment, and a third for the spells:
-
-![](https://github.com/koboldpress/black-flag-tools/blob/main/assets/instructions/compendium-setup.jpg?raw=true)
-
-You will also need to have a DnD5e world and a Black Flag world set up with the "Black Flag Roleplaying Conversion Tools" module enabled in both.
-
-### 2. Export from DnD5e
-
-Next you will want to head into the DnD5e world to export and convert the content. In the Compendium Packs sidebar locate the compendiums you wish to export, in this case "Classes (SRD)", "Subclasses (SRD)", "Class & Subclass Features (SRD)", "Items (SRD)", and "Spells (SRD)". Right click on each of these packs and select "Export for Black Flag":
-
-![](https://github.com/koboldpress/black-flag-tools/blob/main/assets/instructions/sidebar-export-for-black-flag.jpg?raw=true)
-
-This will convert the contents of the compendium to Black Flag data and download a `.json` file for each pack. For larger compendiums such as the "Items (SRD)" pack this may take some time, so be patient for it to complete. Once you have repeated this process for all of the packs, you should find several `.json` files in your computer's downloads folder:
-
-![](https://github.com/koboldpress/black-flag-tools/blob/main/assets/instructions/exported-json.jpg?raw=true?raw=true)
-
-### 3. Import into Black Flag
-
-Now head over to the Black Flag world to import the content. In the Compendium Packs sidebar locate the compendium you wish to begin with, in this case the "D&D SRD Classes" compendium created in the custom module. Right click on that compendium and select "Import from DnD5e":
-
-![](https://github.com/koboldpress/black-flag-tools/blob/main/assets/instructions/sidebar-import-from-dnd5e.jpg?raw=true)
-
-This will bring up a file selection window. Use this window to select the first of the `.json` files from your downloads folder that you wish to import into this compendium:
-
-![](https://github.com/koboldpress/black-flag-tools/blob/main/assets/instructions/file-selection-dialog.jpg?raw=true)
-
-Once you hit "Import", a new dialog will pop up with a summary of how many documents were found, an import button, and potentially some additional options:
-
-![](https://github.com/koboldpress/black-flag-tools/blob/main/assets/instructions/importer-classes.jpg?raw=true)
-
-The options under the "Compendium Pack Remapping" header allow automatically changing links from the old compendium packs to new ones. Each of the listings has a name for a specific dnd5e pack, in this case `dnd5e.classfeatures` for the "Class Features (SRD)" compendium, `dnd5e.subclasses` for the "Subclasses (SRD)" compendium, and `dnd5e.rules` for the "Rules (SRD)" compendium.
-
-The drop down on the right includes a list of all packs available in the current world. Selecting a pack here will cause any UUIDs used within the imported items to be replaced with references to the specified pack:
-
-![](https://github.com/koboldpress/black-flag-tools/blob/main/assets/instructions/pack-remapping-dropdown.jpg?raw=true)
-
-Since we have created a single compendium for storing classes, subclasses, and their features, the dropdowns for `dnd5e.classfeatures` and `dnd5e.subclasses` should be changed to point to the new "D&D SRD Classes" compendium:
-
-![](https://github.com/koboldpress/black-flag-tools/blob/main/assets/instructions/pack-remapping-complete.jpg?raw=true)
-
-Once all of these fields have been set, click the "Import Documents" button to complete the process. Again this may take some time to create all the documents, especially for larger compendiums like "Items (SRD)" which contains hundreds of documents to import.
-
-When the importing is complete, repeat the process with all the other `.json` files exported earlier. Each file may have slightly different options for the pack remapping, such as these for the "Class && Subclass Features (SRD)" compendium:
-
-![](https://github.com/koboldpress/black-flag-tools/blob/main/assets/instructions/importer-class-features.jpg?raw=true)
-
-### 4. Enjoy
-
-Now everything should be fully imported over! Note that the importer will try its best, but certain things might need manual adjustment. Its always a good idea to give you newly imported content a review to ensure everything is set up how you like it. If anything seems to have obviously imported incorrectly, feel free to file an issue on the [bug tracker](https://github.com/koboldpress/black-flag-tools/issues).
-
-![](https://github.com/koboldpress/black-flag-tools/blob/main/assets/instructions/imported-content.jpg?raw=true)
+The parsing tool allows importing items from plain text into the Black Flag system. The parser is designed to work with text formatting in the standard Black Flag style. It currently works for spells and magic items. A detailed guide to its use can be found on the [documentation site](https://koboldpress.github.io/black-flag-docs/documentation/parsing-tutorial).
