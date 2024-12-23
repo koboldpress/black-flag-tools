@@ -10,13 +10,14 @@ import "../styles/_module.css";
 import { selectConverter } from "./conversions/_module.mjs";
 import { ParsingApplication } from "./parsing/_module.mjs";
 import { ImportingDialog } from "./importing/_module.mjs";
+import { CONVERTABLE_TYPES } from "./types.mjs";
 import { seedRandom } from "./utils.mjs";
 
 Hooks.once("setup", () => {
 	// Export options for DnD5e
 	if (game.system.id === "dnd5e") {
 		Hooks.on("getCompendiumEntryContext", (application, menuItems) => {
-			if (!["Actor", "Item"].includes(application.metadata.type)) return false;
+			if (!CONVERTABLE_TYPES.has(application.metadata.type)) return false;
 			menuItems.push({
 				name: game.i18n.localize("BFTools.Export"),
 				icon: '<i class="fa-solid fa-file-export"></i>',
@@ -35,7 +36,7 @@ Hooks.once("setup", () => {
 				group: "conversion",
 				condition: ([li]) => {
 					const pack = game.packs.get(li.closest("[data-pack]")?.dataset.pack);
-					return pack && ["Actor", "Item"].includes(pack.metadata.type);
+					return pack && CONVERTABLE_TYPES.has(pack.metadata.type);
 				},
 				callback: ([li]) => {
 					const pack = game.packs.get(li.closest("[data-pack]")?.dataset.pack);
@@ -54,7 +55,7 @@ Hooks.once("setup", () => {
 				group: "conversion",
 				condition: ([li]) => {
 					const pack = game.packs.get(li.closest("[data-pack]")?.dataset.pack);
-					return pack && ["Actor", "Item"].includes(pack.metadata.type);
+					return pack && CONVERTABLE_TYPES.has(pack.metadata.type);
 				},
 				callback: ([li]) => {
 					const pack = game.packs.get(li.closest("[data-pack]")?.dataset.pack);
@@ -79,13 +80,15 @@ Hooks.once("setup", () => {
  * @returns {object} - Converted object data.
  */
 function convertDocument(doc, { download = true } = {}) {
-	if (["character", "vehicle", "group"].includes(doc.type)) {
-		if (download) ui.notifications.warn(`Actors of the type "${doc.type}" are not currently supported.`);
-		return;
-	}
 	const data = doc.toObject();
 	seedRandom(data._id);
-	const Converter = selectConverter(data);
+	let Converter;
+	try {
+		Converter = selectConverter(doc.constructor.metadata.name, data);
+	} catch (err) {
+		if (download) ui.notifications.warn(err.message);
+		return;
+	}
 	const final = Converter.convert(data);
 	final._documentType = doc.constructor.metadata.name;
 	if (download) createDownload(`${data.name.slugify()}-${data._id}`, final);

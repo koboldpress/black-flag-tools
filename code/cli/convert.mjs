@@ -1,6 +1,7 @@
 import { readdir, readFile, writeFile } from "node:fs/promises";
 import Path from "path";
 
+import { determineType } from "../types.mjs";
 import { seedRandom } from "../utils.mjs";
 import { selectConverter } from "../conversions/_module.mjs";
 
@@ -33,7 +34,7 @@ async function handleConversion(paths) {
 		const file = await readFile(path, { encoding: "utf8" });
 		const initial = JSON.parse(file);
 		seedRandom(initial._id);
-		const Converter = selectConverter(initial);
+		const Converter = selectConverter(determineType(initial._key), initial);
 		const final = Converter.convert(initial);
 		const { name } = Path.parse(path);
 		await writeFile(Path.join("_converted/", `${name}.json`), `${JSON.stringify(final, null, 2)}\n`, { mode: 0o664 });

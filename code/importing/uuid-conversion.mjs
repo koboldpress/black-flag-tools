@@ -1,3 +1,5 @@
+import { DOCUMENT_TYPES, typeForCollection } from "../types.mjs";
+
 const UUIDFields = {
 	ActiveEffect: ["source"],
 	Activity: [
@@ -12,12 +14,19 @@ const UUIDFields = {
 	Item: [
 		"system.description.journal", // Class, Subclass, Lineage, Heritage,
 		"system.restriction.items.*" // Feature, Talent
+	],
+	JournalEntry: [],
+	JournalEntryPage: [
+		"system.item", // Class, Subclass
+		"system.spells", // Spell List
+		"system.subclasses" // Class
 	]
 };
 
 const HTMLFields = {
 	ActiveEffect: ["description"],
-	Activity: ["description"]
+	Activity: ["description"],
+	JournalEntryPage: ["text.content", "text.markdown"]
 };
 
 const PACKS = Symbol("packs");
@@ -52,16 +61,12 @@ export default function scanUuids(documents, options = {}) {
 		}
 
 		// Handle embedded documents
-		switch (type) {
-			case "Item":
-				scanUuids(Object.values(data.system?.activities ?? []), { [PACKS]: packs, replacements, type: "Activity" });
-				scanUuids(Object.values(data.system?.advancement ?? []), { [PACKS]: packs, replacements, type: "Advancement" });
-				scanUuids(data.effects ?? [], { [PACKS]: packs, replacements, type: "ActiveEffect" });
-				break;
-			case "Actor":
-				scanUuids(data.effects ?? [], { [PACKS]: packs, replacements, type: "ActiveEffect" });
-				scanUuids(data.items ?? [], { [PACKS]: packs, replacements, type: "Item" });
-				break;
+		if (type === "Item") {
+			scanUuids(Object.values(data.system?.activities ?? []), { [PACKS]: packs, replacements, type: "Activity" });
+			scanUuids(Object.values(data.system?.advancement ?? []), { [PACKS]: packs, replacements, type: "Advancement" });
+		}
+		for (const collection of DOCUMENT_TYPES[type]?.embedded ?? []) {
+			scanUuids(data[collection] ?? [], { [PACKS]: packs, replacements, type: typeForCollection(collection) });
 		}
 	}
 
@@ -75,19 +80,29 @@ function handleDocumentUUIDField(data, path, packs, replacements) {
 		arr?.forEach(d => handleDocumentUUIDField(d, rest.join("*").replace(/^\./, ""), packs, replacements));
 	} else {
 		const property = path ? foundry.utils.getProperty(data, path) : data;
-		const [, match] = property?.match(/^Compendium\.([\w\d\-]+\.[\w\d\-]+)\./) ?? [];
-		if (match) {
-			packs.add(match);
-			if (replacements?.has(match)) {
-				foundry.utils.setProperty(data, path, property.replace(match, replacements.get(match)));
+		const handle = value => {
+			const [, match] = value?.match(/^Compendium\.([\w\d\-]+\.[\w\d\-]+)\./) ?? [];
+			if (match) {
+				packs.add(match);
+				if (replacements?.has(match)) return value.replace(match, replacements.get(match));
 			}
+			return value;
+		};
+		if (foundry.utils.getType(property) === "Array") {
+			foundry.utils.setProperty(
+				data,
+				path,
+				property.map(p => handle(p))
+			);
+		} else {
+			foundry.utils.setProperty(data, path, handle(property));
 		}
 	}
 }
 
 function getHTMLFieldPaths(type, data) {
 	const paths = Array.from(HTMLFields[type] ?? []);
-	if (!["Actor", "Item"].includes(type) || !data.type) return paths;
+	if (!data.type) return paths;
 	let source;
 	if (data.type.includes(".")) {
 		const [moduleId, moduleType] = data.type.split(".");
