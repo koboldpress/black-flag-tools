@@ -7,7 +7,7 @@ export default class MovementConversion extends BaseConversion {
 		["system.attributes.movement", "system.traits.movement", MovementConversion.convertMovement],
 	];
 
-	static convertMovement(initial) {
+	static convertMovement(initial, context) {
 		const final = {
 			base: initial.walk ?? 30,
 			custom: [],

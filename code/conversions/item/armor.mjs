@@ -22,7 +22,7 @@ export default class ArmorConversion extends BaseConversion {
 		["system.type.baseItem", "system.type.base", convertArmorType]
 	];
 
-	static convertMaxModifier(initial, final) {
+	static convertMaxModifier(initial, final, context) {
 		const dex = getProperty(initial, "system.armor.dex");
 		const type = getProperty(final, "system.type.category");
 		const expectedValue = {

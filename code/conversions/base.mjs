@@ -9,30 +9,32 @@ export default class BaseConversion {
 
 	static postSteps = [];
 
-	static convert(initial, final) {
-		if (!final) final = this.convertBase(initial);
+	static convert(initial, final, context = {}) {
+		if (!final) final = this.convertBase(initial, context);
 
 		// Run preSteps
 		for (const step of this.preSteps) {
-			step(initial, final);
+			step(initial, final, context);
 		}
 
 		// Run templates
 		for (const template of this.templates) {
-			template.convert(initial, final);
+			template.convert(initial, final, context);
 		}
 
 		// Copy & convert direct paths
 		for (const [initialKeyPath, finalKeyPath, conversion] of this.paths) {
 			if (initialKeyPath === null || finalKeyPath === null) continue;
 			let value = getProperty(initial, initialKeyPath);
-			if (conversion) value = conversion(value);
-			setProperty(final, finalKeyPath, value);
+			if (value || !context.delta) {
+				if (conversion) value = conversion(value, context);
+				setProperty(final, finalKeyPath, value);
+			}
 		}
 
 		// Run postSteps
 		for (const step of this.postSteps) {
-			step(initial, final);
+			step(initial, final, context);
 		}
 
 		return final;

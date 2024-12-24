@@ -12,7 +12,7 @@ export default class ScaleValueConversion extends BaseActivityConversion {
 
 	static postSteps = [ScaleValueConversion.convertScale];
 
-	static convertScale(initial, final) {
+	static convertScale(initial, final, context) {
 		final.scale = {};
 		for (const [k, i] of Object.entries(getProperty(initial, "configuration.scale") ?? {})) {
 			const f = {};

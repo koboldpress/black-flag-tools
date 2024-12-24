@@ -11,11 +11,11 @@ export default class TraitConversion extends BaseActivityConversion {
 		["configuration.choices", "configuration.choices", TraitConversion.convertChoices]
 	];
 
-	static convertGrants(initial) {
+	static convertGrants(initial, context) {
 		return initial?.map(i => convertTrait(i));
 	}
 
-	static convertChoices(initial) {
+	static convertChoices(initial, context) {
 		return initial?.map(i => ({
 			count: i.count,
 			pool: i.pool?.map(p => convertTrait(p))

@@ -17,7 +17,7 @@ export default class SundryConversion extends BaseConversion {
 		["system.properties", "system.properties", i => i?.map(p => convertItemProperty(p))]
 	];
 
-	static convertCapacity(initial) {
+	static convertCapacity(initial, context) {
 		switch (initial?.type) {
 			case "items":
 				return { count: initial.value };

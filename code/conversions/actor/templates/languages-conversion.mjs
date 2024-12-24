@@ -7,7 +7,7 @@ export default class LanguagesConversion extends BaseConversion {
 		["system.traits.languages", "system.proficiencies.languages", LanguagesConversion.convertLanguages],
 	];
 
-	static convertLanguages(initial) {
+	static convertLanguages(initial, context) {
 		const final = {
 			values: initial.value?.map(v => convertLanguage(v)) ?? [],
 			communication: {},

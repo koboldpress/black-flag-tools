@@ -19,7 +19,7 @@ export default class ClassConversion extends BaseConversion {
 
 	static postSteps = [ClassConversion.convertHitPoints, ClassConversion.convertPrimaryAbility];
 
-	static convertHitPoints(initial, final) {
+	static convertHitPoints(initial, final, context) {
 		const advancement = {
 			_id: staticID("bfHitPoints"),
 			type: "hitPoints",
@@ -30,7 +30,7 @@ export default class ClassConversion extends BaseConversion {
 		setProperty(final, `system.advancement.${advancement._id}`, advancement);
 	}
 
-	static convertPrimaryAbility(initial, final) {
+	static convertPrimaryAbility(initial, final, context) {
 		if (!initial.primaryAbility?.value?.length) return;
 		const advancement = {
 			_id: staticID("bfKeyAbility"),

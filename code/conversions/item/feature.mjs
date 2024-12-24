@@ -11,7 +11,7 @@ export default class FeatureConversion extends BaseConversion {
 
 	static postSteps = [FeatureConversion.convertRequirements];
 
-	static convertType(initial, final) {
+	static convertType(initial, final, context) {
 		const type = getProperty(initial, "system.type");
 		final.type = type?.value === "feat" ? "talent" : "feature";
 		if (!type) return;
@@ -19,7 +19,7 @@ export default class FeatureConversion extends BaseConversion {
 		setProperty(final, "system.type.value", convertFeatureType(type.subtype));
 	}
 
-	static convertRequirements(initial, final) {
+	static convertRequirements(initial, final, context) {
 		const requirements = getProperty(initial, "system.requirements") ?? "";
 		const match = requirements.match(/(?<class>\w+)\s+(?<level>\d+)/);
 		if (match) {

@@ -11,9 +11,4 @@ export default class SpellsPageConversion extends BaseConversion {
 		["system.type", null],
 		["system.unlinkedSpells", null]
 	];
-
-	static convertGrouping(initial) {
-		if (initial === "level") return "circle";
-		return initial;
-	}
 }

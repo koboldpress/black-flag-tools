@@ -18,7 +18,7 @@ export default class ActivitiesConversion extends BaseConversion {
 		["system.uses.max", "system.uses.max"]
 	];
 
-	static convert(initial, final) {
+	static convert(initial, final, context) {
 		const activities = getProperty(initial, "system.activities") ?? {};
 		for ( const [key, i] of Object.entries(activities) ) {
 			let Converter;
@@ -37,6 +37,6 @@ export default class ActivitiesConversion extends BaseConversion {
 			activities[key] = Converter.convert(i);
 		}
 		setProperty(final, "system.activities", activities);
-		return super.convert(initial, final);
+		return super.convert(initial, final, context);
 	}
 }

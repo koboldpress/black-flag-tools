@@ -9,7 +9,7 @@ export default class SizeConversion extends BaseActivityConversion {
 		["configuration.sizes", "configuration.options", SizeConversion.convertSizes]
 	];
 
-	static convertSizes(initial) {
+	static convertSizes(initial, context) {
 		return initial?.map(i => convertSize(i));
 	}
 }

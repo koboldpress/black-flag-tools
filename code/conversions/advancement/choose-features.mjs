@@ -16,7 +16,7 @@ export default class ChooseFeaturesConversion extends BaseActivityConversion {
 
 	static postSteps = [ChooseFeaturesConversion.convertItemType];
 
-	static convertChoices(initial) {
+	static convertChoices(initial, context) {
 		return Object.entries(initial ?? {}).reduce((obj, [k, i]) => {
 			if (typeof i === "object") i = i.count;
 			obj[k] = i;
@@ -24,7 +24,7 @@ export default class ChooseFeaturesConversion extends BaseActivityConversion {
 		}, {});
 	}
 
-	static convertItemType(initial, final) {
+	static convertItemType(initial, final, context) {
 		setProperty(
 			final,
 			"configuration.type",

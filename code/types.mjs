@@ -18,14 +18,17 @@ export function typeForCollection(collection) {
 }
 
 /**
- * Document types that can currently be converted.
- * @type {Set<string>}
+ * @typedef {object} DocumentTypeData
+ * @property {string} collection
+ * @property {boolean} [convertible]
+ * @property {string[]} [embedded]
+ * @property {string[]} [htmlFields]
+ * @property {string[]} [uuidFields]
  */
-export const CONVERTABLE_TYPES = new Set(["Actor", "Item", "JournalEntry"]);
 
 /**
  * Foundry's built-in types with information needed to build keys.
- * @enum {{ collection: string, [embedded]: string[], [htmlFields]: string[], [uuidFields]: string[] }}
+ * @enum {DocumentTypeData}
  */
 export const DOCUMENT_TYPES = {
 	ActiveEffect: {
@@ -43,6 +46,7 @@ export const DOCUMENT_TYPES = {
 	},
 	Actor: {
 		collection: "actors",
+		convertible: true,
 		embedded: ["effects", "items"]
 	},
 	ActorDelta: {
@@ -85,6 +89,7 @@ export const DOCUMENT_TYPES = {
 	},
 	Item: {
 		collection: "items",
+		convertible: true,
 		embedded: ["effects", "system.activities", "system.advancement"],
 		uuidFields: [
 			"system.description.journal", // Class, Subclass, Lineage, Heritage,
@@ -93,6 +98,7 @@ export const DOCUMENT_TYPES = {
 	},
 	JournalEntry: {
 		collection: "journal",
+		convertible: true,
 		embedded: ["pages"]
 	},
 	JournalEntryPage: {
@@ -133,6 +139,7 @@ export const DOCUMENT_TYPES = {
 	},
 	Scene: {
 		collection: "scenes",
+		convertible: true,
 		embedded: ["drawings", "lights", "notes", "regions", "sounds", "templates", "tiles", "tokens", "walls"]
 	},
 	TableResult: {

@@ -12,7 +12,7 @@ import TraitConversion from "../../advancement/trait.mjs";
 
 export default class AdvancementConversion extends BaseConversion {
 
-	static convert(initial, final) {
+	static convert(initial, final, context) {
 		const advancement = (getProperty(initial, "system.advancement") ?? []).reduce((obj, i) => {
 			const spellData = getProperty(i, "configuration.spell");
 			const hasSpellData = spellData?.ability?.length || spellData?.preparation || spellData?.uses?.max;

@@ -5,7 +5,7 @@ export default class GrantFeaturesConversion extends BaseActivityConversion {
 
 	static paths = [["configuration.items", "configuration.pool", GrantFeaturesConversion.convertPool]];
 
-	static convertPool(initial) {
+	static convertPool(initial, context) {
 		return initial?.map(i => (typeof i === "string" ? { uuid: i } : i));
 	}
 }

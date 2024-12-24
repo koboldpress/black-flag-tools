@@ -29,7 +29,7 @@ export default class ACConversion extends BaseConversion {
 		}
 	};
 
-	static convertAC(initial) {
+	static convertAC(initial, context) {
 		const final = {};
 
 		// If flat AC is set, set override

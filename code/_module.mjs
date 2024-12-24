@@ -10,14 +10,14 @@ import "../styles/_module.css";
 import { selectConverter } from "./conversions/_module.mjs";
 import { ParsingApplication } from "./parsing/_module.mjs";
 import { ImportingDialog } from "./importing/_module.mjs";
-import { CONVERTABLE_TYPES } from "./types.mjs";
+import { DOCUMENT_TYPES } from "./types.mjs";
 import { seedRandom } from "./utils.mjs";
 
 Hooks.once("setup", () => {
 	// Export options for DnD5e
 	if (game.system.id === "dnd5e") {
 		Hooks.on("getCompendiumEntryContext", (application, menuItems) => {
-			if (!CONVERTABLE_TYPES.has(application.metadata.type)) return false;
+			if (!DOCUMENT_TYPES[application.metadata.type]?.convertible) return false;
 			menuItems.push({
 				name: game.i18n.localize("BFTools.Export"),
 				icon: '<i class="fa-solid fa-file-export"></i>',
@@ -36,7 +36,7 @@ Hooks.once("setup", () => {
 				group: "conversion",
 				condition: ([li]) => {
 					const pack = game.packs.get(li.closest("[data-pack]")?.dataset.pack);
-					return pack && CONVERTABLE_TYPES.has(pack.metadata.type);
+					return pack && DOCUMENT_TYPES[pack.metadata.type]?.convertible;
 				},
 				callback: ([li]) => {
 					const pack = game.packs.get(li.closest("[data-pack]")?.dataset.pack);
@@ -55,7 +55,7 @@ Hooks.once("setup", () => {
 				group: "conversion",
 				condition: ([li]) => {
 					const pack = game.packs.get(li.closest("[data-pack]")?.dataset.pack);
-					return pack && CONVERTABLE_TYPES.has(pack.metadata.type);
+					return pack && DOCUMENT_TYPES[pack.metadata.type]?.convertible;
 				},
 				callback: ([li]) => {
 					const pack = game.packs.get(li.closest("[data-pack]")?.dataset.pack);
@@ -77,9 +77,10 @@ Hooks.once("setup", () => {
  * @param {Document} docs - Document to convert.
  * @param {object} [options={}]
  * @param {boolean} [options.download=true] - Should a JSON be downloaded?
+ * @param {Compendium} [options.pack] - Compendium pack containing the document.
  * @returns {object} - Converted object data.
  */
-function convertDocument(doc, { download = true } = {}) {
+function convertDocument(doc, { download = true, pack } = {}) {
 	const data = doc.toObject();
 	seedRandom(data._id);
 	let Converter;
@@ -89,7 +90,7 @@ function convertDocument(doc, { download = true } = {}) {
 		if (download) ui.notifications.warn(err.message);
 		return;
 	}
-	const final = Converter.convert(data);
+	const final = Converter.convert(data, null, { context: "game", pack, rootDocument: data });
 	final._documentType = doc.constructor.metadata.name;
 	if (download) createDownload(`${data.name.slugify()}-${data._id}`, final);
 	return final;
@@ -107,7 +108,7 @@ function convertDocument(doc, { download = true } = {}) {
  */
 async function convertCompendium(pack, { download = true, folders = true } = {}) {
 	const docs = await pack.getDocuments();
-	let final = docs.map(doc => convertDocument(doc, { download: false }));
+	let final = docs.map(doc => convertDocument(doc, { download: false, pack }));
 	if (folders)
 		final = final.concat(
 			pack.folders.map(f => {

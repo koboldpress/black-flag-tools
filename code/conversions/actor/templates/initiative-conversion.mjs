@@ -12,9 +12,11 @@ export default class InitiativeConversion extends BaseConversion {
 		InitiativeConversion.convertInitiativeModifiers
 	];
 
-	static convertInitiativeModifiers(initial, final) {
+	static convertInitiativeModifiers(initial, final, context) {
 		const init = getProperty(initial, "system.attributes.init");
 		const modifiers = getProperty(final, "system.modifiers") ?? [];
+
+		if ( !init && context.delta ) return;
 
 		if ( init.bonus && init.bonus !== "0" ) modifiers.push({
 			type: "bonus",

@@ -7,7 +7,7 @@ export default class SensesConversion extends BaseConversion {
 		["system.attributes.senses", "system.traits.senses", SensesConversion.convertSenses],
 	];
 
-	static convertSenses(initial) {
+	static convertSenses(initial, context) {
 		const final = {
 			custom: [],
 			tags: [],

@@ -2,6 +2,7 @@ import BaseConversion from "./base.mjs";
 import selectActorConverter from "./actor/_module.mjs";
 import selectItemConverter from "./item/_module.mjs";
 import { default as JournalEntryConversion, selectJournalEntryPageConverter } from "./journal/_module.mjs";
+import SceneConversion from "./scene/_module.mjs";
 
 export function selectConverter(type, data) {
 	switch (type) {
@@ -13,6 +14,8 @@ export function selectConverter(type, data) {
 			return JournalEntryConversion;
 		case "JournalEntryPage":
 			return selectJournalEntryPageConverter(data);
+		case "Scene":
+			return SceneConversion;
 	}
 	return BaseConversion;
 }

@@ -18,7 +18,7 @@ export default class PhysicalConversion extends BaseConversion {
 		PhysicalConversion.convertAttunement
 	];
 
-	static convertAttunement(initial, final) {
+	static convertAttunement(initial, final, context) {
 		let attunement = getProperty(initial, "system.attunement");
 		let attuned = getProperty(initial, "system.attuned");
 		if ( Number.isInteger(attunement) ) {
@@ -32,7 +32,7 @@ export default class PhysicalConversion extends BaseConversion {
 		if ( attuned ) setProperty(final, "flags.black-flag.relationship.attuned", true);
 	}
 
-	static convertWeight(initial) {
+	static convertWeight(initial, context) {
 		if ( (typeof initial) === "object" ) {
 			return { value: initial.value, units: convertWeightUnit(initial.units) };
 		} else {

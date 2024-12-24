@@ -8,7 +8,7 @@ export default class SpellcastingConversion extends BaseConversion {
 		SpellcastingConversion.convertSpellcasting
 	];
 
-	static convertSpellcasting(initial, final) {
+	static convertSpellcasting(initial, final, context) {
 		const spellcasting = initial.system?.spellcasting;
 		if ( !spellcasting || spellcasting.progression === "none" ) return;
 		const advancement = {

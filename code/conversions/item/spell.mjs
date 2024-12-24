@@ -43,7 +43,7 @@ export default class SpellConversion extends BaseConversion {
 
 	static postSteps = [SpellConversion.convertProperties];
 
-	static convertProperties(initial, final) {
+	static convertProperties(initial, final, context) {
 		const properties = getProperty(initial, "system.properties");
 		const components = [];
 		const tags = [];

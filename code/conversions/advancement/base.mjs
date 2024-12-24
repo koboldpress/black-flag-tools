@@ -6,7 +6,7 @@ import { convertDamage } from "../shared/damage.mjs";
 export default class BaseAdvancementConversion extends BaseConversion {
 	static advancementType = "";
 
-	static convertBase(initial) {
+	static convertBase(initial, context) {
 		return {
 			_id: initial._id,
 			type: this.advancementType,

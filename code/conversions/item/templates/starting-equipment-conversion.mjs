@@ -10,7 +10,7 @@ export default class StartingEquipmentConversion extends BaseConversion {
 		StartingEquipmentConversion.convertEquipment
 	];
 
-	static convertEquipment(initial, final) {
+	static convertEquipment(initial, final, context) {
 		const equipment = initial.system.startingEquipment;
 		if ( !equipment?.length ) return;
 		const advancement = {

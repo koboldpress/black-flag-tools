@@ -1,7 +1,7 @@
 import BaseConversion from "../base.mjs";
 import NPCConversion from "./npc.mjs";
 
-export default function selectConverter(data) {
+export default function selectActorConverter(data) {
 	switch (data.type) {
 		case "npc":
 			return NPCConversion;

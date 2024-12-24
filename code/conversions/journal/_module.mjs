@@ -6,8 +6,6 @@ import SpellsPageConversion from "./spells-page.mjs";
 import SubclassPageConversion from "./subclass-page.mjs";
 
 export default class JournalEntryConversion extends BaseConversion {
-	static advancementType = "";
-
 	static convertBase(initial) {
 		const final = super.convertBase(initial);
 

@@ -9,7 +9,7 @@ export default class ChooseSpellsConversion extends ChooseFeaturesConversion {
 		["configuration.restriction.level", "configuration.restriction.circle", ChooseSpellsConversion.convertCircle]
 	];
 
-	static convertCircle(initial) {
+	static convertCircle(initial, context) {
 		if (initial === "available") return -1;
 		return Number.parseInt(initial);
 	}

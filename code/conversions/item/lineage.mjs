@@ -21,7 +21,7 @@ export default class LineageConversion extends BaseConversion {
 		setProperty(final, `system.advancement.${advancement._id}`, advancement);
 	}
 
-	static convertMovement(initial, final) {
+	static convertMovement(initial, final, context) {
 		const movement = getProperty(initial, "system.movement") ?? {};
 		const changes = [];
 		if (movement.walk) changes.push({ key: "system.traits.movement.base", mode: 5, value: `${movement.walk}` });
@@ -32,7 +32,7 @@ export default class LineageConversion extends BaseConversion {
 		if (changes.length) LineageConversion.addAdvancement("Movement", changes, final);
 	}
 
-	static convertSenses(initial, final) {
+	static convertSenses(initial, final, context) {
 		const senses = getProperty(initial, "system.senses") ?? {};
 		const changes = [];
 		for (const t of ["darkvision", "blindsight", "tremorsense", "truesight"]) {
@@ -46,7 +46,7 @@ export default class LineageConversion extends BaseConversion {
 		if (changes.length) LineageConversion.addAdvancement("Senses", changes, final);
 	}
 
-	static convertType(initial, final) {
+	static convertType(initial, final, context) {
 		const type = getProperty(initial, "system.type") ?? {};
 		const changes = [];
 		if (type.value) changes.push({ key: "system.traits.type.value", mode: 5, value: type.value });

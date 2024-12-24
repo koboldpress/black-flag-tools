@@ -35,7 +35,7 @@ export default class WeaponConversion extends BaseConversion {
 		["system.type.baseItem", "system.type.base", convertWeapon]
 	];
 
-	static convertDamage(initial, final) {
+	static convertDamage(initial, final, context) {
 		const damage = getProperty(initial, "system.damage.parts") ?? [];
 		if (!damage.length) return;
 		const part = damage[0];

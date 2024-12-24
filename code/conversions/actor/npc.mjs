@@ -46,10 +46,12 @@ export default class NPCConversion extends BaseConversion {
 		return Math.floor(((cr ?? 0) + 7) / 4);
 	}
 
-	static convertAbilities(initial, final) {
+	static convertAbilities(initial, final, context) {
 		const abilities = getProperty(initial, "system.abilities") ?? {};
 		const proficiency = NPCConversion.getProficiency(getProperty(initial, "system.details.cr"));
 		const modifiers = getProperty(final, "system.modifiers") ?? [];
+
+		if (!Object.keys(abilities).length && context.delta) return;
 
 		for (const [key, data] of Object.entries(abilities)) {
 			let mod = Math.floor((data.value - 10) / 2);
@@ -81,21 +83,23 @@ export default class NPCConversion extends BaseConversion {
 		setProperty(final, "system.modifiers", modifiers);
 	}
 
-	static convertBase(initial) {
-		const final = super.convertBase(initial);
+	static convertBase(initial, context) {
+		const final = super.convertBase(initial, context);
 
 		final.items = [];
 		for (const data of initial.items ?? []) {
 			const Converter = selectItemConverter(data);
-			final.items.push(Converter.convert(data));
+			final.items.push(Converter.convert(data, null, { ...context, parentDocument: initial }));
 		}
 
 		return final;
 	}
 
-	static convertBonuses(initial, final) {
+	static convertBonuses(initial, final, context) {
 		const bonuses = getProperty(initial, "system.bonuses") ?? {};
 		const modifiers = getProperty(final, "system.modifiers") ?? [];
+
+		if (!Object.keys(bonuses).length && context.delta) return;
 
 		const attacks = [
 			["mwak", "melee", "weapon"],
@@ -138,7 +142,7 @@ export default class NPCConversion extends BaseConversion {
 		setProperty(final, "system.modifiers", modifiers);
 	}
 
-	static convertCreatureType(initial) {
+	static convertCreatureType(initial, context) {
 		const final = {
 			custom: [],
 			tags: [],
@@ -163,7 +167,7 @@ export default class NPCConversion extends BaseConversion {
 		return final;
 	}
 
-	static convertSkills(initial, final) {
+	static convertSkills(initial, final, context) {
 		const proficiency = NPCConversion.getProficiency(getProperty(initial, "system.details.cr"));
 		const skills = [
 			["prc", "perception", "wisdom"],
@@ -172,8 +176,8 @@ export default class NPCConversion extends BaseConversion {
 		for (const [short, long, ability] of skills) {
 			const data = getProperty(initial, `system.skills.${short}`) ?? {};
 			const mod = getProperty(final, `system.abilities.${ability}.mod`) ?? 0;
-			if (data.value === 0) continue;
-			const score = 10 + Math.floor(proficiency * data.value) + mod;
+			if (!data?.value) continue;
+			const score = 10 + Math.floor(proficiency * data?.value) + mod;
 			setProperty(final, `system.attributes.${long}`, score);
 		}
 	}
