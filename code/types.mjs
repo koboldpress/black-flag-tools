@@ -25,11 +25,21 @@ export const CONVERTABLE_TYPES = new Set(["Actor", "Item", "JournalEntry"]);
 
 /**
  * Foundry's built-in types with information needed to build keys.
- * @enum {{ collection: string, embedded: [string[]] }}
+ * @enum {{ collection: string, [embedded]: string[], [htmlFields]: string[], [uuidFields]: string[] }}
  */
 export const DOCUMENT_TYPES = {
 	ActiveEffect: {
-		collection: "effects"
+		collection: "effects",
+		htmlFields: ["description"],
+		uuidFields: ["source"]
+	},
+	Activity: {
+		collection: "system.activities",
+		htmlFields: ["description"],
+		uuidFields: [
+			"system.spell.uuid", // CastData
+			"system.profiles.*.uuid" // SummonData
+		]
 	},
 	Actor: {
 		collection: "actors",
@@ -38,6 +48,13 @@ export const DOCUMENT_TYPES = {
 	ActorDelta: {
 		collection: "delta",
 		embedded: ["effects", "items"]
+	},
+	Advancement: {
+		collection: "system.advancement",
+		uuidFields: [
+			"configuration.pool.*.key", // Equipment
+			"configuration.pool.*.uuid" // ChooseFeatures, GrantFeatures, ChooseSpells, GrantSpells
+		]
 	},
 	Adventure: {
 		collection: "adventures",
@@ -68,14 +85,24 @@ export const DOCUMENT_TYPES = {
 	},
 	Item: {
 		collection: "items",
-		embedded: ["effects"]
+		embedded: ["effects", "system.activities", "system.advancement"],
+		uuidFields: [
+			"system.description.journal", // Class, Subclass, Lineage, Heritage,
+			"system.restriction.items.*" // Feature, Talent
+		]
 	},
 	JournalEntry: {
 		collection: "journal",
 		embedded: ["pages"]
 	},
 	JournalEntryPage: {
-		collection: "pages"
+		collection: "pages",
+		htmlFields: ["description"],
+		uuidFields: [
+			"system.item", // Class, Subclass
+			"system.spells", // Spell List
+			"system.subclasses" // Class
+		]
 	},
 	Macro: {
 		collection: "macros"

@@ -1,34 +1,5 @@
 import { DOCUMENT_TYPES, typeForCollection } from "../types.mjs";
 
-const UUIDFields = {
-	ActiveEffect: ["source"],
-	Activity: [
-		"system.spell.uuid", // CastData
-		"system.profiles.*.uuid" // SummonData
-	],
-	Actor: [],
-	Advancement: [
-		"configuration.pool.*.key", // Equipment
-		"configuration.pool.*.uuid" // ChooseFeatures, GrantFeatures, ChooseSpells, GrantSpells
-	],
-	Item: [
-		"system.description.journal", // Class, Subclass, Lineage, Heritage,
-		"system.restriction.items.*" // Feature, Talent
-	],
-	JournalEntry: [],
-	JournalEntryPage: [
-		"system.item", // Class, Subclass
-		"system.spells", // Spell List
-		"system.subclasses" // Class
-	]
-};
-
-const HTMLFields = {
-	ActiveEffect: ["description"],
-	Activity: ["description"],
-	JournalEntryPage: ["text.content", "text.markdown"]
-};
-
 const PACKS = Symbol("packs");
 
 /**
@@ -46,7 +17,7 @@ export default function scanUuids(documents, options = {}) {
 
 	for (const data of documents) {
 		// Handle DocumentUUIDFields
-		for (const path of UUIDFields[type] ?? []) {
+		for (const path of DOCUMENT_TYPES[type]?.uuidFields ?? []) {
 			handleDocumentUUIDField(data, path, packs, replacements);
 		}
 
@@ -61,12 +32,10 @@ export default function scanUuids(documents, options = {}) {
 		}
 
 		// Handle embedded documents
-		if (type === "Item") {
-			scanUuids(Object.values(data.system?.activities ?? []), { [PACKS]: packs, replacements, type: "Activity" });
-			scanUuids(Object.values(data.system?.advancement ?? []), { [PACKS]: packs, replacements, type: "Advancement" });
-		}
 		for (const collection of DOCUMENT_TYPES[type]?.embedded ?? []) {
-			scanUuids(data[collection] ?? [], { [PACKS]: packs, replacements, type: typeForCollection(collection) });
+			let d = foundry.utils.getProperty(data, collection);
+			if (foundry.utils.getType(d) === "Object") d = Object.values(d);
+			if (d) scanUuids(d, { [PACKS]: packs, replacements, type: typeForCollection(collection) });
 		}
 	}
 
@@ -101,7 +70,7 @@ function handleDocumentUUIDField(data, path, packs, replacements) {
 }
 
 function getHTMLFieldPaths(type, data) {
-	const paths = Array.from(HTMLFields[type] ?? []);
+	const paths = Array.from(DOCUMENT_TYPES[type]?.htmlFields ?? []);
 	if (!data.type) return paths;
 	let source;
 	if (data.type.includes(".")) {
