@@ -16,6 +16,8 @@ export default function scanUuids(documents, options = {}) {
 	const type = options.type ?? documents[0]?._documentType ?? "Item";
 
 	for (const data of documents) {
+		if (foundry.utils.getType(data) !== "Object") continue;
+
 		// Handle DocumentUUIDFields
 		for (const path of DOCUMENT_TYPES[type]?.uuidFields ?? []) {
 			handleDocumentUUIDField(data, path, packs, replacements);

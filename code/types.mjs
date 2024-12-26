@@ -62,6 +62,7 @@ export const DOCUMENT_TYPES = {
 	},
 	Adventure: {
 		collection: "adventures",
+		convertible: true,
 		embedded: ["actors", "combats", "items", "journal", "scenes", "tables", "macros", "cards", "playlists", "folders"]
 	},
 	AmbientLight: {

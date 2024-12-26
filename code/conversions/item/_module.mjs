@@ -16,7 +16,7 @@ import SundryConversion from "./sundry.mjs";
 import ToolConversion from "./tool.mjs";
 import WeaponConversion from "./weapon.mjs";
 
-export default function selectConverter(data) {
+export default function selectItemConverter(data) {
 	switch (data.type) {
 		case "background":
 			return BackgroundConversion;
