@@ -30,7 +30,7 @@ export default class AdvancementConversion extends BaseConversion {
 				case "Trait": Converter = TraitConversion; break;
 			}
 			if ( Converter ) {
-				const f = Converter.convert(i);
+				const f = Converter.convert(i, null, { ...context, parentDocument: initial, type: "Advancement" });
 				obj[f._id] = f;
 			}
 			return obj;

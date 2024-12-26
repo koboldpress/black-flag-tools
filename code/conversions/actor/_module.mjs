@@ -1,4 +1,5 @@
 import BaseConversion from "../base.mjs";
+import ConversionError from "../error.mjs";
 import NPCConversion from "./npc.mjs";
 
 export default function selectActorConverter(data) {
@@ -6,6 +7,6 @@ export default function selectActorConverter(data) {
 		case "npc":
 			return NPCConversion;
 		default:
-			throw new Error(`Actors of the type "${data.type}" are not currently supported.`);
+			throw new ConversionError(`Actors of the type "${data.type}" are not currently supported.`);
 	}
 }

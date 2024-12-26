@@ -49,8 +49,9 @@ async function handleConversion(paths) {
 		}
 
 		seedRandom(initial._id);
-		const Converter = selectConverter(determineType(initial._key), initial);
-		const final = Converter.convert(initial, null, { context: "cli", path, rootDocument: initial });
+		const type = determineType(initial._key);
+		const Converter = selectConverter(type, initial);
+		const final = Converter.convert(initial, null, { context: "cli", path, rootDocument: initial, type });
 		const { name } = Path.parse(path);
 		await writeFile(Path.join("_converted/", `${name}.json`), `${JSON.stringify(final, null, 2)}\n`, { mode: 0o664 });
 

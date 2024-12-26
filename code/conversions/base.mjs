@@ -1,4 +1,5 @@
-import { getProperty, setProperty } from "../utils.mjs";
+import { getProperty, setProperty, TOOLS } from "../utils.mjs";
+import ConversionError from "./error.mjs";
 
 export default class BaseConversion {
 	static preSteps = [];
@@ -40,12 +41,31 @@ export default class BaseConversion {
 		return final;
 	}
 
-	static convertBase(initial) {
-		const ignore = ["items", "system", "_stats"];
+	static convertBase(initial, context) {
+		const ignore = ["system", "_stats"];
 		const final = {};
+		const config = TOOLS.DOCUMENT_TYPES[context?.type];
 		for (const prop of Object.getOwnPropertyNames(initial)) {
 			if (ignore.includes(prop)) continue;
-			final[prop] = initial[prop];
+			if (config?.embedded?.includes(prop)) {
+				final[prop] = [];
+				const type = TOOLS.typeForCollection(prop);
+				if (!initial[prop]?.[Symbol.iterator]) {
+					final[prop] = initial[prop];
+					continue;
+				}
+				for (const data of initial[prop] ?? []) {
+					try {
+						const Converter = TOOLS.DOCUMENT_TYPES[type]?.selectConverter?.(data) ?? BaseConversion;
+						final[prop].push(Converter.convert(data, null, { ...context, parentDocument: initial, type }));
+					} catch (err) {
+						if (err instanceof ConversionError) console.warn(err.message);
+						else throw err;
+					}
+				}
+			} else {
+				final[prop] = initial[prop];
+			}
 		}
 		return final;
 	}

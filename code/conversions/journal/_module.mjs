@@ -5,19 +5,7 @@ import RulePageConversion from "./rule-page.mjs";
 import SpellsPageConversion from "./spells-page.mjs";
 import SubclassPageConversion from "./subclass-page.mjs";
 
-export default class JournalEntryConversion extends BaseConversion {
-	static convertBase(initial) {
-		const final = super.convertBase(initial);
-
-		final.pages = [];
-		for (const data of initial.pages ?? []) {
-			const Converter = selectJournalEntryPageConverter(data);
-			final.pages.push(Converter.convert(data));
-		}
-
-		return final;
-	}
-}
+export default class JournalEntryConversion extends BaseConversion {}
 
 export function selectJournalEntryPageConverter(data) {
 	switch (data.type) {

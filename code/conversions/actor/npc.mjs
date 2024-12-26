@@ -83,18 +83,6 @@ export default class NPCConversion extends BaseConversion {
 		setProperty(final, "system.modifiers", modifiers);
 	}
 
-	static convertBase(initial, context) {
-		const final = super.convertBase(initial, context);
-
-		final.items = [];
-		for (const data of initial.items ?? []) {
-			const Converter = selectItemConverter(data);
-			final.items.push(Converter.convert(data, null, { ...context, parentDocument: initial }));
-		}
-
-		return final;
-	}
-
 	static convertBonuses(initial, final, context) {
 		const bonuses = getProperty(initial, "system.bonuses") ?? {};
 		const modifiers = getProperty(final, "system.modifiers") ?? [];

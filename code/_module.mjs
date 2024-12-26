@@ -10,14 +10,16 @@ import "../styles/_module.css";
 import { selectConverter } from "./conversions/_module.mjs";
 import { ParsingApplication } from "./parsing/_module.mjs";
 import { ImportingDialog } from "./importing/_module.mjs";
-import { DOCUMENT_TYPES } from "./types.mjs";
-import { seedRandom } from "./utils.mjs";
+import * as types from "./types.mjs";
+import { seedRandom, TOOLS } from "./utils.mjs";
+
+Object.assign(TOOLS, types);
 
 Hooks.once("setup", () => {
 	// Export options for DnD5e
 	if (game.system.id === "dnd5e") {
 		Hooks.on("getCompendiumEntryContext", (application, menuItems) => {
-			if (!DOCUMENT_TYPES[application.metadata.type]?.convertible) return false;
+			if (!types.DOCUMENT_TYPES[application.metadata.type]?.convertible) return false;
 			menuItems.push({
 				name: game.i18n.localize("BFTools.Export"),
 				icon: '<i class="fa-solid fa-file-export"></i>',
@@ -36,7 +38,7 @@ Hooks.once("setup", () => {
 				group: "conversion",
 				condition: ([li]) => {
 					const pack = game.packs.get(li.closest("[data-pack]")?.dataset.pack);
-					return pack && DOCUMENT_TYPES[pack.metadata.type]?.convertible;
+					return pack && types.DOCUMENT_TYPES[pack.metadata.type]?.convertible;
 				},
 				callback: ([li]) => {
 					const pack = game.packs.get(li.closest("[data-pack]")?.dataset.pack);
@@ -55,7 +57,7 @@ Hooks.once("setup", () => {
 				group: "conversion",
 				condition: ([li]) => {
 					const pack = game.packs.get(li.closest("[data-pack]")?.dataset.pack);
-					return pack && DOCUMENT_TYPES[pack.metadata.type]?.convertible;
+					return pack && types.DOCUMENT_TYPES[pack.metadata.type]?.convertible;
 				},
 				callback: ([li]) => {
 					const pack = game.packs.get(li.closest("[data-pack]")?.dataset.pack);
@@ -90,7 +92,12 @@ function convertDocument(doc, { download = true, pack } = {}) {
 		if (download) ui.notifications.warn(err.message);
 		return;
 	}
-	const final = Converter.convert(data, null, { context: "game", pack, rootDocument: data });
+	const final = Converter.convert(data, null, {
+		context: "game",
+		pack,
+		rootDocument: data,
+		type: doc.constructor.metadata.name
+	});
 	final._documentType = doc.constructor.metadata.name;
 	if (download) createDownload(`${data.name.slugify()}-${data._id}`, final);
 	return final;

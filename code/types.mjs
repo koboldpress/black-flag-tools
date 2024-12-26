@@ -1,3 +1,9 @@
+import selectActorConverter from "./conversions/actor/_module.mjs";
+import AdventureConversion from "./conversions/adventure/_module.mjs";
+import selectItemConverter from "./conversions/item/_module.mjs";
+import { default as JournalEntryConversion, selectJournalEntryPageConverter } from "./conversions/journal/_module.mjs";
+import SceneConversion from "./conversions/scene/_module.mjs";
+
 /**
  * Determine the type for the provided `_key`.
  * @param {string} key
@@ -47,10 +53,10 @@ export const DOCUMENT_TYPES = {
 	Actor: {
 		collection: "actors",
 		convertible: true,
-		embedded: ["effects", "items"]
+		embedded: ["effects", "items"],
+		selectConverter: selectActorConverter
 	},
 	ActorDelta: {
-		collection: "delta",
 		embedded: ["effects", "items"]
 	},
 	Advancement: {
@@ -63,7 +69,8 @@ export const DOCUMENT_TYPES = {
 	Adventure: {
 		collection: "adventures",
 		convertible: true,
-		embedded: ["actors", "combats", "items", "journal", "scenes", "tables", "macros", "cards", "playlists", "folders"]
+		embedded: ["actors", "combats", "items", "journal", "scenes", "tables", "macros", "cards", "playlists", "folders"],
+		selectConverter: () => AdventureConversion
 	},
 	AmbientLight: {
 		collection: "lights"
@@ -92,6 +99,7 @@ export const DOCUMENT_TYPES = {
 		collection: "items",
 		convertible: true,
 		embedded: ["effects", "system.activities", "system.advancement"],
+		selectConverter: selectItemConverter,
 		uuidFields: [
 			"system.description.journal", // Class, Subclass, Lineage, Heritage,
 			"system.restriction.items.*" // Feature, Talent
@@ -100,11 +108,13 @@ export const DOCUMENT_TYPES = {
 	JournalEntry: {
 		collection: "journal",
 		convertible: true,
-		embedded: ["pages"]
+		embedded: ["pages"],
+		selectConverter: () => JournalEntryConversion
 	},
 	JournalEntryPage: {
 		collection: "pages",
 		htmlFields: ["description"],
+		selectConverter: selectJournalEntryPageConverter,
 		uuidFields: [
 			"system.item", // Class, Subclass
 			"system.spells", // Spell List
@@ -141,7 +151,8 @@ export const DOCUMENT_TYPES = {
 	Scene: {
 		collection: "scenes",
 		convertible: true,
-		embedded: ["drawings", "lights", "notes", "regions", "sounds", "templates", "tiles", "tokens", "walls"]
+		embedded: ["drawings", "lights", "notes", "regions", "sounds", "templates", "tiles", "tokens", "walls"],
+		selectConverter: () => SceneConversion
 	},
 	TableResult: {
 		collection: "results"

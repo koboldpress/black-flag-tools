@@ -1,5 +1,7 @@
 import MersenneTwister from "./mersenne.mjs";
 
+export const TOOLS = {};
+
 export const generator = new MersenneTwister();
 
 export function getProperty(object, keyPath) {
