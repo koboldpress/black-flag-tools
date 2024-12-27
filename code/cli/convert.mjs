@@ -4,6 +4,7 @@ import Path from "path";
 import { determineType } from "../types.mjs";
 import { seedRandom } from "../utils.mjs";
 import { selectConverter } from "../conversions/_module.mjs";
+import ConversionError from "../conversions/error.mjs";
 
 export default function convertCommand() {
 	return {
@@ -50,8 +51,15 @@ async function handleConversion(paths) {
 
 		seedRandom(initial._id);
 		const type = determineType(initial._key);
-		const Converter = selectConverter(type, initial);
-		const final = Converter.convert(initial, null, { context: "cli", path, rootDocument: initial, type });
+		let final;
+		try {
+			const Converter = selectConverter(type, initial);
+			final = Converter.convert(initial, null, { context: "cli", path, rootDocument: initial, type });
+		} catch (err) {
+			if (err instanceof ConversionError) console.warn("\x1b[31m%s\x1b[0m", `✘ ${path} - ${err.message}`);
+			else throw err;
+			continue;
+		}
 		const { name } = Path.parse(path);
 		await writeFile(Path.join("_converted/", `${name}.json`), `${JSON.stringify(final, null, 2)}\n`, { mode: 0o664 });
 

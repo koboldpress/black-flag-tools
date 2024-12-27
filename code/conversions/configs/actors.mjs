@@ -12,3 +12,7 @@ export function convertSize(initial) {
 		}[initial] ?? initial
 	);
 }
+
+export function convertVehicleType(initial) {
+	return {}[initial] ?? initial;
+}

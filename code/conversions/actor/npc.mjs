@@ -4,23 +4,28 @@ import { convertAbility } from "../configs/abilities.mjs";
 import { convertCreatureType, convertSize } from "../configs/actors.mjs";
 import selectItemConverter from "../item/_module.mjs";
 import ACConversion from "./templates/ac-conversion.mjs";
+import HPConversion from "./templates/hp-conversion.mjs";
 import InitiativeConversion from "./templates/initiative-conversion.mjs";
 import LanguagesConversion from "./templates/languages-conversion.mjs";
+import ResistancesConversion from "./templates/resistances-conversion.mjs";
+import SourceConversion from "./templates/source-conversion.mjs";
 import TraitsConversion from "./templates/traits-conversion.mjs";
 
 export default class NPCConversion extends BaseConversion {
 	static preSteps = [NPCConversion.convertAbilities];
 
-	static templates = [ACConversion, InitiativeConversion, LanguagesConversion, TraitsConversion];
+	static templates = [
+		ACConversion,
+		HPConversion,
+		InitiativeConversion,
+		LanguagesConversion,
+		ResistancesConversion,
+		SourceConversion,
+		TraitsConversion
+	];
 
 	static paths = [
 		["system.attributes.exhaustion", "system.attributes.exhaustion"],
-		["system.attributes.hd.spent", null],
-		["system.attributes.hp.formula", null],
-		["system.attributes.hp.max", "system.attributes.hp.max"],
-		["system.attributes.hp.temp", "system.attributes.hp.temp"],
-		["system.attributes.hp.tempmax", "system.attributes.hp.tempmax"],
-		["system.attributes.hp.value", "system.attributes.hp.value"],
 		["system.attributes.death.success", null],
 		["system.attributes.death.failure", null],
 		["system.attributes.spellcasting", "system.spellcasting.ability", convertAbility],
@@ -34,10 +39,7 @@ export default class NPCConversion extends BaseConversion {
 		["system.resources.legres.max", null],
 		["system.resources.legres.value", null],
 		["system.resources.lair.initiative", null],
-		["system.resources.lair.value", null],
-		["system.source.book", "system.biography.source.book"],
-		["system.source.custom", "system.biography.source.fallback"],
-		["system.source.page", "system.biography.source.page"]
+		["system.resources.lair.value", null]
 	];
 
 	static postSteps = [NPCConversion.convertBonuses, NPCConversion.convertSkills];
