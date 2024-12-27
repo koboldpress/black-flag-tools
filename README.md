@@ -28,7 +28,7 @@ The conversion tools are designed to turn content compatible with the DnD5e syst
 
 There are a few things that conversion currently does not cover:
 1. **PCs**: Due to the large differences in how PCs are handled between the two systems, they cannot be converted. Instead convert the individual classes, spells, and equipment you wish to use with your PC and then re-create it within Black Flag.
-2. **Adventures**: The conversion system currently cannot handle adventure documents. Hopefully this will be possible in the future.
+2. **Groups**: Since Black Flag doesn't support group actors at the moment, these are not converted. This may cause problems with any adventures that come with group actors built-in and may prevent scenes containing group actors from importing properly.
 3. **Active Effects**: No attempt is made to convert active effect keys and values between the two systems. If the content you are converting contains active effects, you will have to manually adjust them to match Black Flag using the references available in the [Active Effects Guide](https://koboldpress.github.io/black-flag-docs/documentation/active-effects).
 
 ### In-game Conversion
