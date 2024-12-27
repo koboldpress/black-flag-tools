@@ -161,8 +161,7 @@ export const DOCUMENT_TYPES = {
 		collection: "tiles"
 	},
 	Token: {
-		collection: "tokens",
-		embedded: ["delta"]
+		collection: "tokens"
 	},
 	Wall: {
 		collection: "walls"
