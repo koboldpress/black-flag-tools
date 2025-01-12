@@ -42,7 +42,7 @@ export default class BaseConversion {
 	}
 
 	static convertBase(initial, context) {
-		const ignore = ["system", "_stats"];
+		const ignore = ["label", "icon", "system", "_stats"];
 		const final = {};
 		const config = TOOLS.DOCUMENT_TYPES[context?.type];
 		for (const prop of Object.getOwnPropertyNames(initial)) {

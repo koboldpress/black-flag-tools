@@ -20,7 +20,7 @@ export function convertDamage(initial) {
 		final.type = convertDamageType(initial.types[0]);
 	} else if (initial.types?.length > 1) {
 		final.type = "variable";
-		final.additionalTypes = final.types.map(convertDamageType(initial.types));
+		final.additionalTypes = initial.types.map(t => convertDamageType(t));
 	}
 
 	return final;
