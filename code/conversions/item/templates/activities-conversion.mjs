@@ -36,7 +36,6 @@ export default class ActivitiesConversion extends BaseConversion {
 				case "utility":
 				default: Converter = UtilityActivityConversion; break;
 			}
-			console.log(i.type, Converter);
 			activities[key] = Converter.convert(i, null, { ...context, parentDocument: initial, type: "Activity" });
 		}
 		setProperty(final, "system.activities", activities);
