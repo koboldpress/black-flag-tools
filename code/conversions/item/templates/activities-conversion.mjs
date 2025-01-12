@@ -4,6 +4,7 @@ import AttackActivityConversion from "../../activity/attack.mjs";
 import CastActivityConversion from "../../activity/cast.mjs";
 import CheckActivityConversion from "../../activity/check.mjs";
 import DamageActivityConversion from "../../activity/damage.mjs";
+import ForwardActivityConversion from "../../activity/forward.mjs";
 import HealActivityConversion from "../../activity/heal.mjs";
 import SaveActivityConversion from "../../activity/save.mjs";
 import SummonActivityConversion from "../../activity/summon.mjs";
@@ -28,12 +29,14 @@ export default class ActivitiesConversion extends BaseConversion {
 				case "check": Converter = CheckActivityConversion; break;
 				case "damage": Converter = DamageActivityConversion; break;
 				// case "enchant": Converter = EnchantActivityConversion; break;
+				case "forward": Converter = ForwardActivityConversion; break;
 				case "heal": Converter = HealActivityConversion; break;
 				case "save": Converter = SaveActivityConversion; break;
 				case "summon": Converter = SummonActivityConversion; break;
 				case "utility":
 				default: Converter = UtilityActivityConversion; break;
 			}
+			console.log(i.type, Converter);
 			activities[key] = Converter.convert(i, null, { ...context, parentDocument: initial, type: "Activity" });
 		}
 		setProperty(final, "system.activities", activities);
