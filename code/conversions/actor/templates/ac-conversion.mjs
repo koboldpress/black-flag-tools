@@ -47,7 +47,7 @@ export default class ACConversion extends BaseConversion {
 		else if ( initial.calc === "custom" ) {
 			final.formulas = [{
 				label: "Custom",
-				formula: ac.formula
+				formula: initial.formula
 			}];
 		}
 
