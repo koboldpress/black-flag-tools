@@ -1,0 +1,25 @@
+.filepicker {
+	.file:has(> .black-flag-tools-counts) {
+		position: relative;
+	
+		.black-flag-tools-counts {
+			position: absolute;
+			inset-block-end: 0;
+			inset-inline-end: 0;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+	
+			> div {
+				margin: 2px;
+				padding: 2px;
+				background: rgb(0 0 0 / .75);
+				color: white;
+				line-height: 1em;
+			}
+		}
+	}
+	.tiles-list .black-flag-tools-counts {
+		inset-block-start: unset;
+	}
+}

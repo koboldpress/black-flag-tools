@@ -8,6 +8,7 @@
 import "../styles/_module.css";
 
 import { selectConverter } from "./conversions/_module.mjs";
+import setupCounter from "./counter.mjs";
 import { ParsingApplication } from "./parsing/_module.mjs";
 import { ImportingDialog } from "./importing/_module.mjs";
 import * as types from "./types.mjs";
@@ -19,6 +20,15 @@ Object.assign(TOOLS, types);
 
 Hooks.once("init", () => {
 	if (game.system.id === "black-flag") {
+		game.settings.register("black-flag-tools", "image-counter", {
+			name: "BFTools.Setting.ImageCounter.Label",
+			hint: "BFTools.Setting.ImageCounter.Hint",
+			scope: "client",
+			config: true,
+			default: false,
+			type: Boolean,
+			requiresReload: true
+		});
 		game.settings.register("black-flag-tools", "wellKnownIDPrefix", {
 			name: "BFTools.Setting.WellKnownIDPrefix.Label",
 			hint: "BFTools.Setting.WellKnownIDPrefix.Hint",
@@ -112,6 +122,10 @@ Hooks.once("setup", () => {
 		Hooks.on("preCreateRollTable", setWellKnownID);
 		Hooks.on("preCreateScene", setWellKnownID);
 	}
+});
+
+Hooks.once("ready", () => {
+	setupCounter();
 });
 
 /* <><><><> <><><><> <><><><> <><><><> <><><><> <><><><> */

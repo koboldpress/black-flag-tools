@@ -1,5 +1,8 @@
 {
 	"BFTools": {
+		"Counter": {
+			"Tooltip": "Compendium: {pack}, Module: {module}"
+		},
 		"Export": "Export for Black Flag",
 		"Import": {
 			"Action": {
@@ -29,6 +32,10 @@
 			"Title": "Parse Document"
 		},
 		"Setting": {
+			"ImageCounter": {
+				"Hint": "When browsing artwork for items in a module compendium, display a count of how many times each icon has been used in that compendium and across the whole module.",
+				"Label": "Compendium Image Count"
+			},
 			"WellKnownIDPrefix": {
 				"Hint": "Prefix used when creating well-known IDs for newly created actors or items through the standard creation dialog or the parsing system. Should generally by between 2 and 4 characters long. If blank, then the option to create well-known IDs will be hidden.",
 				"Label": "Well Known ID Prefix"
