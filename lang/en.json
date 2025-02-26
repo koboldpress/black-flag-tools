@@ -27,6 +27,16 @@
 			"NoFolder": "No Folder",
 			"Save": "Save",
 			"Title": "Parse Document"
+		},
+		"Setting": {
+			"WellKnownIDPrefix": {
+				"Hint": "Prefix used when creating well-known IDs for newly created actors or items through the standard creation dialog or the parsing system. Should generally by between 2 and 4 characters long. If blank, then the option to create well-known IDs will be hidden.",
+				"Label": "Well Known ID Prefix"
+			},
+			"WellKnownIDTypes": {
+				"Hint": "Document types for which well-known IDs will be created if a prefix is supplied.",
+				"Label": "Well Known ID Types"
+			}
 		}
 	}
 }

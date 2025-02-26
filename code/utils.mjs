@@ -28,10 +28,38 @@ export function setProperty(object, keyPath, value) {
 	target[key] = value;
 }
 
+/* <><><><> <><><><> <><><><> <><><><> <><><><> <><><><> */
+/*                     ID Generation                     */
+/* <><><><> <><><><> <><><><> <><><><> <><><><> <><><><> */
+
+/**
+ * Generate a random ID using the provided prefix from a document name.
+ * @param {string} name
+ * @param {object} [option={}]
+ * @param {string} [options.prefix] - Prefix added before the title.
+ * @param {string} [options.type] - Document type being created.
+ * @returns {string}
+ */
+export function generateID(name, { prefix = "", type = "" } = {}) {
+	const text = name.slugify({ replacement: "", strict: true, lowercase: false });
+	return staticID(`${prefix}${type.slice(0, 2).toUpperCase()}${text}`);
+}
+
+/* <><><><> <><><><> <><><><> <><><><> <><><><> <><><><> */
+
+/**
+ * Generate an ID from the input string that is exactly 16 characters long.
+ * @param {string} id - Initial string that contains only valid ID characters.
+ * @returns {string}
+ */
 export function staticID(id) {
 	if (id.length >= 16) return id.substring(0, 16);
 	return id.padEnd(16, "0");
 }
+
+/* <><><><> <><><><> <><><><> <><><><> <><><><> <><><><> */
+/*                      Randomness                       */
+/* <><><><> <><><><> <><><><> <><><><> <><><><> <><><><> */
 
 const base62Chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
@@ -40,6 +68,8 @@ function getRandomValues(array) {
 		array[i] = generator.random_int();
 	}
 }
+
+/* <><><><> <><><><> <><><><> <><><><> <><><><> <><><><> */
 
 export function seedRandom(id) {
 	const chars = base62Chars.split("");
@@ -52,6 +82,8 @@ export function seedRandom(id) {
 	}
 	generator.init_seed(seed);
 }
+
+/* <><><><> <><><><> <><><><> <><><><> <><><><> <><><><> */
 
 /*
  * Portions of the core package (foundry.utils.randomID) repackaged in accordance with the "Limited License
