@@ -258,9 +258,13 @@ export default class ParsingApplication extends HandlebarsApplicationMixin(Appli
 	 * @param {HTMLElement} html  HTML of the application being rendered.
 	 */
 	static injectSidebarButton(app, html) {
-		if (app.collection.locked || app.metadata.type !== "Item") return;
+		if (!(html instanceof HTMLElement)) html = html[0];
+		const metadata = game.release.generation < 13 ? app.metadata : app.collection.metadata;
+		if (app.collection.locked || metadata.type !== "Item") return;
 		const button = document.createElement("button");
 		button.classList.add("parse");
+		button.dataset.action = "parse";
+		button.type = "button";
 		button.innerHTML = `<i class="fa-solid fa-file-lines" inert></i> ${game.i18n.localize("BFTools.Parser.Title")}`;
 		button.addEventListener("click", event => {
 			const parser = new ParsingApplication({ pack: app.collection });

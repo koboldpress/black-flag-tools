@@ -69,3 +69,7 @@
 		> * { flex: 1 1 33%; }
 	}
 }
+
+.compendium-directory .header-actions .parse {
+	flex-basis: 100%;
+}

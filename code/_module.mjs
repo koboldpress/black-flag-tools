@@ -77,42 +77,56 @@ Hooks.once("setup", () => {
 			});
 		});
 
-		Hooks.on("getCompendiumDirectoryEntryContext", (application, menuItems) => {
+		const setCompendiumEntryContext = (application, menuItems) => {
 			menuItems.push({
 				name: game.i18n.localize("BFTools.Export"),
 				icon: '<i class="fa-solid fa-file-export"></i>',
 				group: "conversion",
-				condition: ([li]) => {
+				condition: li => {
+					if (!(li instanceof HTMLElement)) li = li[0];
 					const pack = game.packs.get(li.closest("[data-pack]")?.dataset.pack);
 					return pack && types.DOCUMENT_TYPES[pack.metadata.type]?.convertible;
 				},
-				callback: ([li]) => {
+				callback: li => {
+					if (!(li instanceof HTMLElement)) li = li[0];
 					const pack = game.packs.get(li.closest("[data-pack]")?.dataset.pack);
 					if (pack) convertCompendium(pack);
 				}
 			});
+		};
+		Hooks.on("getCompendiumDirectoryEntryContext", setCompendiumEntryContext);
+		Hooks.on("getEntryContextApplicationV2", (application, menuItems) => {
+			if (!(application instanceof foundry.applications.sidebar.tabs.CompendiumDirectory)) return;
+			setCompendiumEntryContext(application, menuItems);
 		});
 	}
 
 	// Import options for Black Flag
 	else if (game.system.id === "black-flag") {
-		Hooks.on("getCompendiumDirectoryEntryContext", (application, menuItems) => {
+		const setCompendiumEntryContext = (application, menuItems) => {
 			menuItems.push({
 				name: game.i18n.localize("BFTools.Import.Action.Import"),
 				icon: '<i class="fa-solid fa-file-import"></i>',
 				group: "conversion",
-				condition: ([li]) => {
+				condition: li => {
+					if (!(li instanceof HTMLElement)) li = li[0];
 					const pack = game.packs.get(li.closest("[data-pack]")?.dataset.pack);
 					return pack && types.DOCUMENT_TYPES[pack.metadata.type]?.convertible;
 				},
-				callback: ([li]) => {
+				callback: li => {
+					if (!(li instanceof HTMLElement)) li = li[0];
 					const pack = game.packs.get(li.closest("[data-pack]")?.dataset.pack);
 					if (pack) ImportingDialog.import(pack);
 				}
 			});
+		};
+		Hooks.on("getCompendiumDirectoryEntryContext", setCompendiumEntryContext);
+		Hooks.on("getEntryContextApplicationV2", (application, menuItems) => {
+			if (!(application instanceof foundry.applications.sidebar.tabs.CompendiumDirectory)) return;
+			setCompendiumEntryContext(application, menuItems);
 		});
 
-		Hooks.on("renderCompendium", (app, [html], data) => ParsingApplication.injectSidebarButton(app, html));
+		Hooks.on("renderCompendium", (app, html, data) => ParsingApplication.injectSidebarButton(app, html));
 		Hooks.on("preCreateActor", setWellKnownID);
 		Hooks.on("preCreateAdventure", setWellKnownID);
 		Hooks.on("preCreateFolder", setWellKnownID);
@@ -125,7 +139,7 @@ Hooks.once("setup", () => {
 });
 
 Hooks.once("ready", () => {
-	setupCounter();
+	if (game.system.id === "black-flag" && game.settings.get("black-flag-tools", "image-counter")) setupCounter();
 });
 
 /* <><><><> <><><><> <><><><> <><><><> <><><><> <><><><> */
@@ -144,7 +158,7 @@ function setWellKnownID(doc, data, options, userId) {
 	if (data._id || (doc.parent && !(doc instanceof JournalEntryPage)) || !doc.name) return;
 	const prefix = game.settings.get("black-flag-tools", "wellKnownIDPrefix");
 	const types = game.settings.get("black-flag-tools", "wellKnownIDTypes");
-	if (!prefix || !types.includes(doc.constructor.metadata?.name)) return;
+	if (!prefix || !types[game.release.generation < 13 ? "includes" : "has"]?.(doc.constructor.metadata?.name)) return;
 
 	// Create a well-known ID, adding incrementing number if the same ID already exists
 	let newID = generateID(doc.name, { prefix, type: data.type ?? doc.constructor.metadata?.name });

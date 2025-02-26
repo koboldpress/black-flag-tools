@@ -4,8 +4,6 @@ const countedCache = {
 };
 
 export default function setupCounter() {
-	if (!game.settings.get("black-flag-tools", "image-counter")) return;
-
 	for (const pack of game.packs) {
 		for (const index of pack.index) {
 			increaseCount(pack, index.img);

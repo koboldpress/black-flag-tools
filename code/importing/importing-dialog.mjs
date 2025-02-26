@@ -143,34 +143,35 @@ export default class ImportingDialog extends HandlebarsApplicationMixin(Applicat
 	 * Handle displaying the file selection UI, processing the JSON, and presenting the import UI.
 	 */
 	static async import(pack) {
-		const file = await Dialog.wait(
-			{
-				title: `Import Data: ${pack.metadata.label}`,
-				content: await renderTemplate("templates/apps/import-data.html", {
-					hint1: game.i18n.format("BFTools.Import.Hint1", { document: pack.metadata.type }),
-					hint2: game.i18n.localize("BFTools.Import.Hint2")
-				}),
-				buttons: {
-					import: {
-						icon: '<i class="fa-solid fa-file-import" inert></i>',
-						label: "Import",
-						callback: html => {
-							const form = html.find("form")[0];
-							if (!form.data.files.length) return ui.notifications.error("No file uploaded to import.");
-							return readTextFromFile(form.data.files[0]);
-						}
-					},
-					no: {
-						icon: '<i class="fa-solid fa-times"></i>',
-						label: "Cancel"
+		const dialogConfig = {
+			title: `Import Data: ${pack.metadata.label}`,
+			content: await renderTemplate("templates/apps/import-data.html", {
+				hint1: game.i18n.format("BFTools.Import.Hint1", { document: pack.metadata.type }),
+				hint2: game.i18n.localize("BFTools.Import.Hint2")
+			}),
+			buttons: {
+				import: {
+					icon: '<i class="fa-solid fa-file-import" inert></i>',
+					label: "Import",
+					callback: html => {
+						const form = html.find("form")[0];
+						if (!form.data.files.length) return ui.notifications.error("No file uploaded to import.");
+						return readTextFromFile(form.data.files[0]);
 					}
 				},
-				default: "import"
+				no: {
+					icon: '<i class="fa-solid fa-times"></i>',
+					label: "Cancel"
+				}
 			},
-			{
-				width: 400
-			}
-		);
+			default: "import"
+		};
+		let file;
+		try {
+			file = await Dialog.wait(dialogConfig, { width: 400 });
+		} catch (err) {
+			return;
+		}
 
 		let data;
 		try {

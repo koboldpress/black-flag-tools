@@ -5,7 +5,7 @@
 	"version": "1.2.008",
 	"compatibility": {
 		"minimum": "12.331",
-		"verified": "12"
+		"verified": "13.336"
 	},
 	"download": "",
 	"manifest": "https://github.com/koboldpress/black-flag-tools/releases/latest/download/module.json",
