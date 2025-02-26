@@ -41,7 +41,7 @@ export default class LanguagesConversion extends BaseConversion {
 				for ( let match of cantSpeakMatch[1]?.split(",") ) {
 					match = match.toLowerCase().replace("and", "").trim();
 					if ( match.includes("knew in life") ) {
-						if ( !final.tags.includes("knewInLife") ) final.tags.push("knewInLife");
+						if ( !final.tags.includes("knownInLife") ) final.tags.push("knownInLife");
 					} else {
 						match = convertLanguage(match);
 						if ( validLanguage(match) ) final.values.push(match);
@@ -53,7 +53,7 @@ export default class LanguagesConversion extends BaseConversion {
 
 			// Parse "Languages known in life"
 			if ( entry.match(/(knew|known).*(life|alive)/i) ) {
-				if ( !final.tags.includes("knewInLife") ) final.tags.push("knewInLife");
+				if ( !final.tags.includes("knownInLife") ) final.tags.push("knownInLife");
 				continue;
 			}
 
