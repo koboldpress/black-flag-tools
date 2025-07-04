@@ -2,10 +2,10 @@
 	"id": "black-flag-tools",
 	"title": "Black Flag Roleplaying Content Tools",
 	"description": "<p>Set of tools for import content into the Black Flag system and making DnD5e content compatible with the system.</p>",
-	"version": "1.3.008",
+	"version": "1.3.009",
 	"compatibility": {
 		"minimum": "12.331",
-		"verified": "13.337"
+		"verified": "13"
 	},
 	"download": "",
 	"manifest": "https://github.com/koboldpress/black-flag-tools/releases/latest/download/module.json",
