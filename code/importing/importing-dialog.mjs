@@ -145,7 +145,7 @@ export default class ImportingDialog extends HandlebarsApplicationMixin(Applicat
 	static async import(pack) {
 		const dialogConfig = {
 			title: `Import Data: ${pack.metadata.label}`,
-			content: await renderTemplate("templates/apps/import-data.html", {
+			content: await renderTemplate(`templates/apps/import-data.${game.release.generation < 13 ? "html" : "hbs"}`, {
 				hint1: game.i18n.format("BFTools.Import.Hint1", { document: pack.metadata.type }),
 				hint2: game.i18n.localize("BFTools.Import.Hint2")
 			}),

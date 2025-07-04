@@ -64,19 +64,6 @@ Hooks.once("init", () => {
 Hooks.once("setup", () => {
 	// Export options for DnD5e
 	if (game.system.id === "dnd5e") {
-		Hooks.on("getCompendiumEntryContext", (application, menuItems) => {
-			if (!types.DOCUMENT_TYPES[application.metadata.type]?.convertible) return false;
-			menuItems.push({
-				name: game.i18n.localize("BFTools.Export"),
-				icon: '<i class="fa-solid fa-file-export"></i>',
-				group: "conversion",
-				callback: async ([li]) => {
-					const doc = await application.collection.getDocument(li.closest("[data-document-id]")?.dataset.documentId);
-					if (doc) convertDocument(doc);
-				}
-			});
-		});
-
 		const setCompendiumEntryContext = (application, menuItems) => {
 			menuItems.push({
 				name: game.i18n.localize("BFTools.Export"),
@@ -94,8 +81,39 @@ Hooks.once("setup", () => {
 				}
 			});
 		};
+
+		// V12
+		Hooks.on("getCompendiumEntryContext", (application, menuItems) => {
+			if (!types.DOCUMENT_TYPES[application.metadata.type]?.convertible) return false;
+			menuItems.push({
+				name: game.i18n.localize("BFTools.Export"),
+				icon: '<i class="fa-solid fa-file-export"></i>',
+				group: "conversion",
+				callback: async ([li]) => {
+					const doc = await application.collection.getDocument(li.closest("[data-document-id]")?.dataset.documentId);
+					if (doc) convertDocument(doc);
+				}
+			});
+		});
 		Hooks.on("getCompendiumDirectoryEntryContext", setCompendiumEntryContext);
-		Hooks.on("getEntryContextApplicationV2", (application, menuItems) => {
+
+		// V13
+		const setDocumentEntryContext = (application, menuItems) => {
+			const collection = application.options?.collection;
+			if (!types.DOCUMENT_TYPES[collection?.metadata?.type]?.convertible) return false;
+			menuItems.push({
+				name: game.i18n.localize("BFTools.Export"),
+				icon: '<i class="fa-solid fa-file-export"></i>',
+				group: "conversion",
+				callback: async li => {
+					const doc = await collection.getDocument(li.closest("[data-entry-id]")?.dataset.entryId);
+					if (doc) convertDocument(doc);
+				}
+			});
+		};
+		Hooks.on("getActorContextOptions", setDocumentEntryContext);
+		Hooks.on("getItemContextOptions", setDocumentEntryContext);
+		Hooks.on("getCompendiumContextOptions", (application, menuItems) => {
 			if (!(application instanceof foundry.applications.sidebar.tabs.CompendiumDirectory)) return;
 			setCompendiumEntryContext(application, menuItems);
 		});
@@ -121,7 +139,7 @@ Hooks.once("setup", () => {
 			});
 		};
 		Hooks.on("getCompendiumDirectoryEntryContext", setCompendiumEntryContext);
-		Hooks.on("getEntryContextApplicationV2", (application, menuItems) => {
+		Hooks.on("getCompendiumContextOptions", (application, menuItems) => {
 			if (!(application instanceof foundry.applications.sidebar.tabs.CompendiumDirectory)) return;
 			setCompendiumEntryContext(application, menuItems);
 		});
