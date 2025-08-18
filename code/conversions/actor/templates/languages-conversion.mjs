@@ -10,7 +10,7 @@ export default class LanguagesConversion extends BaseConversion {
 
 	static convertLanguages(initial, context) {
 		const final = {
-			values: initial.value?.map(v => convertLanguage(v)) ?? [],
+			value: initial.value?.map(v => convertLanguage(v)) ?? [],
 			communication: Object.fromEntries(Object.entries(initial.communication ?? {}).map(([k, v]) => [k, {
 				range: v.value, units: convertDistanceUnit(v.units)
 			}])),
