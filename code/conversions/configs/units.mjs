@@ -7,6 +7,10 @@ export function convertDistanceUnit(initial) {
 	);
 }
 
+export function convertVolumeUnit(initial) {
+	return {}[initial] ?? initial;
+}
+
 export function convertWeightUnit(initial) {
 	return (
 		{

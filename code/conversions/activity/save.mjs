@@ -6,7 +6,7 @@ export default class SaveActivityConversion extends BaseActivityConversion {
 
 	static paths = [
 		...super.paths,
-		["damage.onSave", null],
+		["damage.onSave", "system.damage.onSave"],
 		["damage.parts", "system.damage.parts", this.convertDamage],
 		["effects", "system.effects"],
 		["save.ability", "system.ability", convertAbility],

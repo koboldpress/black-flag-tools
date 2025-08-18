@@ -28,18 +28,22 @@ export default class NPCConversion extends BaseConversion {
 		["system.attributes.exhaustion", "system.attributes.exhaustion"],
 		["system.attributes.death.success", null],
 		["system.attributes.death.failure", null],
+		["system.attributes.loyalty", null],
 		["system.attributes.spellcasting", "system.spellcasting.ability", convertAbility],
+		["system.attributes.spell.level", null],
 		["system.details.biography.value", "system.biography.value"],
 		["system.details.cr", "system.attributes.cr"],
 		["system.details.environment", null],
-		["system.details.spellLevel", null],
+		["system.details.habitat", null],
+		["system.details.treasure", null],
 		["system.details.type", "system.traits.type", NPCConversion.convertCreatureType],
 		["system.resources.legact.max", "system.attributes.legendary.max"],
-		["system.resources.legact.value", null],
+		["system.resources.legact.spent", "system.attributes.legendary.spent"],
 		["system.resources.legres.max", null],
 		["system.resources.legres.value", null],
 		["system.resources.lair.initiative", null],
-		["system.resources.lair.value", null]
+		["system.resources.lair.value", null],
+		["system.traits.important", null]
 	];
 
 	static postSteps = [NPCConversion.convertBonuses, NPCConversion.convertSkills];
@@ -84,6 +88,8 @@ export default class NPCConversion extends BaseConversion {
 
 		setProperty(final, "system.modifiers", modifiers);
 	}
+
+	// TODO: Convert death save bonuses
 
 	static convertBonuses(initial, final, context) {
 		const bonuses = getProperty(initial, "system.bonuses") ?? {};

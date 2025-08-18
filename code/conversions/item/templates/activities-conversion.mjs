@@ -33,6 +33,7 @@ export default class ActivitiesConversion extends BaseConversion {
 				case "heal": Converter = HealActivityConversion; break;
 				case "save": Converter = SaveActivityConversion; break;
 				case "summon": Converter = SummonActivityConversion; break;
+				// case "transform": Converter = TransformActivityConversion; break;
 				case "utility":
 				default: Converter = UtilityActivityConversion; break;
 			}

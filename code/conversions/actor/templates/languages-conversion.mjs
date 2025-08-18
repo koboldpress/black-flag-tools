@@ -1,5 +1,6 @@
 import BaseConversion from "../../base.mjs";
 import { convertLanguage, validLanguage } from "../../configs/traits.mjs";
+import { convertDistanceUnit } from "../../configs/units.mjs";
 
 export default class LanguagesConversion extends BaseConversion {
 
@@ -10,7 +11,9 @@ export default class LanguagesConversion extends BaseConversion {
 	static convertLanguages(initial, context) {
 		const final = {
 			values: initial.value?.map(v => convertLanguage(v)) ?? [],
-			communication: {},
+			communication: Object.fromEntries(Object.entries(initial.communication ?? {}).map(([k, v]) => [k, {
+				range: v.value, units: convertDistanceUnit(v.units)
+			}])),
 			custom: [],
 			tags: []
 		};

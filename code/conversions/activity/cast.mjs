@@ -6,7 +6,7 @@ export default class CastActivityConversion extends BaseActivityConversion {
 
 	static paths = [
 		...super.paths,
-		[null, "system.spell.ability", convertAbility],
+		["spell.ability", "system.spell.ability", convertAbility],
 		["spell.challenge.attack", "system.spell.challenge.attack"],
 		["spell.challenge.save", "system.spell.challenge.save"],
 		["spell.challenge.override", "system.spell.challenge.override"],

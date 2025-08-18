@@ -56,6 +56,7 @@ export default class FeatureConversion extends BaseConversion {
 					v: prerequisites.level
 				});
 			if (filters.length) setProperty(final, "system.restriction.filters", filters);
+			setProperty(final, "system.restriction.allowMultipleTimes", prerequisites.repeatable);
 		}
 	}
 }

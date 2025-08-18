@@ -2,7 +2,7 @@
 
 These tools are designed to aid in converting [DnD5e](https://github.com/foundryvtt/dnd5e) content into [Black Flag Roleplaying](https://github.com/koboldpress/black-flag/) content as well as parsing content from PDFs.
 
-**Note**: The conversion tools are built to work for DnD5e version `4.1`, older data should be migrated to be compatible with this version and newer data should not be converted until the tools are updated.
+**Note**: The conversion tools are built to work for DnD5e version `5.1`, older data should be migrated to be compatible with this version and newer system versions may not convert all available data.
 
 ## Installation
 

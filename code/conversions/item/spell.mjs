@@ -36,6 +36,8 @@ export default class SpellConversion extends BaseConversion {
 		["system.target.template.height", "system.target.template.height"],
 		["system.target.template.units", "system.target.template.units", convertDistanceUnit],
 		["system.ability", "flags.black-flag.relationship.ability", convertAbility],
+		["system.method", "flags.black-flag.relationship.mode"],
+		["system.prepared", "flags.black-flag.relationship.prepared"],
 		["system.preparation.mode", "flags.black-flag.relationship.mode"],
 		["system.preparation.prepared", "flags.black-flag.relationship.prepared"],
 		["system.sourceClass", "flags.black-flag.relationship.origin.identifier"]
