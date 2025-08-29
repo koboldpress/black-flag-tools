@@ -22,7 +22,7 @@ export default class VehicleConversion extends BaseConversion {
 		["system.attributes.actions.value", null],
 		["system.attributes.actions.thresholds", null],
 		["system.attributes.capacity.cargo", "system.attributes.cargo.max"],
-		[null, "system.attributes.cargo.units"],
+		[null, "system.attributes.cargo.unit"],
 		[null, "system.attributes.crew.required"],
 		["system.attributes.capacity.creature", "system.attributes.passengers.max"],
 		[null, "system.description.actions"],
@@ -31,15 +31,15 @@ export default class VehicleConversion extends BaseConversion {
 		["system.details.biography.value", "system.description.value"],
 		[null, "system.initiative"],
 		["system.traits.dimensions", "system.traits.dimensions", VehicleConversion.convertDimensions],
-		[null, "system.traits.dimensions.units"],
+		[null, "system.traits.dimensions.unit"],
 		[null, "system.traits.dimensions.width"],
 		["system.traits.size", "system.traits.size", convertSize],
 		[null, "system.traits.movement.custom"],
 		[null, "system.traits.movement.tags"],
 		[null, "system.traits.movement.types"],
-		[null, "system.traits.movement.units"],
+		[null, "system.traits.movement.unit"],
 		[null, "system.traits.pace.types"],
-		[null, "system.traits.pace.units"],
+		[null, "system.traits.pace.unit"],
 		["system.vehicleType", "system.traits.type.value", convertVehicleType]
 	];
 

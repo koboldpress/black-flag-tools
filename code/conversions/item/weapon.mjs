@@ -1,6 +1,5 @@
 import { getProperty, setProperty } from "../../utils.mjs";
 import BaseConversion from "../base.mjs";
-import { convertItemProperty } from "../configs/items.mjs";
 import { convertDistanceUnit } from "../configs/units.mjs";
 import { convertWeapon, convertWeaponCategory, convertWeaponType } from "../configs/weapons.mjs";
 import { convertDamage } from "../shared/damage.mjs";
@@ -28,7 +27,7 @@ export default class WeaponConversion extends BaseConversion {
 		["system.range.value", "system.range.short"],
 		["system.range.long", "system.range.long"],
 		["system.range.reach", "system.range.reach"],
-		["system.range.units", "system.range.units", convertDistanceUnit],
+		["system.range.units", "system.range.unit", convertDistanceUnit],
 		["system.range.value", "system.range.value"],
 		["system.type.value", "system.type.value", convertWeaponType],
 		["system.type.value", "system.type.category", convertWeaponCategory],

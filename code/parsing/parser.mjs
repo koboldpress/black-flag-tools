@@ -180,10 +180,10 @@ export default class Parser {
 		if (!line) return;
 		const parser = new Parser(line);
 		const concentration = !!parser.consumeIfMatches("Concentration, up to ");
-		const duration = { value: parser.consumeNumber(), units: null };
+		const duration = { value: parser.consumeNumber(), unit: null };
 		for (const config of [CONFIG.BlackFlag.durations, CONFIG.BlackFlag.timeUnits]) {
-			duration.units = parser.consumeEnumPlurals(config);
-			if (duration.units) break;
+			duration.unit = parser.consumeEnumPlurals(config);
+			if (duration.unit) break;
 		}
 		return { duration, concentration };
 	}
@@ -220,6 +220,7 @@ export default class Parser {
 			const key = this.consumeEnum(localized);
 			if (key) return key;
 		}
+		return null;
 	}
 
 	/* <><><><> <><><><> <><><><> <><><><> */
@@ -262,22 +263,22 @@ export default class Parser {
 		const parser = new Parser(line);
 
 		// Parse Range
-		const range = { value: parser.consumeNumber(), units: null };
+		const range = { value: parser.consumeNumber(), unit: null };
 		for (const config of [CONFIG.BlackFlag.distanceUnits, CONFIG.BlackFlag.rangeTypes]) {
-			range.units = parser.consumeEnumPlurals(config);
-			if (range.units) break;
+			range.unit = parser.consumeEnumPlurals(config);
+			if (range.unit) break;
 		}
 
 		// Shape
 		const template = {};
-		const results = parser.consumeRegex(/\s*\((?<size>\d+)(?<units>[\w-]+)\s+(?<shape>[\w\s]+)\)/i);
+		const results = parser.consumeRegex(/\s*\((?<size>\d+)(?<unit>[\w-]+)\s+(?<shape>[\w\s]+)\)/i);
 		if (results) {
 			template.size = !Number.isNaN(Number(results.groups.size)) ? Number(results.groups.size) : null;
 			template.type = Object.entries(CONFIG.BlackFlag.areaOfEffectTypes.localized).find(
 				([k, v]) => v.toLowerCase() === results.groups.shape
 			)?.[0];
-			const unitsParser = new Parser(results.groups.units.replace("-", ""));
-			template.units = unitsParser.consumeEnumPlurals(CONFIG.BlackFlag.distanceUnits);
+			const unitParser = new Parser(results.groups.unit.replace("-", ""));
+			template.unit = unitParser.consumeEnumPlurals(CONFIG.BlackFlag.distanceUnits);
 		}
 
 		return { range, template };
@@ -317,6 +318,7 @@ export default class Parser {
 	 * @param {object} [options={}]
 	 * @param {boolean} [options.excludeMatch=true] - Don't include match in final string.
 	 * @param {number} [options.endAfter] - End after this many matches found, otherwise continue to end of input.
+	 * @returns {string[]}
 	 */
 	consumeRepeat(match, { excludeMatch = true, endAfter = Infinity } = {}) {
 		let count = 0;

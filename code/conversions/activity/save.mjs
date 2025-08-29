@@ -9,9 +9,11 @@ export default class SaveActivityConversion extends BaseActivityConversion {
 		["damage.onSave", "system.damage.onSave"],
 		["damage.parts", "system.damage.parts", this.convertDamage],
 		["effects", "system.effects"],
-		["save.ability", "system.ability", convertAbility],
-		["save.dc.calculation", "system.dc.ability", this.convertCalculation],
-		["save.dc.formula", "system.dc.formula", i => String(i ?? "")]
+		["save.ability", "system.save.ability", convertAbility],
+		[null, "system.save.bonus"],
+		["save.dc.calculation", "system.save.dc.ability", this.convertCalculation],
+		["save.dc.formula", "system.save.dc.formula", i => String(i ?? "")],
+		[null, "system.save.visible"]
 	];
 
 	static convertCalculation(initial) {

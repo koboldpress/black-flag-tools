@@ -12,7 +12,7 @@ export default class SensesConversion extends BaseConversion {
 			custom: [],
 			tags: [],
 			types: {},
-			units: convertDistanceUnit(initial.unit) ?? "foot"
+			unit: convertDistanceUnit(initial.unit) ?? "foot"
 		};
 
 		for ( let type of ["darkvision", "blindsight", "tremorsense", "truesight"] ) {

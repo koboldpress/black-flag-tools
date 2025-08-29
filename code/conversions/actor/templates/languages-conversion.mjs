@@ -12,7 +12,7 @@ export default class LanguagesConversion extends BaseConversion {
 		const final = {
 			value: initial.value?.map(v => convertLanguage(v)) ?? [],
 			communication: Object.fromEntries(Object.entries(initial.communication ?? {}).map(([k, v]) => [k, {
-				range: v.value, units: convertDistanceUnit(v.units)
+				range: v.value, unit: convertDistanceUnit(v.units)
 			}])),
 			custom: [],
 			tags: []
@@ -25,14 +25,14 @@ export default class LanguagesConversion extends BaseConversion {
 			// Parse "Telepathy 60 ft." into structured data
 			const telepathyMatch = entry.toLowerCase().match(/^telepathy\s+([\d.]+)\s*(\w+)\.?$/);
 			if ( telepathyMatch ) {
-				let [, range, units] = telepathyMatch;
-				if ( ["ft", "foot", "feet"].includes(units) ) units = "foot";
-				else if ( ["mi", "mile", "miles"].includes(units) ) units = "mile";
-				else if ( ["m", "meter", "meters"].includes(units) ) units = "meter";
-				else if ( ["km", "kilometer", "kilometers"].includes(units) ) units = "kilometer";
-				else units = null;
-				if ( units ) {
-					final.communication.telepathy = { range, units };
+				let [, range, unit] = telepathyMatch;
+				if ( ["ft", "foot", "feet"].includes(unit) ) unit = "foot";
+				else if ( ["mi", "mile", "miles"].includes(unit) ) unit = "mile";
+				else if ( ["m", "meter", "meters"].includes(unit) ) unit = "meter";
+				else if ( ["km", "kilometer", "kilometers"].includes(unit) ) unit = "kilometer";
+				else unit = null;
+				if ( unit ) {
+					final.communication.telepathy = { range, unit };
 					continue;
 				}
 			}
@@ -41,7 +41,7 @@ export default class LanguagesConversion extends BaseConversion {
 			const cantSpeakMatch = entry.toLowerCase().match(/^understands ([\w\s,]+) but can(?:'|’)?t speak$/);
 			if ( cantSpeakMatch ) {
 				if ( !final.tags.includes("cantSpeak") ) final.tags.push("cantSpeak");
-				for ( let match of cantSpeakMatch[1]?.split(",") ) {
+				for ( let match of cantSpeakMatch[1]?.split(",") ?? [] ) {
 					match = match.toLowerCase().replace("and", "").trim();
 					if ( match.includes("knew in life") ) {
 						if ( !final.tags.includes("knownInLife") ) final.tags.push("knownInLife");

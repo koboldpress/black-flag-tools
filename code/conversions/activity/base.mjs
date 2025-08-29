@@ -1,4 +1,4 @@
-import { randomID, getProperty, setProperty } from "../../utils.mjs";
+import { setProperty } from "../../utils.mjs";
 import BaseConversion from "../base.mjs";
 import { convertActivationType, convertTimePeriod } from "../configs/activation.mjs";
 import { convertAreaOfEffectType, convertRangeType, convertTargetType } from "../configs/targeting.mjs";
@@ -23,12 +23,12 @@ export default class BaseActivityConversion extends BaseConversion {
 		["duration.concentration", "duration.concentration"],
 		["duration.override", "duration.override"],
 		["duration.special", "duration.special"],
-		["duration.units", "duration.units", convertTimePeriod],
+		["duration.units", "duration.unit", convertTimePeriod],
 		["duration.value", "duration.value"],
 		["name", "name"],
 		["range.override", "range.override"],
 		["range.special", "range.special"],
-		["range.units", "range.units", i => convertRangeType(convertDistanceUnit(i))],
+		["range.units", "range.unit", i => convertRangeType(convertDistanceUnit(i))],
 		["range.value", "range.value"],
 		["sort", "sort"],
 		["target.affects.choice", "target.affects.choice"],
@@ -41,12 +41,18 @@ export default class BaseActivityConversion extends BaseConversion {
 		["target.template.size", "target.template.size"],
 		["target.template.width", "target.template.width"],
 		["target.template.height", "target.template.height"],
-		["target.template.units", "target.template.units", convertDistanceUnit],
+		["target.template.units", "target.template.unit", convertDistanceUnit],
 		["target.override", "target.override"],
 		["target.prompt", "target.prompt"],
 		["uses.max", "uses.max"],
 		["uses.recovery", "uses.recovery", convertUsesRecovery],
-		["uses.spent", "uses.spent"]
+		["uses.spent", "uses.spent"],
+		[null, "visibility.identifier"],
+		[null, "visibility.level.min"],
+		[null, "visibility.level.max"],
+		[null, "visibility.requireAttunement"],
+		[null, "visibility.requireIdentification"],
+		[null, "visibility.requireMagic"]
 	];
 
 	static convertBase(initial) {

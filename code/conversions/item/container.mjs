@@ -17,9 +17,9 @@ export default class SundryConversion extends BaseConversion {
 		["system.capacity", "system.capacity", SundryConversion.convertCapacity],
 		["system.capacity.count", "system.capacity.count"],
 		["system.capacity.volume.value", "system.capacity.volume.value"],
-		["system.capacity.volume.units", "system.capacity.volume.units", convertVolumeUnit],
+		["system.capacity.volume.units", "system.capacity.volume.unit", convertVolumeUnit],
 		["system.capacity.weight.value", "system.capacity.weight.value"],
-		["system.capacity.weight.units", "system.capacity.weight.units", convertWeightUnit],
+		["system.capacity.weight.units", "system.capacity.weight.unit", convertWeightUnit],
 		["system.properties", "system.properties", i => i?.map(p => convertItemProperty(p))]
 	];
 
@@ -28,7 +28,7 @@ export default class SundryConversion extends BaseConversion {
 			case "items":
 				return { count: initial.value };
 			case "weight":
-				return { weight: { value: initial.value, units: "pound" } };
+				return { weight: { value: initial.value, unit: "pound" } };
 		}
 	}
 }

@@ -28,7 +28,7 @@ export default class ScaleValueConversion extends BaseActivityConversion {
 					break;
 				case "distance":
 					f.value = i.value;
-					f.units = convertDistanceUnit(initial.distance?.units);
+					f.unit = convertDistanceUnit(initial.distance?.units);
 					break;
 			}
 			final.scale[k] = f;

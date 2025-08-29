@@ -10,6 +10,7 @@ export default class CheckActivityConversion extends BaseActivityConversion {
 		...super.paths,
 		["check.ability", "system.check.ability", convertAbility],
 		["check.associated", "system.check.associated", initial => initial?.map(i => convertSkill(convertTool(i)))],
+		[null, "system.check.bonus"],
 		["check.dc.calculation", "system.check.dc.calculation", convertAbility],
 		["check.dc.formula", "system.check.dc.formula"],
 		[null, "system.check.visible"],

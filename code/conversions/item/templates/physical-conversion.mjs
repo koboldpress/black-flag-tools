@@ -34,9 +34,9 @@ export default class PhysicalConversion extends BaseConversion {
 
 	static convertWeight(initial, context) {
 		if ( (typeof initial) === "object" ) {
-			return { value: initial.value, units: convertWeightUnit(initial.units) };
+			return { value: initial.value, unit: convertWeightUnit(initial.units) };
 		} else {
-			return { value: initial, units: "pound" }
+			return { value: initial, unit: "pound" }
 		}
 	}
 
