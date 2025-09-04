@@ -37,7 +37,7 @@ async function handleConversion(paths) {
 		let initial;
 		try {
 			initial = JSON.parse(file);
-		} catch (err) {
+		} catch {
 			console.warn("\x1b[31m%s\x1b[0m", `✘ ${path} - Unable to parse json`);
 			warningShown = true;
 			continue;

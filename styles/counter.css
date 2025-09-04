@@ -1,4 +1,4 @@
-.filepicker, .file-picker {
+#file-picker {
 	.file:has(> .black-flag-tools-counts) {
 		position: relative;
 	

@@ -35,7 +35,7 @@ export function setProperty(object, keyPath, value) {
 /**
  * Generate a random ID using the provided prefix from a document name.
  * @param {string} name
- * @param {object} [option={}]
+ * @param {object} [options={}]
  * @param {string} [options.prefix] - Prefix added before the title.
  * @param {string} [options.type] - Document type being created.
  * @returns {string}

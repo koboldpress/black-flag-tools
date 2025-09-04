@@ -7,7 +7,7 @@ import parseInput from "./types/_module.mjs";
 export default class ParsingApplication extends HandlebarsApplicationMixin(ApplicationV2) {
 	/** @override */
 	static DEFAULT_OPTIONS = {
-		classes: ["black-flag-tools", "parser"],
+		classes: ["black-flag", "black-flag-tools", "parser"],
 		tag: "form",
 		window: {
 			title: "BFTools.Parser.Title",

@@ -64,43 +64,9 @@ Hooks.once("init", () => {
 Hooks.once("setup", () => {
 	// Export options for DnD5e
 	if (game.system.id === "dnd5e") {
-		const setCompendiumEntryContext = (application, menuItems) => {
-			menuItems.push({
-				name: game.i18n.localize("BFTools.Export"),
-				icon: '<i class="fa-solid fa-file-export"></i>',
-				group: "conversion",
-				condition: li => {
-					if (!(li instanceof HTMLElement)) li = li[0];
-					const pack = game.packs.get(li.closest("[data-pack]")?.dataset.pack);
-					return pack && types.DOCUMENT_TYPES[pack.metadata.type]?.convertible;
-				},
-				callback: li => {
-					if (!(li instanceof HTMLElement)) li = li[0];
-					const pack = game.packs.get(li.closest("[data-pack]")?.dataset.pack);
-					if (pack) convertCompendium(pack);
-				}
-			});
-		};
-
-		// V12
-		Hooks.on("getCompendiumEntryContext", (application, menuItems) => {
-			if (!types.DOCUMENT_TYPES[application.metadata.type]?.convertible) return false;
-			menuItems.push({
-				name: game.i18n.localize("BFTools.Export"),
-				icon: '<i class="fa-solid fa-file-export"></i>',
-				group: "conversion",
-				callback: async ([li]) => {
-					const doc = await application.collection.getDocument(li.closest("[data-document-id]")?.dataset.documentId);
-					if (doc) convertDocument(doc);
-				}
-			});
-		});
-		Hooks.on("getCompendiumDirectoryEntryContext", setCompendiumEntryContext);
-
-		// V13
 		const setDocumentEntryContext = (application, menuItems) => {
 			const collection = application.options?.collection;
-			if (!types.DOCUMENT_TYPES[collection?.metadata?.type]?.convertible) return false;
+			if (!types.DOCUMENT_TYPES[collection?.documentName]?.convertible) return false;
 			menuItems.push({
 				name: game.i18n.localize("BFTools.Export"),
 				icon: '<i class="fa-solid fa-file-export"></i>',
@@ -115,33 +81,39 @@ Hooks.once("setup", () => {
 		Hooks.on("getItemContextOptions", setDocumentEntryContext);
 		Hooks.on("getCompendiumContextOptions", (application, menuItems) => {
 			if (!(application instanceof foundry.applications.sidebar.tabs.CompendiumDirectory)) return;
-			setCompendiumEntryContext(application, menuItems);
+			menuItems.push({
+				name: game.i18n.localize("BFTools.Export"),
+				icon: '<i class="fa-solid fa-file-export"></i>',
+				group: "conversion",
+				condition: li => {
+					const pack = game.packs.get(li.closest("[data-pack]")?.dataset.pack);
+					return pack && types.DOCUMENT_TYPES[pack.metadata.type]?.convertible;
+				},
+				callback: li => {
+					const pack = game.packs.get(li.closest("[data-pack]")?.dataset.pack);
+					if (pack) convertCompendium(pack);
+				}
+			});
 		});
 	}
 
 	// Import options for Black Flag
 	else if (game.system.id === "black-flag") {
-		const setCompendiumEntryContext = (application, menuItems) => {
+		Hooks.on("getCompendiumContextOptions", (application, menuItems) => {
+			if (!(application instanceof foundry.applications.sidebar.tabs.CompendiumDirectory)) return;
 			menuItems.push({
 				name: game.i18n.localize("BFTools.Import.Action.Import"),
 				icon: '<i class="fa-solid fa-file-import"></i>',
 				group: "conversion",
 				condition: li => {
-					if (!(li instanceof HTMLElement)) li = li[0];
 					const pack = game.packs.get(li.closest("[data-pack]")?.dataset.pack);
 					return pack && types.DOCUMENT_TYPES[pack.metadata.type]?.convertible;
 				},
 				callback: li => {
-					if (!(li instanceof HTMLElement)) li = li[0];
 					const pack = game.packs.get(li.closest("[data-pack]")?.dataset.pack);
 					if (pack) ImportingDialog.import(pack);
 				}
 			});
-		};
-		Hooks.on("getCompendiumDirectoryEntryContext", setCompendiumEntryContext);
-		Hooks.on("getCompendiumContextOptions", (application, menuItems) => {
-			if (!(application instanceof foundry.applications.sidebar.tabs.CompendiumDirectory)) return;
-			setCompendiumEntryContext(application, menuItems);
 		});
 
 		Hooks.on("renderCompendium", (app, html, data) => ParsingApplication.injectSidebarButton(app, html));
