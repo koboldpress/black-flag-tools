@@ -22,6 +22,12 @@ export default class MovementConversion extends BaseConversion {
 		for ( const type of ["burrow", "climb", "fly", "swim"] ) {
 			if ( initial[type] ) final.types[type] = initial[type];
 		}
+		
+		for ( let entry of initial.special?.split(";") ?? [] ) {
+			entry = entry.trim();
+			if ( !entry ) continue;
+			final.custom.push(entry);
+		}
 
 		return final;
 	}

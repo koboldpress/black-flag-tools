@@ -5,7 +5,7 @@ const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 export default class ImportingDialog extends HandlebarsApplicationMixin(ApplicationV2) {
 	/** @override */
 	static DEFAULT_OPTIONS = {
-		classes: ["black-flag-tools", "importer"],
+		classes: ["black-flag", "black-flag-tools", "importer"],
 		tag: "form",
 		window: {
 			title: "BFTools.Import.Title",
@@ -58,6 +58,7 @@ export default class ImportingDialog extends HandlebarsApplicationMixin(Applicat
 
 	/**
 	 * Compendium pack where the documents should be imported.
+	 * @type {Compendium}
 	 */
 	get pack() {
 		return this.options.pack;
@@ -141,6 +142,7 @@ export default class ImportingDialog extends HandlebarsApplicationMixin(Applicat
 
 	/**
 	 * Handle displaying the file selection UI, processing the JSON, and presenting the import UI.
+	 * @param {Compendium} pack - Pack into which the documents should be imported.
 	 */
 	static async import(pack) {
 		const dialogConfig = {
@@ -169,19 +171,20 @@ export default class ImportingDialog extends HandlebarsApplicationMixin(Applicat
 		let file;
 		try {
 			file = await Dialog.wait(dialogConfig, { width: 400 });
-		} catch (err) {
+		} catch {
 			return;
 		}
 
 		let data;
 		try {
 			data = JSON.parse(file);
-		} catch (err) {
+		} catch {
 			ui.notifications.error("Could not parse JSON file.");
 			return;
 		}
 
 		const options = { documents: [], folders: [], pack };
+		console.log(data);
 		for (const entry of foundry.utils.getType(data) === "Array" ? data : [data]) {
 			if (entry._documentType === "Folder") options.folders.push(entry);
 			else options.documents.push(entry);

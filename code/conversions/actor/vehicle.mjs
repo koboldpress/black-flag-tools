@@ -2,6 +2,7 @@ import { getProperty, setProperty } from "../../utils.mjs";
 import BaseConversion from "../base.mjs";
 import { convertAbility } from "../configs/abilities.mjs";
 import { convertVehicleType, convertSize } from "../configs/actors.mjs";
+import MovementConversion from "../shared/templates/movement-conversion.mjs";
 import HPConversion from "./templates/hp-conversion.mjs";
 import ResistancesConversion from "./templates/resistances-conversion.mjs";
 import SourceConversion from "./templates/source-conversion.mjs";
@@ -9,7 +10,7 @@ import SourceConversion from "./templates/source-conversion.mjs";
 export default class VehicleConversion extends BaseConversion {
 	static preSteps = [VehicleConversion.convertAbilities];
 
-	static templates = [HPConversion, ResistancesConversion, SourceConversion];
+	static templates = [HPConversion, MovementConversion, ResistancesConversion, SourceConversion];
 
 	static paths = [
 		["system.attributes.hp.dt", "system.attributes.ac.threshold"],
@@ -34,10 +35,6 @@ export default class VehicleConversion extends BaseConversion {
 		[null, "system.traits.dimensions.unit"],
 		[null, "system.traits.dimensions.width"],
 		["system.traits.size", "system.traits.size", convertSize],
-		[null, "system.traits.movement.custom"],
-		[null, "system.traits.movement.tags"],
-		[null, "system.traits.movement.types"],
-		[null, "system.traits.movement.unit"],
 		[null, "system.traits.pace.types"],
 		[null, "system.traits.pace.unit"],
 		["system.vehicleType", "system.traits.type.value", convertVehicleType]

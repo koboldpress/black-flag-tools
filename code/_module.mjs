@@ -195,6 +195,7 @@ function setWellKnownID(doc, data, options, userId) {
  * Check to see if the provided ID exists relative to where the document will be created.
  * @param {string} id
  * @param {Document} doc
+ * @returns {boolean}
  */
 function doesIDExist(id, doc) {
 	if (doc.parent) return !!doc.parent.getEmbeddedDocument(doc.constructor.metadata.name, id);
@@ -208,11 +209,11 @@ function doesIDExist(id, doc) {
 
 /**
  * Convert a document and download them as a JSON file that can be imported into Black Flag.
- * @param {Document} docs - Document to convert.
+ * @param {Document} doc - Document to convert.
  * @param {object} [options={}]
  * @param {boolean} [options.download=true] - Should a JSON be downloaded?
  * @param {Compendium} [options.pack] - Compendium pack containing the document.
- * @returns {object} - Converted object data.
+ * @returns {object|void} - Converted object data.
  */
 function convertDocument(doc, { download = true, pack } = {}) {
 	const data = doc.toObject();
@@ -239,7 +240,7 @@ function convertDocument(doc, { download = true, pack } = {}) {
 
 /**
  * Convert multiple documents and download them as a JSON file that can be imported into Black Flag.
- * @param {Document[]} docs - Documents to convert.
+ * @param {Document[]} pack - Pack containing documents to convert.
  * @param {object} [options={}]
  * @param {boolean} [options.download=true] - Should a JSON be downloaded?
  * @param {boolean} [options.folders=true] - Should folders be exported?
@@ -247,7 +248,7 @@ function convertDocument(doc, { download = true, pack } = {}) {
  */
 async function convertCompendium(pack, { download = true, folders = true } = {}) {
 	const docs = await pack.getDocuments();
-	let final = docs.map(doc => convertDocument(doc, { download: false, pack }));
+	let final = docs.map(doc => convertDocument(doc, { download: false, pack })).filter(_ => _);
 	if (folders)
 		final = final.concat(
 			pack.folders.map(f => {
@@ -264,6 +265,7 @@ async function convertCompendium(pack, { download = true, folders = true } = {})
 
 /**
  * Download a JSON file.
+ * @param {string} filename - Name of file to create.
  * @param {any} json - Any JSON serializable data.
  */
 function createDownload(filename, json) {

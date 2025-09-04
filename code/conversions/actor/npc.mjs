@@ -2,7 +2,6 @@ import { getProperty, setProperty } from "../../utils.mjs";
 import BaseConversion from "../base.mjs";
 import { convertAbility } from "../configs/abilities.mjs";
 import { convertCreatureType, convertSize } from "../configs/actors.mjs";
-import selectItemConverter from "../item/_module.mjs";
 import ACConversion from "./templates/ac-conversion.mjs";
 import HPConversion from "./templates/hp-conversion.mjs";
 import InitiativeConversion from "./templates/initiative-conversion.mjs";
