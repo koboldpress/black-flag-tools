@@ -47,7 +47,7 @@ export default class LanguagesConversion extends BaseConversion {
 						if ( !final.tags.includes("knownInLife") ) final.tags.push("knownInLife");
 					} else {
 						match = convertLanguage(match);
-						if ( validLanguage(match) ) final.values.push(match);
+						if ( validLanguage(match) ) final.value.push(match);
 						else final.custom.push(match);
 					}
 				}
