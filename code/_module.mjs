@@ -19,46 +19,48 @@ const { SetField, StringField } = foundry.data.fields;
 Object.assign(TOOLS, types);
 
 Hooks.once("init", () => {
-	if (game.system.id === "black-flag") {
-		game.settings.register("black-flag-tools", "image-counter", {
-			name: "BFTools.Setting.ImageCounter.Label",
-			hint: "BFTools.Setting.ImageCounter.Hint",
-			scope: "client",
-			config: true,
-			default: false,
-			type: Boolean,
-			requiresReload: true
-		});
-		game.settings.register("black-flag-tools", "wellKnownIDPrefix", {
-			name: "BFTools.Setting.WellKnownIDPrefix.Label",
-			hint: "BFTools.Setting.WellKnownIDPrefix.Hint",
-			scope: "client",
-			config: true,
-			default: "",
-			type: String
-		});
-		game.settings.register("black-flag-tools", "wellKnownIDTypes", {
-			name: "BFTools.Setting.WellKnownIDTypes.Label",
-			hint: "BFTools.Setting.WellKnownIDTypes.Hint",
-			scope: "client",
-			config: true,
-			default: ["Actor", "Adventure", "Folder", "Item", "JournalEntry", "JournalEntryPage", "RollTable", "Scene"],
-			type: new SetField(
-				new StringField({
-					choices: {
-						Actor: "DOCUMENT.Actor",
-						Adventure: "DOCUMENT.Adventure",
-						Folder: "DOCUMENT.Folder",
-						Item: "DOCUMENT.Item",
-						JournalEntry: "DOCUMENT.JournalEntry",
-						JournalEntryPage: "DOCUMENT.JournalEntryPage",
-						RollTable: "DOCUMENT.RollTable",
-						Scene: "DOCUMENT.Scene"
-					}
-				})
-			)
-		});
-	}
+	Object.assign(game.modules.get("black-flag-tools"), {
+		utils: { generateID }
+	});
+
+	game.settings.register("black-flag-tools", "image-counter", {
+		name: "BFTools.Setting.ImageCounter.Label",
+		hint: "BFTools.Setting.ImageCounter.Hint",
+		scope: "user",
+		config: true,
+		default: false,
+		type: Boolean,
+		requiresReload: true
+	});
+	game.settings.register("black-flag-tools", "wellKnownIDPrefix", {
+		name: "BFTools.Setting.WellKnownIDPrefix.Label",
+		hint: "BFTools.Setting.WellKnownIDPrefix.Hint",
+		scope: "user",
+		config: true,
+		default: "",
+		type: String
+	});
+	game.settings.register("black-flag-tools", "wellKnownIDTypes", {
+		name: "BFTools.Setting.WellKnownIDTypes.Label",
+		hint: "BFTools.Setting.WellKnownIDTypes.Hint",
+		scope: "user",
+		config: true,
+		default: ["Actor", "Adventure", "Folder", "Item", "JournalEntry", "JournalEntryPage", "RollTable", "Scene"],
+		type: new SetField(
+			new StringField({
+				choices: {
+					Actor: "DOCUMENT.Actor",
+					Adventure: "DOCUMENT.Adventure",
+					Folder: "DOCUMENT.Folder",
+					Item: "DOCUMENT.Item",
+					JournalEntry: "DOCUMENT.JournalEntry",
+					JournalEntryPage: "DOCUMENT.JournalEntryPage",
+					RollTable: "DOCUMENT.RollTable",
+					Scene: "DOCUMENT.Scene"
+				}
+			})
+		)
+	});
 });
 
 Hooks.once("setup", () => {
@@ -117,19 +119,20 @@ Hooks.once("setup", () => {
 		});
 
 		Hooks.on("renderCompendium", (app, html, data) => ParsingApplication.injectSidebarButton(app, html));
-		Hooks.on("preCreateActor", setWellKnownID);
-		Hooks.on("preCreateAdventure", setWellKnownID);
-		Hooks.on("preCreateFolder", setWellKnownID);
-		Hooks.on("preCreateItem", setWellKnownID);
-		Hooks.on("preCreateJournalEntry", setWellKnownID);
-		Hooks.on("preCreateJournalEntryPage", setWellKnownID);
-		Hooks.on("preCreateRollTable", setWellKnownID);
-		Hooks.on("preCreateScene", setWellKnownID);
 	}
+
+	Hooks.on("preCreateActor", setWellKnownID);
+	Hooks.on("preCreateAdventure", setWellKnownID);
+	Hooks.on("preCreateFolder", setWellKnownID);
+	Hooks.on("preCreateItem", setWellKnownID);
+	Hooks.on("preCreateJournalEntry", setWellKnownID);
+	Hooks.on("preCreateJournalEntryPage", setWellKnownID);
+	Hooks.on("preCreateRollTable", setWellKnownID);
+	Hooks.on("preCreateScene", setWellKnownID);
 });
 
 Hooks.once("ready", () => {
-	if (game.system.id === "black-flag" && game.settings.get("black-flag-tools", "image-counter")) setupCounter();
+	if (game.settings.get("black-flag-tools", "image-counter")) setupCounter();
 });
 
 /* <><><><> <><><><> <><><><> <><><><> <><><><> <><><><> */
@@ -151,14 +154,16 @@ function setWellKnownID(doc, data, options, userId) {
 	if (!prefix || !types[game.release.generation < 13 ? "includes" : "has"]?.(doc.constructor.metadata?.name)) return;
 
 	// Create a well-known ID, adding incrementing number if the same ID already exists
-	let newID = generateID(doc.name, { prefix, type: data.type ?? doc.constructor.metadata?.name });
+	let newID = generateID(doc.name, { prefix });
 	let count = 1;
 	while (doesIDExist(newID, doc)) newID = newID.slice(0, -String(count).length).concat(count++);
 
 	// Save the new ID to the creation data
 	doc.updateSource({ _id: newID });
 	options.keepId = true;
-	BlackFlag.utils.log(`Created ${doc.constructor.metadata?.name} with well-known ID: ${newID}`);
+	(globalThis.BlackFlag ?? globalThis.dnd5e).utils.log(
+		`Created ${doc.constructor.metadata?.name} with well-known ID: ${newID}`
+	);
 }
 
 /* <><><><> <><><><> <><><><> <><><><> <><><><> <><><><> */
@@ -171,6 +176,7 @@ function setWellKnownID(doc, data, options, userId) {
  */
 function doesIDExist(id, doc) {
 	if (doc.parent) return !!doc.parent.getEmbeddedDocument(doc.constructor.metadata.name, id);
+	if (doc instanceof Folder && doc.pack) return game.packs.get(doc.pack).folders.has(id);
 	if (game.release.generation < 13 && doc.pack) return doc.compendium.index.has(id);
 	return doc.collection.has(id);
 }

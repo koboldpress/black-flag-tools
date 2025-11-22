@@ -32,6 +32,8 @@ export function setProperty(object, keyPath, value) {
 /*                     ID Generation                     */
 /* <><><><> <><><><> <><><><> <><><><> <><><><> <><><><> */
 
+const IGNORED_WORDS = new Set(["the", "a", "an", "of"]);
+
 /**
  * Generate a random ID using the provided prefix from a document name.
  * @param {string} name
@@ -41,6 +43,10 @@ export function setProperty(object, keyPath, value) {
  * @returns {string}
  */
 export function generateID(name, { prefix = "", type = "" } = {}) {
+	name = name
+		.split(" ")
+		.filter(w => !IGNORED_WORDS.has(w.toLowerCase()))
+		.join(" ");
 	const text = name.slugify({ replacement: "", strict: true, lowercase: false });
 	return staticID(`${prefix}${type.slice(0, 2).toUpperCase()}${text}`);
 }
