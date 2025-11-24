@@ -32,6 +32,21 @@ export function setProperty(object, keyPath, value) {
 /*                     ID Generation                     */
 /* <><><><> <><><><> <><><><> <><><><> <><><><> <><><><> */
 
+/**
+ * Check to see if the provided ID exists relative to where the document will be created.
+ * @param {string} id
+ * @param {Document} doc
+ * @returns {boolean}
+ */
+export function doesIDExist(id, doc) {
+	if (doc.parent) return !!doc.parent.getEmbeddedDocument(doc.constructor.metadata.name, id);
+	if (doc instanceof Folder && doc.pack) return game.packs.get(doc.pack).folders.has(id);
+	if (game.release.generation < 13 && doc.pack) return doc.compendium.index.has(id);
+	return doc.collection.has(id);
+}
+
+/* <><><><> <><><><> <><><><> <><><><> <><><><> <><><><> */
+
 const IGNORED_WORDS = new Set(["the", "a", "an", "of"]);
 
 /**

@@ -12,7 +12,7 @@ import setupCounter from "./counter.mjs";
 import { ParsingApplication } from "./parsing/_module.mjs";
 import { ImportingDialog } from "./importing/_module.mjs";
 import * as types from "./types.mjs";
-import { generateID, seedRandom, TOOLS } from "./utils.mjs";
+import { doesIDExist, generateID, seedRandom, TOOLS } from "./utils.mjs";
 
 const { SetField, StringField } = foundry.data.fields;
 
@@ -20,7 +20,7 @@ Object.assign(TOOLS, types);
 
 Hooks.once("init", () => {
 	Object.assign(game.modules.get("black-flag-tools"), {
-		utils: { generateID }
+		utils: { doesIDExist, generateID }
 	});
 
 	game.settings.register("black-flag-tools", "image-counter", {
@@ -164,21 +164,6 @@ function setWellKnownID(doc, data, options, userId) {
 	(globalThis.BlackFlag ?? globalThis.dnd5e).utils.log(
 		`Created ${doc.constructor.metadata?.name} with well-known ID: ${newID}`
 	);
-}
-
-/* <><><><> <><><><> <><><><> <><><><> <><><><> <><><><> */
-
-/**
- * Check to see if the provided ID exists relative to where the document will be created.
- * @param {string} id
- * @param {Document} doc
- * @returns {boolean}
- */
-function doesIDExist(id, doc) {
-	if (doc.parent) return !!doc.parent.getEmbeddedDocument(doc.constructor.metadata.name, id);
-	if (doc instanceof Folder && doc.pack) return game.packs.get(doc.pack).folders.has(id);
-	if (game.release.generation < 13 && doc.pack) return doc.compendium.index.has(id);
-	return doc.collection.has(id);
 }
 
 /* <><><><> <><><><> <><><><> <><><><> <><><><> <><><><> */
