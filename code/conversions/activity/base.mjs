@@ -20,11 +20,14 @@ export default class BaseActivityConversion extends BaseConversion {
 		["consumption.scaling.allowed", "consumption.scale.allowed"],
 		["consumption.scaling.max", "consumption.scale.max"],
 		["consumption.targets", "consumption.targets", initial => initial?.map(i => this.convertConsumptionTarget(i))],
+		[null, "description"],
 		["duration.concentration", "duration.concentration"],
 		["duration.override", "duration.override"],
 		["duration.special", "duration.special"],
 		["duration.units", "duration.unit", convertTimePeriod],
 		["duration.value", "duration.value"],
+		["flags", "flags"],
+		["img", "img"],
 		["name", "name"],
 		["range.override", "range.override"],
 		["range.special", "range.special"],
@@ -47,12 +50,12 @@ export default class BaseActivityConversion extends BaseConversion {
 		["uses.max", "uses.max"],
 		["uses.recovery", "uses.recovery", convertUsesRecovery],
 		["uses.spent", "uses.spent"],
-		[null, "visibility.identifier"],
-		[null, "visibility.level.min"],
-		[null, "visibility.level.max"],
-		[null, "visibility.requireAttunement"],
-		[null, "visibility.requireIdentification"],
-		[null, "visibility.requireMagic"]
+		["visibility.identifier", "visibility.identifier"],
+		["visibility.level.min", "visibility.level.min"],
+		["visibility.level.max", "visibility.level.max"],
+		["visibility.requireAttunement", "visibility.requireAttunement"],
+		["visibility.requireIdentification", "visibility.requireIdentification"],
+		["visibility.requireMagic", "visibility.requireMagic"]
 	];
 
 	static convertBase(initial) {
