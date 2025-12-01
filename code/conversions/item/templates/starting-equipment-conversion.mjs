@@ -19,9 +19,10 @@ export default class StartingEquipmentConversion extends BaseConversion {
 			configuration: {
 				pool: equipment.map(e => {
 					if ( e.type === "armor" ) e.key = convertArmor(e.key);
-					if ( e.type === "focus" ) return null;
-					if ( e.type === "tool" ) e.key = convertTool(e.key);
-					if ( e.type === "weapon" ) e.key = convertWeapon(e.key);
+					else if ( e.type === "currency" ) return null;
+					else if ( e.type === "focus" ) return null;
+					else if ( e.type === "tool" ) e.key = convertTool(e.key);
+					else if ( e.type === "weapon" ) e.key = convertWeapon(e.key);
 					return e;
 				}).filter(_ => _)
 			}
