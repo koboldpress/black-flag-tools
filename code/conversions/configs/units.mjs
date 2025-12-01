@@ -15,6 +15,15 @@ export function convertDistanceUnit(initial) {
 }
 
 /**
+ * Convert a travel unit from dnd5e to those used by Black Flag.
+ * @param {string} initial
+ * @returns {string}
+ */
+export function convertPaceUnit(initial) {
+	return {}[initial] ?? initial;
+}
+
+/**
  * Convert a volume unit from dnd5e to those used by Black Flag.
  * @param {string} initial
  * @returns {string}

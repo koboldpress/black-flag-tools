@@ -5,7 +5,7 @@ export default class MovementConversion extends BaseConversion {
 
 	static paths = [
 		["system.attributes.movement", "system.traits.movement", MovementConversion.convertMovement],
-		["system.attributes.movement.ignoredDifficultTerrain", "system.trait.movement.ignoredDifficultTerrain"]
+		["system.attributes.movement.ignoredDifficultTerrain", "system.traits.movement.ignoredDifficultTerrain"]
 	];
 
 	static convertMovement(initial, context) {

@@ -1,6 +1,7 @@
 import { getProperty, setProperty } from "../../utils.mjs";
 import BaseConversion from "../base.mjs";
 import { convertAbility } from "../configs/abilities.mjs";
+import { convertDistanceUnit, convertPaceUnit, convertWeightUnit } from "../configs/units.mjs";
 import { convertVehicleType, convertSize } from "../configs/actors.mjs";
 import MovementConversion from "../shared/templates/movement-conversion.mjs";
 import HPConversion from "./templates/hp-conversion.mjs";
@@ -19,24 +20,32 @@ export default class VehicleConversion extends BaseConversion {
 		["system.attributes.ac.flat", "system.attributes.ac.value"],
 		["system.attributes.ac.formula", null],
 		["system.attributes.ac.motionless", null],
+		["system.attributes.actions.spent", null],
 		["system.attributes.actions.stations", null],
-		["system.attributes.actions.value", null],
 		["system.attributes.actions.thresholds", null],
-		["system.attributes.capacity.cargo", "system.attributes.cargo.max"],
-		[null, "system.attributes.cargo.unit"],
-		[null, "system.attributes.crew.required"],
-		["system.attributes.capacity.creature", "system.attributes.passengers.max"],
-		[null, "system.description.actions"],
+		["system.attributes.capacity.cargo.value", "system.attributes.cargo.max"],
+		["system.attributes.capacity.cargo.units", "system.attributes.cargo.unit", convertWeightUnit],
+		["system.crew.max", "system.attributes.crew.required"],
+		["system.passengers.max", "system.attributes.passengers.max"],
+		["system.passengers.value", null],
+		["system.crew.value", null],
+		["system.attributes.price.value", null],
+		["system.attributes.price.denomination", null],
+		["system.attributes.quality.value", null],
+		["system.attributes.travel", null],
+		["system.attributes.actions.max", "system.description.actions"],
 		[null, "system.description.bonusActors"],
 		[null, "system.description.reactions"],
 		["system.details.biography.value", "system.description.value"],
+		["system.draft.value", null],
 		[null, "system.initiative"],
-		["system.traits.dimensions", "system.traits.dimensions", VehicleConversion.convertDimensions],
-		[null, "system.traits.dimensions.unit"],
-		[null, "system.traits.dimensions.width"],
+		["system.traits.beam.value", "system.traits.dimensions.length"],
+		["system.traits.beam.units", "system.traits.dimensions.units", convertDistanceUnit],
+		["system.traits.keel.value", "system.traits.dimensions.width"],
+		["system.traits.keel.units", "system.traits.dimensions.units", convertDistanceUnit],
 		["system.traits.size", "system.traits.size", convertSize],
-		[null, "system.traits.pace.types"],
-		[null, "system.traits.pace.unit"],
+		["system.attributes.travel.speeds", "system.traits.pace.types"],
+		["system.attributes.travel.units", "system.traits.pace.unit", convertPaceUnit],
 		["system.vehicleType", "system.traits.type.value", convertVehicleType]
 	];
 
@@ -121,16 +130,5 @@ export default class VehicleConversion extends BaseConversion {
 		// TODO: If spell DC bonus is set, calculate spell bonus and add
 
 		setProperty(final, "system.modifiers", modifiers);
-	}
-
-	static DIMENSION_REGEX = /^\s*(?<length>\d+)\s*(?<dimension>\w+\.?)\s*(?:by|x)\s*(?<width>\d+)\s*(?:\w+\.?)/i;
-
-	static convertDimensions(initial, context) {
-		const match = initial?.match(VehicleConversion.DIMENSION_REGEX);
-		if (!match) return {};
-		return {
-			length: Number(match.groups.length),
-			width: Number(match.groups.width)
-		};
 	}
 }

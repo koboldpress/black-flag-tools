@@ -74,7 +74,11 @@ Hooks.once("setup", () => {
 				icon: '<i class="fa-solid fa-file-export"></i>',
 				group: "conversion",
 				callback: async li => {
-					const doc = await collection.getDocument(li.closest("[data-entry-id]")?.dataset.entryId);
+					const id = li.closest("[data-entry-id]")?.dataset.entryId;
+					if (!id) return;
+					let doc;
+					if (collection instanceof foundry.documents.abstract.WorldCollection) doc = collection.get(id);
+					else doc = await collection.getDocument(id);
 					if (doc) convertDocument(doc);
 				}
 			});
