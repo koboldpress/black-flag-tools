@@ -9,20 +9,23 @@ export default class MovementConversion extends BaseConversion {
 	];
 
 	static convertMovement(initial, context) {
+		const walkIsBase = Number.isNumeric(initial.walk);
+
 		const final = {
-			base: initial.walk ?? 30,
+			base: walkIsBase ? Number(initial.walk) ?? 30 : 0,
 			custom: [],
 			tags: initial.hover ? ["hover"] : [],
 			types: {
-				walk: "@base"
+				walk: walkIsBase || !initial.walk ? "@base" : String(initial.walk)
 			},
 			unit: convertDistanceUnit(initial.units) ?? "foot"
 		};
+		// TODO: Handle movement bonus as modifier
 
 		for ( const type of ["burrow", "climb", "fly", "swim"] ) {
 			if ( initial[type] ) final.types[type] = initial[type];
 		}
-		
+
 		for ( let entry of initial.special?.split(";") ?? [] ) {
 			entry = entry.trim();
 			if ( !entry ) continue;
