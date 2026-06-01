@@ -162,7 +162,7 @@ export default class Parser {
 			paragraph = "";
 		};
 		for (const line of this.consumeRepeat("\n")) {
-			if (line) paragraph += " " + line;
+			if (line) paragraph += (paragraph ? " " : "") + line;
 			else addParagraph();
 		}
 		addParagraph();
