@@ -46,9 +46,13 @@ export default async function parseSpell(type, input) {
 	// Description
 	data["system.description.value"] = parser.consumeDescription({
 		process: (paragraph, index) => {
-			// Highlight first paragraph as long as it is less than 20 words
-			if (index === 0 && paragraph.split(" ").length < 20) {
-				paragraph = `<em>${paragraph}</em>`;
+			// First paragraph is the spell's short description
+			if (index === 0) {
+				// Store the plain-text first paragraph as the short description
+				data["system.description.short"] = paragraph;
+				// Retain it in the body, set off as a blockquote (≤25 words) or em (longer)
+				paragraph =
+					paragraph.split(/\s+/).length <= 25 ? `<blockquote>${paragraph}</blockquote>` : `<em>${paragraph}</em>`;
 			}
 
 			// Emphasize "At Higher Circles"

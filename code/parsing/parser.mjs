@@ -156,7 +156,12 @@ export default class Parser {
 					paragraph = paragraph.replace(/^•|-\s*/, "");
 				} else if (inList) paragraphs.push("</ul>");
 				if (process) paragraph = process(paragraph, index);
-				paragraphs.push(`${li ? "<li>" : ""}<p>${this.parseEnrichers(paragraph.trim())}</p>${li ? "</li>" : ""}`);
+				const inner = this.parseEnrichers(paragraph.trim());
+				// If the paragraph's content begins with a block-level element, don't wrap it in
+				// <p> — nesting block elements inside <p> produces invalid HTML5.
+				const isBlock = /^<(blockquote|div|ul|ol|table|pre|h[1-6]|p|figure|hr)\b/i.test(inner);
+				const wrapped = isBlock ? inner : `<p>${inner}</p>`;
+				paragraphs.push(`${li ? "<li>" : ""}${wrapped}${li ? "</li>" : ""}`);
 				index += 1;
 			}
 			paragraph = "";
