@@ -73,7 +73,16 @@ export default class Parser {
 			type = parser.consumeEnumPlurals(config);
 			if (type) break;
 		}
-		return { value, type };
+		// Capture any trailing trigger clause (e.g. reactions: "1 reaction, when an ally …").
+		// Strip leading punctuation/whitespace delimiter, then store verbatim as condition.
+		const result = { value, type };
+		const condition = parser
+			.consumeRemainder()
+			.trim()
+			.replace(/^[,;:\s]+/, "")
+			.trim();
+		if (condition) result.condition = condition;
+		return result;
 	}
 
 	/* <><><><> <><><><> <><><><> <><><><> */

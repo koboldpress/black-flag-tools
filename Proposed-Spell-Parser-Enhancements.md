@@ -16,29 +16,29 @@ The following enhancements target `code/parsing/parser.mjs` and `code/parsing/ty
 
 ### Enhancement 1 — Tighten Paragraph Accumulation in `consumeDescription`
 
-**Summary:** The line-accumulation loop in `consumeDescription()` reads `paragraph += " " + line`, which prepends a space unconditionally — including on the first line of a new paragraph, when `paragraph` is still empty. The upate makes the space conditional on the paragraph already having content: `paragraph += (paragraph ? " " : "") + line`.
+**Summary:** The line-accumulation loop in `consumeDescription()` reads `paragraph += " " + line`, which adds a space at the start of every new paragraph because it runs unconditionally — even when `paragraph` is still empty. The fix makes the space conditional: `paragraph += (paragraph ? " " : "") + line`.
 
-**Why:** In the current code this is a latent issue rather than an observable one. Each paragraph is `.trim()`ed before being wrapped in `<p>` (line 159 of `parser.mjs`), so the transient leading space is stripped before storage and the stored field value is clean. The fix produces byte-identical output today.
+**Why:** This doesn't actually change anything you can see today. Each paragraph gets `.trim()`ed before it's wrapped in `<p>`, so the leading space is stripped before anything gets stored. The output is byte-identical before and after.
 
-The reason to ship it is purely defensive. The current pattern works because a downstream .trim() happens to strip the transient leading space. The fix makes the loop self-contained, so future changes between the accumulation and the trim — or callers that reuse the accumulated value without trimming — won't reintroduce the artifact.
+The reason to ship it anyway is defensive. Right now the code relies on a downstream `.trim()` to clean up a space it never should have added. The fix makes the loop correct on its own, so if someone changes the code between the accumulation and the trim later — or reuses the accumulated value somewhere without trimming — the stray space won't sneak through.
 
-**Risk: None.** Output is identical before and after — verified against the realistic spell. Single-line change with no behavioral consequences for any current caller.
+**Risk: None.** Single-line change. Output is identical before and after, verified against a realistic spell. No current caller is affected.
 
-**What this does _not_ fix:** Stray whitespace artifacts do exist in stored descriptions from other paths in the parser — notably a regex operator-precedence bug in the list-item bullet stripper (`^•|-\s*` parses as `(^•) | (-\s*)`, leaving a leading space when a paragraph starts with `•`), and doubled spaces produced when input lines carry trailing whitespace. Those are separate defects; Enhancement 1 does not address them.
+**What this does not fix:** There are other whitespace issues elsewhere in the parser — specifically a regex operator-precedence issue in the list-item bullet stripper (`^•|-\s*` parses as `(^•) | (-\s*)`, which leaves a leading space when a paragraph starts with `•`) and doubled spaces that appear when input lines have trailing whitespace. Those are separate issues that Enhancement 1 does not address.
 
 ---
 
 ### Enhancement 2 — Populate `system.description.short` and Set Off the First Paragraph
 
-**Summary:** The BF spell data model exposes `system.description.short`, but the parser never populates it. The first paragraph of a spell's description is the canonical short description. This enhancement extracts it as plain text into `system.description.short` and also retains it in `system.description.value`, set off as a `<blockquote>` (≤ 25 words) or `<em>` (> 25 words, flagging longer openings for human review). The previous behavior — wrapping first paragraphs in `<em>` only when under 20 words — is replaced by this approach.
+**Summary:** The BF spell data model has a `system.description.short` field that the parser never fills in. This field shows up in the spell selection dialog and the spell list index, but every spell created by the parser leaves it blank. This fix grabs the first paragraph of the description, saves it as plain text in `system.description.short`, and also keeps it in the description body wrapped in a `<blockquote>` (25 words or fewer) or `<em>` (longer than 25 words). The old behavior — only wrapping the first paragraph in `<em>` when it was under 20 words — is replaced by this approach.
 
-**Why:** `system.description.short` is actively used by the BF system in visible UI contexts including the spell selection dialog and the spell list index. Every spell currently created through the parser has a blank short description that the user must fill in manually. Populating it from the first paragraph is a straightforward quality-of-life improvement that makes parsed spells immediately usable without post-parse editing. Wrapping the same paragraph in the description body visually distinguishes the spell's narrative opening from its mechanical text, mirroring the formatting convention of the published source books.
+**Why:** Players and GMs see `system.description.short` every time they browse spells or open the selection dialog. Having it blank on every parsed spell means someone has to go back and fill it in by hand. Pulling it from the first paragraph is an easy win that makes parsed spells usable right away. Wrapping the same paragraph in the description body also helps visually separate the flavor text from the mechanical rules, which matches how the published books lay things out.
 
-**Implementation note:** Because `<blockquote>` is a block-level element, `consumeDescription()` in `parser.mjs` also needs a small adjustment: when the `process` callback returns content that begins with a block-level tag, the surrounding `<p>` wrapper is skipped. Without this, the output would be `<p><blockquote>…</blockquote></p>`, which is invalid HTML5. Inline wrappers like `<em>` still receive the `<p>` wrap as before, so every other caller of `consumeDescription()` is unaffected.
+**Implementation note:** `<blockquote>` is a block-level HTML element, so `consumeDescription()` needed a small tweak: when the `process` callback returns something that starts with a block-level tag, the usual `<p>` wrapper is skipped. Without this, the output would be `<p><blockquote>…</blockquote></p>`, which is invalid HTML5. Everything else that uses `consumeDescription()` is unaffected — inline content like `<em>` still gets wrapped in `<p>` as before.
 
-**Risk: Low.** The spell-side change is confined to the `process` callback and is deterministic. The shared change to `consumeDescription()` is backward-compatible: callers that don't pass a `process` callback, or whose callbacks return inline content, get byte-identical output. `<blockquote>` is confirmed on the BF HTML whitelist.
+**Risk: Low.** The spell-side change only touches the `process` callback and behaves the same way every time. The change to `consumeDescription()` is backward-compatible — callers that don't use a `process` callback, or that return inline content, get the same output as before. `<blockquote>` is on the BF HTML whitelist.
 
-**Note on input format**: The parser's existing `consumeDescription()` uses blank lines as paragraph separators in the spell's description. When a paste contains no blank lines between paragraphs, the entire description is merged into one paragraph and treated as the first paragraph for purposes of the short-description extraction and wrap rules. This is pre-existing behavior unchanged by this PR; users who paste from sources without blank-line paragraph separators (e.g., Markdown raw text) should add blank lines between paragraphs. A future enhancement could add heuristic paragraph detection.
+**Note on input format:** `consumeDescription()` uses blank lines to separate paragraphs. If a paste has no blank lines between paragraphs, the whole description gets treated as one paragraph — meaning the entire thing ends up in `system.description.short` and gets wrapped as a single block. This is pre-existing behavior that this PR doesn't change. If that happens, add blank lines between paragraphs in the source text. A future enhancement could handle this automatically with heuristic paragraph detection.
 
 ---
 
@@ -50,7 +50,11 @@ Dropped from the project
 
 ### Enhancement 4 — Capture Reaction Trigger Condition in `consumeCasting()`
 
-More to come
+**Summary:** The BF spell data model has a `system.casting.condition` field that displays as a hover tooltip on the spell's activity in the character sheet. Reaction spells put their trigger condition on the Casting Time line after the action type — e.g., `Casting Time: 1 reaction, when a creature you can see within 60 feet of you misses with a melee attack`. The parser was throwing that part away. This enhancement reads whatever is left on the line after the action type, strips the leading comma and whitespace, and saves it as `condition` on the returned object. If there's nothing there, the returned object stays the same as before.
+
+**Why:** The trigger condition is useful information that a player needs to know about the reaction spell they are casting — it essentially tells them when they can use it. The field for it was always blank for spells created by the parser, so users had to fill it in manually after every import. This QoL enhancement takes care of it automatically.
+
+**Risk: Low.** The existing parsing logic runs exactly the same as before. The condition is read after the action type is already captured, so the two can't interfere with each other. For non-reaction spells with nothing after the action type, the output is identical to today. The only minor risk is the punctuation-stripping pattern leaving a stray character at the start of the condition in unusual cases — easy to spot in testing and simple to fix.
 
 ---
 
