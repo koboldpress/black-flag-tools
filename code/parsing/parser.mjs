@@ -194,10 +194,34 @@ export default class Parser {
 		if (!line) return;
 		const parser = new Parser(line);
 		const concentration = !!parser.consumeIfMatches("Concentration, up to ");
-		const duration = { value: parser.consumeNumber(), unit: null };
-		for (const config of [CONFIG.BlackFlag.durations, CONFIG.BlackFlag.timeUnits]) {
-			duration.unit = parser.consumeEnumPlurals(config);
-			if (duration.unit) break;
+		const duration = { value: null, unit: null };
+		// Non-scalar special and permanent durations are checked before consumeEnumPlurals
+		// to prevent prefix collisions. makeLabels flattens CONFIG.BlackFlag.durations and
+		// sorts entries alphabetically by label — "Until Dispelled" sorts before "Until
+		// Dispelled or Triggered", so consumeEnumPlurals would prefix-match the shorter
+		// phrase first and return the wrong key. Testing our explicit list first avoids this.
+		// Ordered most-specific-first for the same reason.
+		const specialDurations = [
+			["until destroyed or dispelled", "destroyed"],
+			["until dispelled or triggered", "triggered"],
+			["until dispelled", "dispelled"],
+			["instantaneous", "instantaneous"],
+			["permanent", "permanent"],
+			["special", "special"]
+		];
+		for (const [phrase, key] of specialDurations) {
+			if (parser.consumeIfMatches(phrase)) {
+				duration.unit = key;
+				break;
+			}
+		}
+		// Scalar durations (e.g. "1 minute") fall through to number + enum parsing.
+		if (!duration.unit) {
+			duration.value = parser.consumeNumber();
+			for (const config of [CONFIG.BlackFlag.durations, CONFIG.BlackFlag.timeUnits]) {
+				duration.unit = parser.consumeEnumPlurals(config);
+				if (duration.unit) break;
+			}
 		}
 		return { duration, concentration };
 	}

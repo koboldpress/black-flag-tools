@@ -60,7 +60,13 @@ Dropped from the project
 
 ### Enhancement 5 — Handle Special Duration Types in `consumeDuration()`
 
-More to come
+**Summary:** Spells with non-numeric durations — Instantaneous, Permanent, Until Dispelled, Until Dispelled or Triggered, and Until Destroyed or Dispelled — were producing `duration: { value: null, unit: null }` because the existing parsing logic only handles durations that start with a number. This enhancement adds an explicit phrase list that runs before `consumeEnumPlurals()`, maps each phrase to its correct BF duration key, and is ordered longest-match-first to prevent shorter phrases from matching the start of longer ones. Scalar durations like "1 minute" don't match any phrase in the list and fall through to the existing logic unchanged.
+
+**Why:** Instantaneous is probably the most common duration in the game, and it was silently producing a blank duration field on every parsed spell. This enhancement is a small addition that makes a noticeable difference across a large number of spells that use non-numeric durations.
+
+**Risk: Low.** The phrase list only runs when the existing number-based parsing finds nothing, so timed durations like "1 minute" or "8 hours" are completely unaffected. The longest-match-first ordering is the only thing that needs to be right, and it's been verified against all six phrases.
+
+**Implementation note:** The phrase list runs _before_ `consumeEnumPlurals()`, not after. `makeLabels()` flattens BF's nested duration config and sorts entries alphabetically, which puts "Until Dispelled" before "Until Dispelled or Triggered" in the output. Without the explicit pre-check, `consumeEnumPlurals()` prefix-matches the shorter phrase and returns the wrong key for the longer one.
 
 ---
 
