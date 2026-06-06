@@ -441,6 +441,44 @@ export default class Parser {
 			}
 		},
 
+		// Conditions — match when preceded by a contextual verb phrase to prevent false
+		// positives on bare condition names. apply=false suppresses the "apply condition"
+		// button; conditions here are described, not triggered.
+		{
+			regex:
+				// eslint-disable-next-line max-len
+				/\b(?:is|are|becomes?|while|be|fall(?:ing)?|knocked|also|or|and)\s+(blinded|charmed|deafened|frightened|grappled|incapacitated|invisible|paralyzed|petrified|poisoned|prone|restrained|stunned|unconscious)\b/dgi,
+			handler: result => {
+				const conditionName = result[1];
+				const verbPhrase = result[0].slice(0, result[0].toLowerCase().lastIndexOf(conditionName.toLowerCase()));
+				return `${verbPhrase}&Reference[${conditionName.toLowerCase()} apply=false]`;
+			}
+		},
+
+		// Difficult terrain — matched standalone without a verb trigger since the phrase
+		// is specific enough to always be a terrain reference. No apply=false (not a condition).
+		{
+			regex: /\bdifficult terrain\b/dgi,
+			handler: () => "&Reference[difficult terrain]"
+		},
+
+		// Actions — match action names following "take/use the … action" or "for … action".
+		// A non-capturing skip group allows non-action items at the start of the list
+		// (e.g. "Attack (one weapon attack only), Dash, Disengage…") without consuming
+		// the action names. Handles single names, pairs, and Oxford-comma/and lists.
+		{
+			regex:
+				// eslint-disable-next-line max-len
+				/\b(?:(?:takes?|uses?)\s+the\s+|for\s+)(?:(?!Dash|Disengage|Dodge|Help|Hide|Ready|Search|Use an Object)[^,]+,\s*)*((?:Dash|Disengage|Dodge|Help|Hide|Ready|Search|Use an Object)(?:(?:\s*,\s*(?:(?:or|and)\s+)?|\s+(?:or|and)\s+)(?:Dash|Disengage|Dodge|Help|Hide|Ready|Search|Use an Object))*)\s+action/dgi,
+			handler: result => {
+				const enrichedList = result[1].replace(
+					/Dash|Disengage|Dodge|Help|Hide|Ready|Search|Use an Object/gi,
+					name => `&Reference[${name}]`
+				);
+				return result[0].replace(result[1], enrichedList);
+			}
+		},
+
 		// Damage
 		{
 			regex: /(?<roll>\d+d\d+(?:\s+[+|-|−]\s+\d+)?)\s+(?<type>\w+)\sdamage/dgi,

@@ -72,7 +72,13 @@ Dropped from the project
 
 ### Enhancement 6 — Add Condition Reference Enrichers
 
-More to come
+**Summary:** Spell and item descriptions frequently mention the 14 standard BF conditions (Blinded, Charmed, Deafened, etc.) as plain text. This adds a new entry to `Parser.enrichers` that wraps condition names in `&Reference[conditionname apply=false]` syntax, which turns them into clickable journal links in Foundry. The regex only matches condition names when preceded by a verb phrase ("is", "are", "becomes", "while") to avoid false positives on words like "prone" used in other contexts. Pseudo-conditions without a `reference` journal UUID are excluded. Because `parseEnrichers()` runs on every paragraph in `consumeDescription()`, this works automatically across all item types — spells, magic items, armor, weapons, and enchantments — with no extra code changes needed.
+
+This enhancement also adds enrichers for eight BF actions — Dash, Disengage, Dodge, Help, Hide, Ready, Search, and Use an Object — that appear in descriptions in the form "takes/uses/for the X action". These are matched individually and in comma-separated or "or/and" lists, with support for non-action items at the start of the list (e.g., "Attack (one weapon attack only), Dash, Disengage…").
+
+**Why:** Condition names are some of the most looked-up pieces of text in most game — players and GMs regularly need to know what a condition does mid-session. Right now every condition reference in a parsed description is plain text and unclickable. This enhancement closes that gap automatically for everything the parser produces, without any extra work from the user.
+
+**Risk: Medium.** The main risk is false negatives — unusual phrasing that the verb-phrase pattern doesn't catch — rather than false positives, since the pattern is deliberately conservative. The test bank covers the most common cases but real spell text will surface edge cases.
 
 ---
 
