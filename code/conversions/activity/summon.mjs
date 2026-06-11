@@ -17,12 +17,14 @@ export default class SummonActivityConversion extends BaseActivityConversion {
 		["effects", "system.effects"],
 		["match.ability", null],
 		["match.attacks", "system.match.attacks"],
+		["match.disposition", "system.match.disposition"],
 		["match.proficiency", "system.match.proficiency"],
 		["match.saves", "system.match.saves"],
 		["profiles", "system.profiles", initial => initial.map(i => this.convertProfile(i))],
 		["summon.mode", "system.summon.mode"],
 		["summon.prompt", "system.summon.prompt"],
-		["summon.identifier", "visibility.identifier"]
+		["summon.identifier", "visibility.identifier"],
+		["tempHP", "system.tempHP"]
 	];
 
 	static convertProfile(initial) {
