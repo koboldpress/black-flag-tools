@@ -166,8 +166,8 @@ export default class ParsingApplication extends HandlebarsApplicationMixin(Appli
 			field: new foundry.data.fields.StringField(),
 			options: Object.entries(this.constructor.TYPES).map(([value, data]) => ({
 				value,
-				label: game.i18n.localize(data.label),
-				group: game.i18n.localize(data.group),
+				label: _loc(data.label),
+				group: _loc(data.group),
 				selected: lastType === value
 			}))
 		};
@@ -175,7 +175,7 @@ export default class ParsingApplication extends HandlebarsApplicationMixin(Appli
 		context.folders = {
 			field: new foundry.data.fields.StringField(),
 			options: [
-				{ value: "", label: game.i18n.localize("BFTools.Parser.NoFolder") },
+				{ value: "", label: _loc("BFTools.Parser.NoFolder") },
 				...this.pack
 					._formatFolderSelectOptions()
 					.map(({ id, name }) => ({ value: id, label: name, selected: id === lastFolder }))
@@ -265,7 +265,7 @@ export default class ParsingApplication extends HandlebarsApplicationMixin(Appli
 		button.classList.add("parse");
 		button.dataset.action = "parse";
 		button.type = "button";
-		button.innerHTML = `<i class="fa-solid fa-file-lines" inert></i> ${game.i18n.localize("BFTools.Parser.Title")}`;
+		button.innerHTML = `<i class="fa-solid fa-file-lines" inert></i> ${_loc("BFTools.Parser.Title")}`;
 		button.addEventListener("click", event => {
 			const parser = new ParsingApplication({ pack: app.collection });
 			parser.render({ force: true });
