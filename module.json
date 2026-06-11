@@ -4,8 +4,8 @@
 	"description": "<p>Set of tools for import content into the Black Flag system and making DnD5e content compatible with the system.</p>",
 	"version": "3.0.013",
 	"compatibility": {
-		"minimum": "13.341",
-		"verified": "13"
+		"minimum": "14.359",
+		"verified": "14"
 	},
 	"download": "",
 	"manifest": "https://github.com/koboldpress/black-flag-tools/releases/latest/download/module.json",
@@ -25,15 +25,15 @@
 			{
 				"id": "black-flag",
 				"compatibility": {
-					"minimum": "2.0.068",
-					"verified": "2.0.068"
+					"minimum": "3.0.076",
+					"verified": "3.0.076"
 				}
 			},
 			{
 				"id": "dnd5e",
 				"compatibility": {
-					"minimum": "5.2.0",
-					"verified": "5.2.0"
+					"minimum": "5.3.0",
+					"verified": "5.3.0"
 				}
 			}
 		]
