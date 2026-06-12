@@ -70,11 +70,11 @@ Hooks.once("setup", () => {
 			const collection = application.options?.collection;
 			if (!types.DOCUMENT_TYPES[collection?.documentName]?.convertible) return false;
 			menuItems.push({
-				name: game.i18n.localize("BFTools.Export"),
+				label: _loc("BFTools.Export"),
 				icon: '<i class="fa-solid fa-file-export"></i>',
 				group: "conversion",
-				callback: async li => {
-					const id = li.closest("[data-entry-id]")?.dataset.entryId;
+				onClick: async (event, target) => {
+					const id = target.closest("[data-entry-id]")?.dataset.entryId;
 					if (!id) return;
 					let doc;
 					if (collection instanceof foundry.documents.abstract.WorldCollection) doc = collection.get(id);
@@ -88,15 +88,15 @@ Hooks.once("setup", () => {
 		Hooks.on("getCompendiumContextOptions", (application, menuItems) => {
 			if (!(application instanceof foundry.applications.sidebar.tabs.CompendiumDirectory)) return;
 			menuItems.push({
-				name: game.i18n.localize("BFTools.Export"),
+				label: _loc("BFTools.Export"),
 				icon: '<i class="fa-solid fa-file-export"></i>',
 				group: "conversion",
-				condition: li => {
+				visible: li => {
 					const pack = game.packs.get(li.closest("[data-pack]")?.dataset.pack);
 					return pack && types.DOCUMENT_TYPES[pack.metadata.type]?.convertible;
 				},
-				callback: li => {
-					const pack = game.packs.get(li.closest("[data-pack]")?.dataset.pack);
+				onClick: (event, target) => {
+					const pack = game.packs.get(target.closest("[data-pack]")?.dataset.pack);
 					if (pack) convertCompendium(pack);
 				}
 			});
@@ -108,15 +108,15 @@ Hooks.once("setup", () => {
 		Hooks.on("getCompendiumContextOptions", (application, menuItems) => {
 			if (!(application instanceof foundry.applications.sidebar.tabs.CompendiumDirectory)) return;
 			menuItems.push({
-				name: game.i18n.localize("BFTools.Import.Action.Import"),
+				label: _loc("BFTools.Import.Action.Import"),
 				icon: '<i class="fa-solid fa-file-import"></i>',
 				group: "conversion",
-				condition: li => {
+				visible: li => {
 					const pack = game.packs.get(li.closest("[data-pack]")?.dataset.pack);
 					return pack && types.DOCUMENT_TYPES[pack.metadata.type]?.convertible;
 				},
-				callback: li => {
-					const pack = game.packs.get(li.closest("[data-pack]")?.dataset.pack);
+				onClick: (event, target) => {
+					const pack = game.packs.get(target.closest("[data-pack]")?.dataset.pack);
 					if (pack) ImportingDialog.import(pack);
 				}
 			});

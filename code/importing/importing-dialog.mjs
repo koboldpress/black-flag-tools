@@ -74,14 +74,14 @@ export default class ImportingDialog extends HandlebarsApplicationMixin(Applicat
 		context.pack = {
 			field: new foundry.data.fields.StringField(),
 			options: [
-				{ value: "", label: game.i18n.localize("BFTools.Import.Remapping.KeepExisting") },
+				{ value: "", label: _loc("BFTools.Import.Remapping.KeepExisting") },
 				{ rule: true },
 				...Array.from(game.packs.entries()).map(([value, pack]) => this.#packageEntry(value, pack.metadata))
 			],
 			originals: scanUuids(this.documents)
 		};
-		context.summary = game.i18n.format("BFTools.Import.Summary.Description", {
-			count: BlackFlag.utils.numberFormat(this.documents.length),
+		context.summary = _loc("BFTools.Import.Summary.Description", {
+			count: BlackFlag.utils.formatNumber(this.documents.length),
 			target: this.pack.metadata.label
 		});
 		return context;
@@ -97,8 +97,8 @@ export default class ImportingDialog extends HandlebarsApplicationMixin(Applicat
 	 */
 	#packageEntry(id, metadata) {
 		const data = { value: id, label: `${metadata.label} (${id})` };
-		if (metadata.packageType === "world") data.group = game.i18n.localize("PACKAGE.Type.world");
-		else if (metadata.packageType === "system") data.group = game.i18n.localize("BF.BlackFlagRoleplaying");
+		if (metadata.packageType === "world") data.group = _loc("PACKAGE.Type.world");
+		else if (metadata.packageType === "system") data.group = _loc("BF.BlackFlagRoleplaying");
 		else data.group = game.modules.get(metadata.packageName)?.title;
 		return data;
 	}
@@ -129,7 +129,7 @@ export default class ImportingDialog extends HandlebarsApplicationMixin(Applicat
 
 		if (created?.length)
 			ui.notifications.info(
-				game.i18n.format("BFTools.Import.Success", {
+				_loc("BFTools.Import.Success", {
 					compendium: this.pack.metadata.label,
 					count: created.length
 				})
@@ -146,38 +146,46 @@ export default class ImportingDialog extends HandlebarsApplicationMixin(Applicat
 	 */
 	static async import(pack) {
 		const dialogConfig = {
-			title: `Import Data: ${pack.metadata.label}`,
-			content: await renderTemplate(`templates/apps/import-data.${game.release.generation < 13 ? "html" : "hbs"}`, {
-				hint1: game.i18n.format("BFTools.Import.Hint1", { document: pack.metadata.type }),
-				hint2: game.i18n.localize("BFTools.Import.Hint2")
-			}),
-			buttons: {
-				import: {
+			buttons: [
+				{
+					action: "import",
 					icon: '<i class="fa-solid fa-file-import" inert></i>',
 					label: "Import",
-					callback: html => {
-						const form = html.find("form")[0];
+					callback: (event, button, dialog) => {
+						const form = button.form;
 						if (!form.data.files.length) return ui.notifications.error("No file uploaded to import.");
-						return readTextFromFile(form.data.files[0]);
-					}
+						file = foundry.utils.readTextFromFile(form.data.files[0]);
+					},
+					default: true
 				},
-				no: {
+				{
+					actions: "no",
 					icon: '<i class="fa-solid fa-times"></i>',
 					label: "Cancel"
 				}
+			],
+			content: await foundry.applications.handlebars.renderTemplate("templates/apps/import-data.hbs", {
+				hint1: _loc("BFTools.Import.Hint1", { document: pack.metadata.type }),
+				hint2: _loc("BFTools.Import.Hint2")
+			}),
+			position: {
+				width: 400
 			},
-			default: "import"
+			window: {
+				title: `Import Data: ${pack.metadata.label}`
+			}
 		};
 		let file;
 		try {
-			file = await Dialog.wait(dialogConfig, { width: 400 });
+			await foundry.applications.api.DialogV2.wait(dialogConfig, { width: 400 });
 		} catch {
 			return;
 		}
+		if (!file) return;
 
 		let data;
 		try {
-			data = JSON.parse(file);
+			data = JSON.parse(await file);
 		} catch {
 			ui.notifications.error("Could not parse JSON file.");
 			return;

@@ -12,11 +12,12 @@ export default class SensesConversion extends BaseConversion {
 			custom: [],
 			tags: [],
 			types: {},
-			unit: convertDistanceUnit(initial.unit) ?? "foot"
+			unit: convertDistanceUnit(initial.units) ?? "foot"
 		};
 
 		for ( let type of ["darkvision", "blindsight", "tremorsense", "truesight"] ) {
-			if ( initial[type] ) final.types[type === "blindsight" ? "keensense" : type] = initial[type];
+			if ( initial.ranges?.[type] ) final.types[type === "blindsight" ? "keensense" : type] = initial.ranges[type];
+			else if ( initial[type] ) final.types[type === "blindsight" ? "keensense" : type] = initial[type];
 		}
 
 		for ( let entry of initial.special?.split(";") ?? [] ) {

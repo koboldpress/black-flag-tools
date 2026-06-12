@@ -1,72 +1,57 @@
 {
-  "id": "black-flag-tools",
-  "title": "Black Flag Roleplaying Content Tools",
-  "description": "<p>Set of tools for import content into the Black Flag system and making DnD5e content compatible with the system.</p>",
-  "version": "2.0.012",
-  "compatibility": {
-    "minimum": "13.341",
-    "verified": "13"
-  },
-  "download": "https://github.com/koboldpress/black-flag-tools/releases/download/2.0.012/black-flag-tools-2.0.012.zip",
-  "manifest": "https://github.com/koboldpress/black-flag-tools/releases/latest/download/module.json",
-  "url": "https://github.com/koboldpress/black-flag-tools/",
-  "authors": [
-    {
-      "name": "Jeff ‘Arbron’ Hitchcock",
-      "url": "https://github.com/arbron",
-      "email": "jeff@szed.co",
-      "discord": "arbron#6515",
-      "flags": {}
-    }
-  ],
-  "relationships": {
-    "systems": [
-      {
-        "id": "black-flag",
-        "compatibility": {
-          "minimum": "2.0.068",
-          "verified": "2.0.068"
-        },
-        "type": "system"
-      },
-      {
-        "id": "dnd5e",
-        "compatibility": {
-          "minimum": "5.2.0",
-          "verified": "5.2.0"
-        },
-        "type": "system"
-      }
-    ]
-  },
-  "esmodules": [
-    "black-flag-tools.mjs"
-  ],
-  "styles": [
-    {
-      "src": "black-flag-tools.css"
-    }
-  ],
-  "languages": [
-    {
-      "lang": "en",
-      "name": "English",
-      "path": "lang/en.json",
-      "flags": {}
-    }
-  ],
-  "flags": {
-    "hotReload": {
-      "extensions": [
-        "css",
-        "hbs",
-        "json"
-      ],
-      "paths": [
-        "black-flag-tools.css",
-        "templates",
-        "lang"
-      ]
-    }
-  }
+	"id": "black-flag-tools",
+	"title": "Black Flag Roleplaying Content Tools",
+	"description": "<p>Set of tools for import content into the Black Flag system and making DnD5e content compatible with the system.</p>",
+	"version": "3.0.013",
+	"compatibility": {
+		"minimum": "14.359",
+		"verified": "14"
+	},
+	"download": "",
+	"manifest": "https://github.com/koboldpress/black-flag-tools/releases/latest/download/module.json",
+	"url": "https://github.com/koboldpress/black-flag-tools/",
+	"authors": [
+		{
+			"name": "Jeff ‘Arbron’ Hitchcock",
+			"url": "https://github.com/arbron",
+			"email": "jeff@szed.co",
+			"discord": "arbron#6515",
+			"twitter": "@arbron",
+			"flags": {}
+		}
+	],
+	"relationships": {
+		"systems": [
+			{
+				"id": "black-flag",
+				"compatibility": {
+					"minimum": "3.0.076",
+					"verified": "3.0.076"
+				}
+			},
+			{
+				"id": "dnd5e",
+				"compatibility": {
+					"minimum": "5.3.0",
+					"verified": "5.3.0"
+				}
+			}
+		]
+	},
+	"esmodules": ["./black-flag-tools.mjs"],
+	"styles": ["./black-flag-tools.css"],
+	"languages": [
+		{
+			"lang": "en",
+			"name": "English",
+			"path": "lang/en.json",
+			"flags": {}
+		}
+	],
+	"flags": {
+		"hotReload": {
+			"extensions": ["css", "hbs", "json"],
+			"paths": ["black-flag-tools.css", "templates", "lang"]
+		}
+	}
 }

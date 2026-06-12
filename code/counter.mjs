@@ -30,7 +30,7 @@ export default function setupCounter() {
 			const div = document.createElement("div");
 			div.classList.add("black-flag-tools-counts");
 			div.innerHTML = `
-				<div data-tooltip="${game.i18n.format("BFTools.Counter.Tooltip", counts)}">
+				<div data-tooltip="${_loc("BFTools.Counter.Tooltip", counts)}">
 					${counts.pack} / ${counts.module}
 				</div>
 			`;
