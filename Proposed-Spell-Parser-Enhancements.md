@@ -106,4 +106,10 @@ More to come
 
 ### Enhancement 9 — Broaden "At Higher Circles" Detection
 
-More to come
+**Summary:** The existing regex for emphasizing "At Higher Circles" only matched when the phrase ended with a period (`At Higher Circles.`). Some published source books use a colon instead (`At Higher Circles:`), which meant the bold/italic formatting was silently skipped for those spells. The fix updates both the test regex and the replacement regex to accept either punctuation character.
+
+The replacement also switches from a literal string replace to a capturing-group replace, so the matched punctuation (whichever one triggered the match) is preserved inside the emphasis tags rather than hardcoded as a period.
+
+**Why:** The formatting is purely cosmetic, but it's a visible inconsistency — spells from sources that use a colon would have their "At Higher Circles" line appear as plain text while spells from sources that use a period would have it bold and italic. The fix is a one-line regex change with no behavioral impact on anything else.
+
+**Risk: None.** The change only affects paragraphs that start with "At Higher Circles" followed immediately by a period or colon. All other paragraphs are completely unaffected.

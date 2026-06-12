@@ -62,8 +62,8 @@ export default async function parseSpell(type, input) {
 			}
 
 			// Emphasize "At Higher Circles"
-			if (/^\s*At Higher Circles\./i.test(paragraph)) {
-				paragraph = paragraph.replace("At Higher Circles.", "<strong><em>At Higher Circles.</em></strong>");
+			if (/^\s*At Higher Circles[.:]/i.test(paragraph)) {
+				paragraph = paragraph.replace(/^(\s*)(At Higher Circles[.:])/i, "$1<strong><em>$2</em></strong>");
 			}
 
 			return paragraph;
