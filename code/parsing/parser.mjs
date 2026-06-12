@@ -409,6 +409,111 @@ export default class Parser {
 	/*               Parsing               */
 	/* <><><><> <><><><> <><><><> <><><><> */
 
+	/**
+	 * Detect an area of effect type and size from raw description text.
+	 * Used as a fallback when the Range line provides no template data, and also to
+	 * supplement it with secondary dimensions (e.g. width for lines, height for cylinders).
+	 * Patterns are checked in priority order; the first match wins.
+	 * Type strings are resolved against CONFIG.BlackFlag.areaOfEffectTypes.localized,
+	 * consistent with the lookup used by consumeRange().
+	 * @param {string} text - Raw description text to scan.
+	 * @returns {{ size: number, type: string, unit: string, height?: number, width?: number }|null}
+	 */
+	static parseAOEFromText(text) {
+		const findType = shape =>
+			Object.entries(CONFIG.BlackFlag.areaOfEffectTypes.localized).find(
+				([, v]) => v.toLowerCase() === shape.toLowerCase()
+			)?.[0] ?? null;
+		const scanHeight = ctx => {
+			const m = ctx.match(/(\d+)[-\s]?(?:foot|feet|ft)[^.]{0,5}?(?:high|tall)/i);
+			return m ? Number(m[1]) : null;
+		};
+		const scanWidth = ctx => {
+			const m = ctx.match(/(\d+)[-\s]?(?:foot|feet|ft)[^.]{0,5}?(?:wide|thick)/i);
+			return m ? Number(m[1]) : null;
+		};
+		// Extend context past the match end to capture secondary dimensions that follow.
+		const extCtx = m => m[0] + text.substring(m.index + m[0].length, m.index + m[0].length + 100);
+
+		let m;
+
+		// C1: cylinder, radius-first (e.g. "30-foot-radius, 60-foot-high cylinder")
+		m = text.match(/(\d+)[-\s]?(?:foot|feet|ft)[-\s]?radius[^.]{0,40}?cylinder/i);
+		if (m) {
+			const type = findType("cylinder");
+			if (type) {
+				const result = { size: Number(m[1]), type, unit: "foot" };
+				const height = scanHeight(extCtx(m));
+				if (height !== null) result.height = height;
+				return result;
+			}
+		}
+
+		// C2: cylinder, shape-first (e.g. "cylinder that is 10 feet tall with a 20-foot radius")
+		m = text.match(/cylinder[^.]{0,80}?(\d+)[-\s]?(?:foot|feet|ft)[-\s]?radius/i);
+		if (m) {
+			const type = findType("cylinder");
+			if (type) {
+				const result = { size: Number(m[1]), type, unit: "foot" };
+				const height = scanHeight(extCtx(m));
+				if (height !== null) result.height = height;
+				return result;
+			}
+		}
+
+		// P1: radius + sphere or circle (e.g. "20-foot-radius sphere")
+		m = text.match(/(\d+)[-\s]?(?:foot|feet|ft)[-\s]?radius\s+(sphere|circle)/i);
+		if (m) {
+			const type = findType(m[2]);
+			if (type) return { size: Number(m[1]), type, unit: "foot" };
+		}
+
+		// P2: size + shape — cone, cube, square only (cylinder/line/wall handled separately)
+		m = text.match(/(\d+)[-\s]?(?:foot|feet|ft)[-\s]?(cone|cube|square)/i);
+		if (m) {
+			const type = findType(m[2]);
+			if (type) return { size: Number(m[1]), type, unit: "foot" };
+		}
+
+		// P4 (wall) before P3 (line): wall descriptions often use "in a line … long" for
+		// their geometry, which would otherwise trigger P3 prematurely.
+		// P4: wall, shape-first (e.g. "wall…90 feet long, 30 feet high, and 50 feet thick")
+		m = text.match(/\bwall\b[^.]{0,80}?(\d+)[-\s]?(?:foot|feet|ft)[^.]{0,10}?(?:long|in length)/i);
+		if (m) {
+			const type = findType("wall");
+			if (type) {
+				const result = { size: Number(m[1]), type, unit: "foot" };
+				const ctx = extCtx(m);
+				const height = scanHeight(ctx);
+				const width = scanWidth(ctx);
+				if (height !== null) result.height = height;
+				if (width !== null) result.width = width;
+				return result;
+			}
+		}
+
+		// P3: line, shape-first (e.g. "a line 60 feet long and 10 feet wide")
+		m = text.match(/\bline\b[^.]{0,80}?(\d+)[-\s]?(?:foot|feet|ft)[^.]{0,10}?(?:long|in length)/i);
+		if (m) {
+			const type = findType("line");
+			if (type) {
+				const result = { size: Number(m[1]), type, unit: "foot" };
+				const width = scanWidth(extCtx(m));
+				if (width !== null) result.width = width;
+				return result;
+			}
+		}
+
+		// P5: standalone radius with no explicit shape (e.g. "20-foot radius")
+		m = text.match(/(\d+)[-\s]?(?:foot|feet|ft)[-\s]?radius\b/i);
+		if (m) {
+			const type = findType("radius");
+			if (type) return { size: Number(m[1]), type, unit: "foot" };
+		}
+
+		return null;
+	}
+
 	static enrichers = [
 		// Skills
 		{

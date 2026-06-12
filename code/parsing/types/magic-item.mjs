@@ -28,6 +28,11 @@ export default async function parseMagicItem(type, input) {
 	data["system.price.denomination"] = "gp";
 	if (!data["system.attunement"]) data["system.attunement"] = parser.consumeAttunement();
 
+	// AOE from description text (scanned before consumeDescription advances the cursor).
+	// Capped at 1000 chars; AoE descriptions always appear near the start of the body.
+	const aoe = Parser.parseAOEFromText(parser.remainder.substring(0, 1000));
+	if (aoe) data["system.target.template"] = aoe;
+
 	// Description
 	data["system.description.value"] = parser.consumeDescription();
 

@@ -84,7 +84,17 @@ This enhancement also adds enrichers for eight BF actions — Dash, Disengage, D
 
 ### Enhancement 7 — Detect AOE from Description Text
 
-More to come
+**Summary:** Many spells specify their area of effect in the description body rather than on the Range line. The parser was only reading AoE from the Range line (e.g., `Range: 60 feet (15-foot cube)`), so spells like Fireball — which just says `Range: 150 feet` — ended up with no AoE template data at all. This adds a new static method `Parser.parseAOEFromText()` that scans the description text for AoE shapes and dimensions, and wires it up in both `parseSpell()` and `parseMagicItem()`.
+
+The method works through a priority-ordered list of patterns. Cylinders are handled first since they need two dimensions (radius and height) and appear in several different formats in spell text. Then radius+sphere/circle, cone/cube/square, wall (deliberately before line, since wall descriptions often say "in a line…long" which would otherwise trigger the line pattern early), line, and finally standalone radius as the lowest-priority fallback. Line and wall patterns also capture secondary dimensions — width for lines, height and width for walls — since the BF template stores these separately.
+
+The Range line always takes priority. `parseSpell()` now always runs the description scan and merges the result with whatever the Range line found, using `{ ...aoe, ...template }` so the Range line wins for type/size/unit but description data fills in supplemental fields like width and height that a Range line parenthetical never captures. The scan is capped at 1,000 characters because AoE descriptions always appear near the start of the body, and scanning a full multi-paragraph description (e.g., Prismatic Wall) against several regex patterns was causing the parser UI to lock up.
+
+`parseMagicItem()` gets the same scan before `consumeDescription()` runs, with no merge logic needed since magic items had no prior template data at all.
+
+**Why:** Spells without a structured AoE Range line were silently producing blank template data, meaning the area of effect indicator on the spell sheet was always empty even when the description clearly described the shape and size. This fixes that automatically for the most common AoE formats without any manual follow-up from the user.
+
+**Risk: Medium.** The patterns cover the most common real-world BF spell formats and have been tested against a representative bank of spells. Known limitations: cylinders described by diameter ("40-foot-wide cylinder") rather than radius are not detected since there is no reliable way to infer radius from diameter without an ambiguous halving assumption. Wall thickness expressed in inches rather than feet is also not captured. Both are documented and require manual correction.
 
 ---
 

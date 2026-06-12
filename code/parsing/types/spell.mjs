@@ -35,9 +35,15 @@ export default async function parseSpell(type, input) {
 
 	// Other Details
 	data["system.casting"] = parser.consumeCasting();
-	const { range, template } = parser.consumeRange() ?? {};
+	const { range, template = {} } = parser.consumeRange() ?? {};
 	data["system.range"] = range;
-	data["system.target.template"] = template;
+	// Always scan description text — the Range line takes priority for type/size/unit,
+	// but description fills in supplemental dimensions (e.g. width for lines, height for cylinders)
+	// that the Range line's parenthetical never captures. Capped at 1000 chars because AoE
+	// descriptions always appear near the start of the body; scanning the full remainder of a
+	// long spell (e.g. Prismatic Wall) is needlessly expensive.
+	const aoe = Parser.parseAOEFromText(parser.remainder.substring(0, 1000));
+	data["system.target.template"] = aoe ? { ...aoe, ...template } : template;
 	data["system.components"] = parser.consumeComponents();
 	const { duration, concentration } = parser.consumeDuration() ?? {};
 	data["system.duration"] = duration;
